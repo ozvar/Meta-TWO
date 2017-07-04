@@ -57,8 +57,11 @@ Tetris.Block.prototype = {
     var delay = 0;
     var yoyo = false;
 
+    this.sprite.x = spriteLocation.x;
+    this.sprite.y = spriteLocation.y;
+
     
-    this.tween = Tetris.game.add.tween(this.sprite).to(spriteLocation, duration, ease, autoStart, delay, repeat, yoyo);
-    this.tween.start();
+    //this.tween = Tetris.game.add.tween(this.sprite).to(spriteLocation, duration, ease, autoStart, delay, repeat, yoyo);
+    //this.tween.start();
   }
 };
