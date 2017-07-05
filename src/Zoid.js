@@ -33,7 +33,7 @@ Tetris.Zoid.prototype = {
   randomizeZoid: function () {
     
     this.type = Math.floor(Math.random() * this.NUM_ZOID_TYPES);
-    this.orientation = Math.floor(Math.random() * this.NUM_ORIENTATIONS);
+    this.orientation = 0;//Math.floor(Math.random() * this.NUM_ORIENTATIONS);
     this.color = Math.floor(Math.random() * Tetris.NUM_COLORS);
     
     this.initBlocks();
@@ -214,6 +214,7 @@ Tetris.Zoid.prototype = {
       this.blocks[i].moveBlock(newX, newY);
     }
     this.orientation = newOrientation;
+
     this.isTweening = true;
   },
   
