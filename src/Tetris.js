@@ -60,4 +60,9 @@ Tetris.run = function()
 
   // Boot the game
   this.game.state.start( Tetris.Boot.stateKey );
+
+  // Random number generator
+  this.mt = new MersenneTwister();
+  // to get "identical" results to Python 2.7.x, we seed with seedArray(), not seed()
+  this.mt.seedArray([1]);
 };

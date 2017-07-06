@@ -13,6 +13,7 @@ Tetris.Zoid = function () {
   this.tweenCounter = 0;
   
   this.tempCounter = 0;
+  
 };
 
 Tetris.Zoid.prototype = {
@@ -32,8 +33,14 @@ Tetris.Zoid.prototype = {
   
   randomizeZoid: function () {
     
-    this.type = Math.floor(Math.random() * this.NUM_ZOID_TYPES);
-    this.orientation = 0;//Math.floor(Math.random() * this.NUM_ORIENTATIONS);
+    this.type = Math.floor(Tetris.mt.random() * this.NUM_ZOID_TYPES);
+    // For reasons I don't have time to get into (research software!), this version of the 
+    // Mersenne Twister produces "idential" results to Python 2.7.x on every *other*
+    // number generation. So every time we choose a piece, we "throw away" the next random number.
+    Tetris.mt.random(); 
+    //this.type = Math.floor(Math.random() * this.NUM_ZOID_TYPES);
+    this.orientation = 0;
+    //this.orientation = Math.floor(Math.random() * this.NUM_ORIENTATIONS);
     this.color = Math.floor(Math.random() * Tetris.NUM_COLORS);
     
     this.initBlocks();
