@@ -15,9 +15,9 @@ Tetris.Preloader.prototype = {
     this.stage.backgroundColor = 0x111111;
 
     // Setup preloader 'loading' bar
-    var preloaderWidth = ( this.game.width * 0.67 / 2.0 ) | 0;
-    var preloaderHeight = 32;
-    var bmd = this.game.add.bitmapData( preloaderWidth, preloaderHeight );
+    let preloaderWidth = ( this.game.width * 0.67 / 2.0 ) | 0;
+    let preloaderHeight = 32;
+    let bmd = this.game.add.bitmapData( preloaderWidth, preloaderHeight );
     bmd.ctx.fillStyle = "#999999";
     bmd.ctx.fillRect( 0, 0, preloaderWidth, preloaderHeight );
 
@@ -49,11 +49,11 @@ Tetris.Preloader.prototype = {
     this.numberOfDecodedSounds = 0;
 
     // Add the loaded audio to the game
-    //var bell2 = this.game.add.audio( "bell2" );
+    //let bell2 = this.game.add.audio( "bell2" );
     //this.soundList.push( bell2 );
 
     // Apply callback to decoding sounds.
-    for( var i = 0; i < this.soundList.length; i++ )
+    for( let i = 0; i < this.soundList.length; i++ )
     {
       this.soundList[i].onDecoded.add( this.soundDecoded, this );
     }

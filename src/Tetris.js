@@ -1,8 +1,8 @@
 /** @constructor */
-var Tetris =
+let Tetris =
 {
-  SCREEN_WIDTH: 510,
-  SCREEN_HEIGHT: 950,
+  SCREEN_WIDTH: 600,
+  SCREEN_HEIGHT: 800,
 
   titleStyle: { font: "72px Arial", fill: "#ffffff" },
 

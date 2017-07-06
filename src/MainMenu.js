@@ -1,5 +1,5 @@
 /** @constructor */
-var spacebar;
+let spacebar;
 
 Tetris.MainMenu = function() {};
 
@@ -11,7 +11,7 @@ Tetris.MainMenu.prototype.preload = function() {};
 
 Tetris.MainMenu.prototype.create = function() {
   this.stage.backgroundColor = 0x444444;
-  var text = Tetris.game.add.text(0, 0, "Dummy text, hit spacebar", {
+  let text = Tetris.game.add.text(0, 0, "Dummy text, hit spacebar", {
     font: "bold 32px Arial",
     fill: "#fff",
     boundsAlignH: "center",

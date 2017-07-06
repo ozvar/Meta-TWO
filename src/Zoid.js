@@ -41,7 +41,7 @@ Tetris.Zoid.prototype = {
   
   initBlocks: function () {
     
-    var i;
+    let i;
     for(i = 0; i < this.NUM_BLOCKS_IN_ZOID; i++) {
       this.blocks[i] = new Tetris.Block();
     }
@@ -62,7 +62,7 @@ Tetris.Zoid.prototype = {
     this.centerX = this.zoid.orientation[this.orientation].startingLocation.x;
     this.centerY = this.zoid.orientation[this.orientation].startingLocation.y;
     
-    var i, newX, newY;
+    let i, newX, newY;
 
     for(i = 0; i < this.blocks.length; i++) {
       newX = this.centerX + this.zoid.orientation[this.orientation].blockPosition[i].x;
@@ -85,7 +85,7 @@ Tetris.Zoid.prototype = {
   
   placeZoidInBoard: function () {
     
-    var i, block;
+    let i, block;
     
     for(i = 0; i < this.blocks.length; i++) {
       block = this.blocks[i];
@@ -112,7 +112,7 @@ Tetris.Zoid.prototype = {
   
   canMoveZoid: function (direction) {
     
-    var i, newX, newY;
+    let i, newX, newY;
 
     for(i = 0; i < this.blocks.length; i++) {
       switch(direction) {
@@ -142,7 +142,7 @@ Tetris.Zoid.prototype = {
       throw "Cannot move active zoid in direction: " + direction;
     }
     
-    var i, newX, newY;
+    let i, newX, newY;
     
     // Move the Zoid's blocks
     for(i = 0; i < this.blocks.length; i++) {
@@ -186,7 +186,7 @@ Tetris.Zoid.prototype = {
       return false;
     }
     
-    var i, newX, newY, newOrientation;
+    let i, newX, newY, newOrientation;
     newOrientation = (this.orientation + 1) % this.NUM_ORIENTATIONS;
     
     for(i = 0; i < this.blocks.length; i++) {
@@ -206,7 +206,7 @@ Tetris.Zoid.prototype = {
       throw "Cannot rotate active zoid";
     }
     
-    var i, newX, newY, newOrientation;
+    let i, newX, newY, newOrientation;
     newOrientation = (this.orientation + 1) % this.NUM_ORIENTATIONS;
     for(i = 0; i < this.blocks.length; i++) {
       newX = this.centerX + this.zoid.orientation[newOrientation].blockPosition[i].x;

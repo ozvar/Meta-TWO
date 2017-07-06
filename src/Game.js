@@ -19,7 +19,7 @@ Tetris.Game.prototype = {
     
   create: function () {
     
-    var i, j;
+    let i, j;
     
     // Create background
     this.stage.backgroundColor = 0x171642; 
@@ -144,8 +144,8 @@ Tetris.Game.prototype = {
   },
   
   getCompleteRows: function() {
-    var i, j, max;
-    var completeRows = [];
+    let i, j, max;
+    let completeRows = [];
     
     for(i = 0; i < Tetris.board.length; i++) {
       if (this.isRowFull(i)) {
@@ -157,7 +157,7 @@ Tetris.Game.prototype = {
     
   isRowFull: function(row) {
     
-    var i;
+    let i;
     
     for(i = 0; i < Tetris.board[row].length; i++) {
       if (Tetris.board[row][i] === null) {
@@ -170,7 +170,7 @@ Tetris.Game.prototype = {
   
   clearRow: function(completedRows) {
     
-    var i, j, h, row, block, alreadyShifted, actualRowToClear;
+    let i, j, h, row, block, alreadyShifted, actualRowToClear;
     alreadyShifted = 0;
     
     for(i = completedRows.length-1; i >= 0 ; i--) {
@@ -190,7 +190,7 @@ Tetris.Game.prototype = {
   
   dropRowsAbove: function(row) {
     
-    var i, j, block;
+    let i, j, block;
     
     for(i = row; i >= 0; i--) {
       for(j = 0; j < Tetris.board[i].length; j++) {
