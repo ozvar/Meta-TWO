@@ -22,9 +22,9 @@ Tetris.Game.prototype = {
     let i, j;
     
     // Create background
-    this.stage.backgroundColor = 0x171642; 
-    this.add.sprite(0,0,'background');
-    this.add.sprite(0,0,'banner');
+    this.stage.backgroundColor = 0x050505; 
+    //this.add.sprite(0,0,'background');
+    //this.add.sprite(0,0,'banner');
     
     // Create an empty board filled with nulls
     Tetris.board = new Array(Tetris.BOARD_HEIGHT);

@@ -1,8 +1,8 @@
 /** @constructor */
 let Tetris =
 {
-  SCREEN_WIDTH: 600,
-  SCREEN_HEIGHT: 800,
+  SCREEN_WIDTH: 800,
+  SCREEN_HEIGHT: 600,
 
   titleStyle: { font: "72px Arial", fill: "#ffffff" },
 
@@ -12,13 +12,13 @@ let Tetris =
   buttonActiveStyle: { font: "32px Arial", fill: "#ffffff", fontStyle: "italic" },
   
   // Asset Sizes
-  BANNER_HEIGHT: 145,
+  BANNER_HEIGHT: 25, //temp
   LINING_WIDTH: 5,
-  BLOCK_WIDTH: 50,
+  BLOCK_WIDTH: 25,
   
   // Board Size
   BOARD_WIDTH: 10,
-  BOARD_HEIGHT: 16,
+  BOARD_HEIGHT: 20,
   
   // Movement Directions
   DOWN: 0,

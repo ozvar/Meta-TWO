@@ -35,7 +35,7 @@ Tetris.Preloader.prototype = {
     // Load images
     this.load.image('background', 'background.png');
     this.load.image('banner', 'banner.png');
-    this.load.spritesheet('block', 'blocks.png', Tetris.BLOCK_WIDTH, Tetris.BLOCK_WIDTH);
+    this.load.spritesheet('block', 'blocks25.png', Tetris.BLOCK_WIDTH, Tetris.BLOCK_WIDTH);
     
     // Load blockPositions.json and put into Tetris.blockPositions
     this.load.json('zoids', 'zoids.json');
