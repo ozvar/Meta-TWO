@@ -13,6 +13,11 @@ Tetris.Game = function (game) {
   this.completedRows = [];
   this.rotateFlag = false;
 
+  this.level = 0;
+  this.gravityTimer = 0;
+  this.gravityThresholdArray = [48, 43, 38, 33, 28, 23, 18, 13, 8, 6, 5, 5, 5, 4, 4, 4, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1];
+  this.gravityThreshold = this.gravityThresholdArray[this.level];
+
 };
 
 Tetris.Game.stateKey = "Game";
@@ -61,7 +66,7 @@ Tetris.Game.prototype = {
   
   update: function () {
     
-    if(this.turnCounter >= this.turnLength) {
+    if(this.gravityTimer >= this.gravityThreshold) {
       
       if(this.activeZoid !== null && this.activeZoid.canMoveZoid(Tetris.DOWN)) {
         this.activeZoid.moveZoid(Tetris.DOWN);
@@ -82,7 +87,7 @@ Tetris.Game.prototype = {
         
         this.completedRows = [];
       }
-      this.turnCounter = 0;
+      this.gravityTimer = 0;
       
     } else if (this.isUpdatingAfterRowClear) {
       
@@ -95,7 +100,7 @@ Tetris.Game.prototype = {
     } else {
       
       this.handleInput();
-      this.turnCounter++;
+      this.gravityTimer++;
       
     }
   },
