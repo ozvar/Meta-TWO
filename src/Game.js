@@ -11,6 +11,8 @@ Tetris.Game = function (game) {
   this.cursors = null;
   
   this.completedRows = [];
+  this.rotateFlag = false;
+
 };
 
 Tetris.Game.stateKey = "Game";
@@ -20,11 +22,10 @@ Tetris.Game.prototype = {
   create: function () {
     
     let i, j;
+    console.log(this);
     
     // Create background
     this.stage.backgroundColor = 0x050505; 
-    //this.add.sprite(0,0,'background');
-    //this.add.sprite(0,0,'banner');
     
     // Create an empty board filled with nulls
     Tetris.board = new Array(Tetris.BOARD_HEIGHT);
@@ -100,14 +101,20 @@ Tetris.Game.prototype = {
   },
   
   handleInput: function() {
-    
-    if (this.cursors.up.isDown) {
+
+    if (this.cursors.up.isDown && (this.rotateFlag === false)) {
       
+      this.rotateFlag = true; // don't allow rotation again until button is released
       if (this.activeZoid.canRotate()) {        
         this.activeZoid.rotate();
       }
+    }
+
+    if (!this.cursors.up.isDown){
+      this.rotateFlag = false;
+    }
       
-    } else if (this.cursors.left.isDown) {
+    if (this.cursors.left.isDown) {
       
       if (this.activeZoid.canMoveZoid(Tetris.LEFT)) {
         this.activeZoid.moveZoid(Tetris.LEFT);
@@ -209,6 +216,7 @@ Tetris.Game.prototype = {
   
   render: function(){
     Tetris.game.debug.text(Tetris.game.time.fps, 2, 14, "#00ff00");
+    //Tetris.game.debug.text(this.turnCounter, 2, 30, "#00ff00");
   }
   
 };
