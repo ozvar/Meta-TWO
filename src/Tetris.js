@@ -58,11 +58,13 @@ Tetris.run = function()
   this.game.state.add( Tetris.MainMenu.stateKey, Tetris.MainMenu );
   this.game.state.add( Tetris.Game.stateKey, Tetris.Game );
 
-  // Boot the game
-  this.game.state.start( Tetris.Boot.stateKey );
-
   // Random number generator
   this.mt = new MersenneTwister();
   // to get "identical" results to Python 2.7.x, we seed with seedArray(), not seed()
   this.mt.seedArray([1]);
+
+  // Boot the game
+  this.game.state.start( Tetris.Boot.stateKey );
+
+  
 };

@@ -46,14 +46,16 @@ Tetris.Game.prototype = {
     
     this.cursors = this.game.input.keyboard.createCursorKeys();
     
-    // Create Zoids
+    // Create Initial Zoids
+    this.activeZoid = new Tetris.Zoid();
+    this.activeZoid.randomizeZoid();
+    this.activeZoid.activate();
+    
     this.nextZoid = new Tetris.Zoid();
     this.nextZoid.randomizeZoid();
     this.nextZoid.preview();
     
-    this.activeZoid = new Tetris.Zoid();
-    this.activeZoid.randomizeZoid();
-    this.activeZoid.activate();
+    Tetris.game.time.advancedTiming = true;
   },
   
   update: function () {
@@ -209,6 +211,10 @@ Tetris.Game.prototype = {
   setupSounds: function () {
     
     //TODO
+  },
+  
+  render: function(){
+    Tetris.game.debug.text(Tetris.game.time.fps, 2, 14, "#00ff00");
   }
   
 };

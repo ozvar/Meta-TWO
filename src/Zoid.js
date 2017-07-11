@@ -71,6 +71,7 @@ Tetris.Zoid.prototype = {
     
     let i, newX, newY;
 
+    //adds block sprites to stage
     for(i = 0; i < this.blocks.length; i++) {
       newX = this.centerX + this.zoid.orientation[this.orientation].blockPosition[i].x;
       newY = this.centerY + this.zoid.orientation[this.orientation].blockPosition[i].y;
