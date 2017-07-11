@@ -101,11 +101,7 @@ Tetris.Game.prototype = {
   
   handleInput: function() {
     
-    if (this.activeZoid.isTweening) {
-      
-      this.activeZoid.updateTween();
-      
-    } else if (this.cursors.up.isDown) {
+    if (this.cursors.up.isDown) {
       
       if (this.activeZoid.canRotate()) {        
         this.activeZoid.rotate();
@@ -115,14 +111,12 @@ Tetris.Game.prototype = {
       
       if (this.activeZoid.canMoveZoid(Tetris.LEFT)) {
         this.activeZoid.moveZoid(Tetris.LEFT);
-        this.activeZoid.isTweening = true;
       }
       
     } else if (this.cursors.right.isDown) {
       
       if (this.activeZoid.canMoveZoid(Tetris.RIGHT)) {        
         this.activeZoid.moveZoid(Tetris.RIGHT);
-        this.activeZoid.isTweening = true;
       }
       
     } else if (this.cursors.down.isDown) {

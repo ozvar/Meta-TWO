@@ -8,10 +8,7 @@ Tetris.Zoid = function () {
   
   this.zoid = null;
   this.blocks = [];
-  
-  this.isTweening = false;
-  this.tweenCounter = 0;
-  
+    
   this.tempCounter = 0;
   
 };
@@ -189,11 +186,7 @@ Tetris.Zoid.prototype = {
   },
   
   canRotate: function () {
-    
-    if (this.isTweening) {
-      return false;
-    }
-    
+        
     let i, newX, newY, newOrientation;
     newOrientation = (this.orientation + 1) % this.NUM_ORIENTATIONS;
     
@@ -223,15 +216,7 @@ Tetris.Zoid.prototype = {
     }
     this.orientation = newOrientation;
 
-    this.isTweening = true;
   },
   
-  updateTween: function () {
-    
-    if (this.tweenCounter > 10) {
-      this.isTweening = false;
-      this.tweenCounter = 0;
-    } 
-    this.tweenCounter++;
-  }
+  
 };
