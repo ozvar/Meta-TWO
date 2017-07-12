@@ -149,10 +149,15 @@ Tetris.Game.prototype = {
         this.activeZoid.moveZoid(Tetris.RIGHT);
       }
       
-    } else if (this.cursors.down.isDown) {
-      
-      this.turnCounter += this.turnLength/5;
+    } 
     
+    if (this.cursors.down.isDown) {
+      
+      this.gravityThreshold = Math.ceil(this.gravityThresholdArray[this.level]/2);
+    
+    }
+    else {
+      this.gravityThreshold = this.gravityThresholdArray[this.level];
     }
   },
   
