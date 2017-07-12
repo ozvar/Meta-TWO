@@ -13,8 +13,13 @@ Tetris.Game = function (game) {
   this.completedRows = [];
   this.rotateFlag = false;
 
-  this.level = 0;
+  // CONFIG THIS
+  this.startLevel = 0;
+
+  this.level = this.startLevel;
+  this.lineCount = 0;
   this.gravityTimer = 0;
+  // not expecting to go past level 30?
   this.gravityThresholdArray = [48, 43, 38, 33, 28, 23, 18, 13, 8, 6, 5, 5, 5, 4, 4, 4, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1];
   this.gravityThreshold = this.gravityThresholdArray[this.level];
 
@@ -27,7 +32,6 @@ Tetris.Game.prototype = {
   create: function () {
     
     let i, j;
-    console.log(this);
     
     // Create background
     this.stage.backgroundColor = 0x050505; 
@@ -80,6 +84,20 @@ Tetris.Game.prototype = {
           
           this.clearRow(this.completedRows);
           this.isUpdatingAfterRowClear = true;
+          this.lineCount += this.completedRows.length;
+          // TODO: the CTWC videos show champions going from level 18 to level 19 at 130 (??) lines
+          // from https://tetris.wiki/Tetris_(NES,_Nintendo) :
+          // when the player line clear (startLevel * 10 + 10) or max(100,
+          //  (startLevel * 10 - 50)) lines, whatever comes first, the level advances by 1. After this,
+          //  the level advances by 1 for every 10 lines
+          // lineCount to advance = min((startLevel * 10 + 10), max(100, (startLevel * 10 - 50)))
+          // if lineCount > lineCount_to_advance, level = startLevel + math.floor(lineCount/10) - startLevel
+          // def calc(startLevel, lineCount):
+          //   LTA= min((startLevel * 10 + 10), max(100, (startLevel * 10 - 50)))
+          //   if (lineCount >= LTA):
+          //     return startLevel + math.floor((lineCount - LTA)/10) + 1
+          //   else: return startLevel
+          this.level = this.calcLevel(this.startLevel, this.lineCount);
           
         } else {
           this.promoteZoids();
@@ -220,8 +238,18 @@ Tetris.Game.prototype = {
   },
   
   render: function(){
-    Tetris.game.debug.text(Tetris.game.time.fps, 2, 14, "#00ff00");
-    //Tetris.game.debug.text(this.turnCounter, 2, 30, "#00ff00");
+    Tetris.game.debug.text("fps: " + Tetris.game.time.fps, 2, 14, "#00ff00");
+    Tetris.game.debug.text("gravity timer: " + this.gravityTimer, 2, 30, "#00ff00");
+    Tetris.game.debug.text("level: " + this.level, 2, 46, "#00ff00");
+    Tetris.game.debug.text("line count: " + this.lineCount, 2, 62, "#00ff00");
+  },
+
+  calcLevel: function(startLevel, lineCount){
+    let LTA= Math.min((startLevel * 10 + 10), Math.max(100, (startLevel * 10 - 50)));
+    if (lineCount >= LTA){
+      return startLevel + Math.floor((lineCount - LTA)/10) + 1;
+    }
+    else return startLevel;
   }
   
 };
