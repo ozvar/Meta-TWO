@@ -32,15 +32,15 @@
     };
 
     Board.prototype.isFilled = function (x, y) {
-        return (self.contents[y+self.vanish][x] !== 0);
+        return (this.contents[y+this.vanish][x] !== 0);
     };
 
     Board.prototype.getCell = function (x, y) {
-        return self.contents[y+self.vanish][x];
+        return this.contents[y+this.vanish][x];
     };
 
     Board.prototype.setCell = function (x, y, val) {
-        self.contents[y+self.vanish][x] = val;
+        this.contents[y+this.vanish][x] = val;
     };
 
     Board.prototype.commit = function(zoid){
@@ -51,7 +51,7 @@
             if (this.isFilled(x, y)){
                 collide = true;
             }
-            self.setCell(x, y, zoid.type+1);
+            this.setCell(x, y, zoid.type+1);
         }            
         return collide;
     };
@@ -68,8 +68,9 @@
     Board.prototype.lineDrop = function(row){
         let bug = (row <= 0);
         let top_row = 0;
+        let j = 0;
         if (bug){
-            row = self.height -1;
+            row = this.height -1;
             top_row = -this.vanish;
         }
         for (j = row; j > top_row; j--){
