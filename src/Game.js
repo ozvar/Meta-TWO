@@ -279,7 +279,7 @@ Tetris.Game.prototype = {
   },
 
   lineAnim: function(){
-
+    //this stuff seems to be handled in 94ee
   },
 
   scoreUpdate: function(){
@@ -299,7 +299,33 @@ Tetris.Game.prototype = {
   },
 
   sub_94ee: function(){
+    if (this.currentTask = this.lineAnim){
+        if ((this.frames & 3) === 0){
+            //PLAY LINE SOUND?
+            this.are++;
+        }
+        if (this.are >= this.LINECLEAR_STEPS){
+            this.are = 0;
+            this.currentTask = this.scoreUpdate;
+        }
+        this._49 = 0;
+    }
+    else {
+        for (i = 0; i < 4; i++){
+            this.sub_9725();
+        }
+    }
+  },
 
+  sub_9725: function(){
+    if(this._49 > 0x15){
+        return;
+    }
+    this._49++;
+    if (this._49 < 0x14){
+        return;
+    }
+    this._49 = 0x20;
   },
 
   sub_9caf: function(){
