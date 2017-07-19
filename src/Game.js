@@ -249,14 +249,14 @@ Tetris.Game.prototype = {
 
     this.are = 0;
     this.sub_9caf();
-    this.currentTask = lineCheck;
+    this.currentTask = this.lineCheck;
   },
 
   lineCheck: function(){
     if(this._49 < 0x20){
         return;
     }
-    let row = Math.max(0, this.piece.y);
+    let row = Math.max(0, this.zoid.y);
     row += this.are;
 
     if ((row < this.board.height) && (this.board.lineCheck(row))){
@@ -283,7 +283,37 @@ Tetris.Game.prototype = {
   },
 
   scoreUpdate: function(){
-
+    let lines_before = this.lines;
+    this.lines += this.lines_this;
+    let hex_trick = 0;
+    if (Math.floor(this.lines/10) > Math.floor(lines_before/10)){
+        hex_trick = Math.floor(this.lines/10);
+        hex_trick = parseInt(hex_trick.toString(), 16);
+        if (hex_trick > this.level){
+            this.level++;
+            //PLAY LEVEL UP SOUND
+        }
+    }
+    this.level = this.level & 255;
+    this.score += (this.level + 1) * this.scoreVals[this.lines_this];
+    // To replicate the drop score bug, we need to convert the last 
+    // two digits to packed binary coded decimal.
+    if (this.drop_points >= 2){
+        let modScore = this.score % 100;
+        hex_trick = parseInt(modScore.toString(), 16);
+        hex_trick--;
+        hex_trick += this.drop_points;
+        if (hex_trick & 0x0F >= 0x0A){
+            hex_trick += 0x06;
+        }
+        if (hex_trick & 0xF0 >= 0xA0){
+            hex_trick = hex_trick & 0xF0;
+            hex_trick += 0x60;
+        }
+        this.score -= modScore;
+        this.score += parseInt(hex_trick.toString(16), 10);
+    }
+    this.currentTask = this.goalCheck;
   },
 
   goalCheck: function(){
@@ -299,7 +329,7 @@ Tetris.Game.prototype = {
   },
 
   sub_94ee: function(){
-    if (this.currentTask = this.lineAnim){
+    if (this.currentTask === this.lineAnim){
         if ((this.frames & 3) === 0){
             //PLAY LINE SOUND?
             this.are++;
@@ -343,6 +373,8 @@ Tetris.Game.prototype = {
     Tetris.game.debug.text("vx: " + this.vx, 2, 78, "#00ff00");
     let das_rect = new Phaser.Rectangle(2, 94, this.das * 10, 12);
     Tetris.game.debug.geom(das_rect, 'rgba(0,255,0,1)')
+    Tetris.game.debug.text("score: " + this.score, 2, 110, "#00ff00");
+
     //Tetris.game.debug.text("DAS: " + this.das, 2, 94, "#00ff00");
   },
 
