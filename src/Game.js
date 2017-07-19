@@ -108,6 +108,7 @@ Tetris.Game.prototype = {
   update: function () {
     this.poll();
     this.sub_94ee();
+    this.drop++;
     this.currentTask();
     this.frames++;
   },
@@ -212,7 +213,7 @@ Tetris.Game.prototype = {
     if (this.softdrop_timer < 0){
         return;
     }
-    if ((this.vy !== 0) || (this.drop > this.speedLevels[this.level<29?this.level:29])){
+    if ((this.vy !== 0) || (this.drop >= this.speedLevels[this.level<29?this.level:29])){
         this.vy = 0;
         this.drop = 0;
         if (!this.zoid.collide(this.board, 0, 1, 0)){
@@ -317,15 +318,30 @@ Tetris.Game.prototype = {
   },
 
   goalCheck: function(){
-
+      //not applicable in A-Type Tetris
+      this.currentTask = this.dummy;
   },
 
   dummy: function(){
-
+      //skipped frame for unimplemented 2-player code
+      this.currentTask = this.prep;
   },
 
   prep: function(){
-
+    if(this._49 < 0x20){
+        return;
+    }
+    this.are = 0;
+    this.lines_this = 0;
+    this.drop_points = 0;
+    this.softdrop_timer = 0;
+    this.drop = 0;
+    this.vy = 0;
+    this.curr = this.next;
+    this.next = Math.floor(Tetris.mt.random() * 7);
+    Math.floor(Tetris.mt.random() * 7);
+    this.zoid = Zoid.spawn(this.curr);
+    this.currentTask = this.active;
   },
 
   sub_94ee: function(){
@@ -366,6 +382,21 @@ Tetris.Game.prototype = {
   },
 
   render: function(){
+    //debug draw field
+    for(iy = 0; iy<this.board.height; iy++){
+        for(ix = 0; ix<this.board.width; ix++){
+            if(this.board.isFilled(ix, iy)){
+                Tetris.game.debug.geom(new Phaser.Rectangle(ix*25, iy*25, 25, 25), 'rgba(0,255,255,1)');
+            }
+        }
+    }
+    //debug draw zoid
+    if ((this.currentTask === this.active) || (this.currentTask === this.updateTask)){
+        let blocks = this.zoid.getBlocks();
+        for (i=0; i< 4; i++){
+            Tetris.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25, blocks[i][1]*25, 25, 25), 'rgba(0,0,255,1)');
+        }
+    }
     Tetris.game.debug.text("fps: " + Tetris.game.time.fps, 2, 14, "#00ff00");
     Tetris.game.debug.text("softdrop: " + this.softdrop_timer, 2, 30, "#00ff00");
     Tetris.game.debug.text("level: " + this.level, 2, 46, "#00ff00");
@@ -375,7 +406,6 @@ Tetris.Game.prototype = {
     Tetris.game.debug.geom(das_rect, 'rgba(0,255,0,1)')
     Tetris.game.debug.text("score: " + this.score, 2, 110, "#00ff00");
 
-    //Tetris.game.debug.text("DAS: " + this.das, 2, 94, "#00ff00");
   },
 
   poll: function(){
