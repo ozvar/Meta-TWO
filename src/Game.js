@@ -234,11 +234,48 @@ Tetris.Game.prototype = {
   },
 
   updateTask: function(){
+    if (this.are === 0){
+        this.are = 1;
+        //console.log(this.zoid);
+        if(this.board.commit(this.zoid)){
+            //GAME OVER
+            this.alive = false;
+        }
+        //console.log(this.board);
+    }
+    if (this._49 < 0x20){
+        return;
+    }
 
+    this.are = 0;
+    this.sub_9caf();
+    this.currentTask = lineCheck;
   },
 
   lineCheck: function(){
+    if(this._49 < 0x20){
+        return;
+    }
+    let row = Math.max(0, this.piece.y);
+    row += this.are;
 
+    if ((row < this.board.height) && (this.board.lineCheck(row))){
+        this.board.lineDrop(row);
+        this.lines_this++;
+    }
+
+    this.are++;
+
+    if (this.are >= 4){
+        this._49 = 0;
+        this.are = 0;
+        if (this.lines_this !== 0){
+            this.currentTask = this.lineAnim;
+        }
+        else {
+            this.currentTask = this.scoreUpdate;
+        }
+    }
   },
 
   lineAnim: function(){

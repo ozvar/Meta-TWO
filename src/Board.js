@@ -45,13 +45,14 @@
 
     Board.prototype.commit = function(zoid){
         let collide = false;
-        
-        for (block in zoid.getBlocks()){
-            let x = block[0], y = block[1];
+        let blocks = zoid.getBlocks();
+        for (i = 0; i< blocks.length; i++){
+            let x = blocks[i][0], y = blocks[i][1];
             if (this.isFilled(x, y)){
                 collide = true;
             }
-            this.setCell(x, y, zoid.type+1);
+            //console.log(x + " " + y + " " + zoid.zoidType + 1);
+            this.setCell(x, y, zoid.zoidType+1);
         }            
         return collide;
     };
