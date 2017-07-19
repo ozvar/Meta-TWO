@@ -197,7 +197,7 @@ Tetris.Game.prototype = {
   rotate: function(){
       
       if (self.vr !== 0){
-          console.log("rotate");
+          //console.log("rotate");
           if (!this.zoid.collide(this.board, 0, 0, this.vr)){
               //PLAY ROTATE SOUND
               this.zoid.r += vr;
@@ -209,7 +209,21 @@ Tetris.Game.prototype = {
   },
 
   gravity: function(){
-
+    if (this.softdrop_timer < 0){
+        return;
+    }
+    if ((this.vy !== 0) || (this.drop > this.speedLevels[this.level<29?this.level:29])){
+        this.vy = 0;
+        this.drop = 0;
+        if (!this.zoid.collide(this.board, 0, 1, 0)){
+            this.zoid.y++;
+        }
+        else{
+            //PLAY LOCK SOUND
+            this.sub_9caf();
+            this.currentTask = this.updateTask;
+        }
+    }
   },
 
   active: function(){
@@ -219,8 +233,43 @@ Tetris.Game.prototype = {
     this.gravity();
   },
 
+  updateTask: function(){
+
+  },
+
+  lineCheck: function(){
+
+  },
+
+  lineAnim: function(){
+
+  },
+
+  scoreUpdate: function(){
+
+  },
+
+  goalCheck: function(){
+
+  },
+
+  dummy: function(){
+
+  },
+
+  prep: function(){
+
+  },
+
   sub_94ee: function(){
 
+  },
+
+  sub_9caf: function(){
+    this._49 = this.zoid.y;
+    if (this._49 < 0){
+        this._49 = 0;
+    }
   },
 
   render: function(){
