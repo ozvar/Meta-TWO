@@ -86,6 +86,7 @@ Tetris.Game.prototype = {
     Math.floor(Tetris.mt.random() * 7);
     this.next = Math.floor(Tetris.mt.random() * 7);
     Math.floor(Tetris.mt.random() * 7);
+    this.zoid = Zoid.spawn(this.curr);
     this.paused = false;
         
     this.alive = true;
@@ -106,7 +107,9 @@ Tetris.Game.prototype = {
   
   update: function () {
     this.poll();
+    this.sub_94ee();
     this.currentTask();
+    this.frames++;
   },
 
   control: function(){
@@ -128,10 +131,96 @@ Tetris.Game.prototype = {
             this.softdrop_timer ++;
         }
     }
+
+    if (this.softdrop_timer >= 0){
+        if (this.softdrop_timer === 0){
+            if (this.onlyDown()){
+                this.softdrop_timer = 1;
+            }
+        }
+        else{
+            if (this.downCurr){
+                this.softdrop_timer ++;
+                if (this.softdrop_timer > 2){
+                    this.softdrop_timer = 1;
+                    this.drop_points ++;
+                    this.vy = 1;
+                }
+                else{
+                    this.vy = 0;
+                }
+            }
+            else{
+                this.softdrop_timer = 0;
+                this.vy = 0;
+                this.drop_points = 0;
+            }
+        }
+    }
+
+    if (this.justPressed(this.keys.ROTATE)){
+        self.vr = 1;
+    }
+    else if (this.justPressed(this.keys.COUNTERROTATE)){
+        self.vr = -1;
+    }
+    else{
+        self.vr = 0;
+    }
+
+  },
+
+  move: function(){
+    if (this.vx !== 0){
+        let shift = false;
+        if (this.das === 0){
+            shift = true;
+        }
+        if (this.das >= this.DAS_MAX){
+            shift = true;
+            this.das = this.DAS_NEGATIVE_EDGE;
+        }
+        this.das ++;
+
+        if (shift){
+            if (!this.zoid.collide(this.board, this.vx, 0, 0)){
+                this.zoid.x += this.vx;
+                //PLAY MOVE SOUND
+            }
+            else{
+                this.das = this.DAS_MAX;
+            }
+        }
+    }
+  },
+
+  rotate: function(){
+      
+      if (self.vr !== 0){
+          console.log("rotate");
+          if (!this.zoid.collide(this.board, 0, 0, this.vr)){
+              //PLAY ROTATE SOUND
+              this.zoid.r += vr;
+              this.zoid.r = this.zoid.r & 3;
+              //console.log(this.zoid.r);
+          }
+
+      }
+  },
+
+  gravity: function(){
+
   },
 
   active: function(){
     this.control();
+    this.move();
+    this.rotate();
+    this.gravity();
+  },
+
+  sub_94ee: function(){
+
   },
 
   render: function(){
@@ -140,6 +229,9 @@ Tetris.Game.prototype = {
     Tetris.game.debug.text("level: " + this.level, 2, 46, "#00ff00");
     Tetris.game.debug.text("line count: " + this.lines, 2, 62, "#00ff00");
     Tetris.game.debug.text("vx: " + this.vx, 2, 78, "#00ff00");
+    let das_rect = new Phaser.Rectangle(2, 94, this.das * 10, 12);
+    Tetris.game.debug.geom(das_rect, 'rgba(0,255,0,1)')
+    //Tetris.game.debug.text("DAS: " + this.das, 2, 94, "#00ff00");
   },
 
   poll: function(){
@@ -152,7 +244,7 @@ Tetris.Game.prototype = {
     this.rightCurr = this.rightKey.isDown;
     this.downCurr = this.downKey.isDown;
     this.rotateCurr = this.rotateKey.isDown;
-    this.counterRotateCurr = this.rotateKey.isDown;
+    this.counterRotateCurr = this.counterRotateKey.isDown;
   },
 
   justPressed: function(key){

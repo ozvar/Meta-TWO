@@ -52,7 +52,7 @@
     };
 
     Zoid.prototype.collide = function(board, vx, vy, vr){
-        vr = (this.vr + vr) & 3;
+        vr = (this.r + vr) & 3;
         let ix = 0, iy = 0;
         let rotateBlocks = this.getBlocksWithRotation(vr);
         for (i = 0; i< 4; i++){
