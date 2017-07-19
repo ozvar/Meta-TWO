@@ -304,10 +304,10 @@ Tetris.Game.prototype = {
         hex_trick = parseInt(modScore.toString(), 16);
         hex_trick--;
         hex_trick += this.drop_points;
-        if (hex_trick & 0x0F >= 0x0A){
+        if ((hex_trick & 0x0F) >= 0x0A){
             hex_trick += 0x06;
         }
-        if (hex_trick & 0xF0 >= 0xA0){
+        if ((hex_trick & 0xF0) >= 0xA0){
             hex_trick = hex_trick & 0xF0;
             hex_trick += 0x60;
         }
