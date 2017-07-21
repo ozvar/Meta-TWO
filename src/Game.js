@@ -65,6 +65,8 @@ Tetris.Game.prototype = {
     //allows us to view FPS   
     Tetris.game.time.advancedTiming = true;
 
+    this.gamepad = Tetris.gamepad;
+
     //add graphics object for drawing frames, etc
     let graphics = Tetris.game.add.graphics();
     graphics.lineStyle(2, 0x00FF00, 1);    
@@ -445,6 +447,10 @@ Tetris.Game.prototype = {
     this.downCurr = this.downKey.isDown;
     this.rotateCurr = this.rotateKey.isDown;
     this.counterRotateCurr = this.counterRotateKey.isDown;
+    if (Tetris.game.input.gamepad.supported && Tetris.game.input.gamepad.active && this.gamepad.connected)
+    {
+        console.log(this.gamepad.isDown(Phaser.Gamepad.BUTTON_0));
+    }
   },
 
   justPressed: function(key){

@@ -25,6 +25,9 @@ Tetris.Boot.prototype.preload = function()
 
 Tetris.Boot.prototype.create = function()
 { 
+  Tetris.game.input.gamepad.start();
+
+  Tetris.gamepad = Tetris.game.input.gamepad.pad1;
   // Go straight to the Preloader
   this.state.start( Tetris.Preloader.stateKey );
 };
