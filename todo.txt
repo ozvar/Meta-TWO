@@ -1,9 +1,9 @@
 line animation
 block colors
 pause
-entry screen
+//entry screen
 game #
 config options
 log
-gamepad
+//gamepad
 audio
