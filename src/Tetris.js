@@ -45,7 +45,10 @@ let Tetris =
   // in the bottom right corner. Initialized in Tetris.Game.create(). 
   board: null,
   
-  config: {}
+  config: {startLevel: 0,
+           AButton: -1, // different USB NES pads assign different button values
+           BButton: -1} // to A and B (grumble). We ask the player to press the A
+                        // button at the main menu, and assign that to AButton
 };
 
 Tetris.run = function()

@@ -442,15 +442,17 @@ Tetris.Game.prototype = {
     this.downPrev = this.downCurr;
     this.rotatePrev = this.rotateCurr;
     this.counterRotatePrev = this.counterRotateCurr;
-    this.leftCurr = this.leftKey.isDown;
-    this.rightCurr = this.rightKey.isDown;
-    this.downCurr = this.downKey.isDown;
-    this.rotateCurr = this.rotateKey.isDown;
-    this.counterRotateCurr = this.counterRotateKey.isDown;
-    if (Tetris.game.input.gamepad.supported && Tetris.game.input.gamepad.active && this.gamepad.connected)
-    {
-        console.log(this.gamepad.isDown(Phaser.Gamepad.BUTTON_0));
-    }
+
+    this.leftCurr = this.leftKey.isDown || (this.gamepad._rawPad.axes[0] === -1);
+    this.rightCurr = this.rightKey.isDown || (this.gamepad._rawPad.axes[0] === 1);
+    this.downCurr = this.downKey.isDown || (this.gamepad._rawPad.axes[1] === 1);
+    this.rotateCurr = this.rotateKey.isDown || this.gamepad.isDown(Tetris.config.AButton);
+    this.counterRotateCurr = this.counterRotateKey.isDown || this.gamepad.isDown(Tetris.config.BButton);;
+    // if (Tetris.game.input.gamepad.supported && Tetris.game.input.gamepad.active && this.gamepad.connected)
+    // {
+    //     console.log(this.gamepad.isDown(Tetris.config.AButton));
+    // }
+    //console.log(this.gamepad._rawPad.axes[0]);
   },
 
   justPressed: function(key){

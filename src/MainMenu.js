@@ -55,9 +55,23 @@ Tetris.MainMenu.prototype.create = function() {
 
 Tetris.MainMenu.prototype.update = function() {
   if (enter.isDown) {
-    input.endFocus();
-    input.value = input.value===""?0:input.value;
-    Tetris.config.startLevel = input.value;
-    this.state.start(Tetris.Game.stateKey);
+    this.gotoNextScreen();
   }
+  if (Tetris.gamepad.isDown(Phaser.Gamepad.BUTTON_0)){
+    Tetris.config.AButton = Phaser.Gamepad.BUTTON_0;
+    Tetris.config.BButton = Phaser.Gamepad.BUTTON_1;
+    this.gotoNextScreen();
+  }
+  if (Tetris.gamepad.isDown(Phaser.Gamepad.BUTTON_1)){
+    Tetris.config.AButton = Phaser.Gamepad.BUTTON_1;
+    Tetris.config.BButton = Phaser.Gamepad.BUTTON_0;
+    this.gotoNextScreen();
+  }
+};
+
+Tetris.MainMenu.prototype.gotoNextScreen = function(){
+  input.endFocus();
+  input.value = input.value===""?0:input.value;
+  Tetris.config.startLevel = input.value;
+  this.state.start(Tetris.Game.stateKey);
 };
