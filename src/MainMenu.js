@@ -1,5 +1,5 @@
 /** @constructor */
-let spacebar;
+let spacebar, input;
 
 Tetris.MainMenu = function() {};
 
@@ -19,10 +19,27 @@ Tetris.MainMenu.prototype.create = function() {
   });
   //text.setTextBounds(0, 100, 800, 100);
   spacebar =  Tetris.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+  input = Tetris.game.add.inputField(10,90, {
+    font: '18px Arial',
+    fill: '#212121',
+    fontWeight: 'bold',
+    width: 50,
+    padding: 8,
+    borderWidth: 1,
+    borderColor: '#000',
+    borderRadius: 6,
+    placeHolder: '1',
+    min: 0,
+    max: 29,
+    type: PhaserInput.InputType.number
+  });
+  input.setText(0);
+  input.startFocus();
 };
 
 Tetris.MainMenu.prototype.update = function() {
   if (spacebar.isDown) {
+    Tetris.config.startLevel = input.value;
     this.state.start(Tetris.Game.stateKey);
   }
 };

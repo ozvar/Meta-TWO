@@ -24,7 +24,7 @@ Tetris.Game = function (game) {
     this.softdrop_timer = 0
     this.drop = 0
     
-    this.start_level = 0
+    //this.start_level = 0;
     this.level = 0
     this.lines = 0
     this.score = 0
@@ -105,7 +105,7 @@ Tetris.Game.prototype = {
         
     this.alive = true;
     this.currentTask = this.active; 
-    this.level = this.start_level;
+    this.level = Tetris.config.startLevel; //this.start_level;
     this.lines = 0;
     this.score = 0;
     

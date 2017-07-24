@@ -26,8 +26,9 @@ Tetris.Boot.prototype.preload = function()
 Tetris.Boot.prototype.create = function()
 { 
   Tetris.game.input.gamepad.start();
-
   Tetris.gamepad = Tetris.game.input.gamepad.pad1;
+  //Enable plugin for text field in menu
+  Tetris.game.add.plugin(PhaserInput.Plugin);
   // Go straight to the Preloader
   this.state.start( Tetris.Preloader.stateKey );
 };

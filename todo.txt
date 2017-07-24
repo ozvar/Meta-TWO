@@ -6,3 +6,4 @@ game #
 config options
 log
 gamepad
+audio
