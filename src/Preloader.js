@@ -30,17 +30,17 @@ Tetris.Preloader.prototype = {
     this.load.path = './media/';
 
     // Load audio
-    this.load.audio( "clear1", "clear1.wav" );
-    this.load.audio( "clear4", "clear4.wav" );
-    this.load.audio( "crash", "crash.wav" );
-    this.load.audio( "keep", "keep.wav" );
-    this.load.audio( "music", "korobeiniki.wav" );
-    this.load.audio( "music_fast", "korobeiniki_fast.wav" );
-    this.load.audio( "levelup", "levelup.wav" );
-    this.load.audio( "move", "movebeep.wav" );
-    this.load.audio( "pause", "pause.wav" );
-    this.load.audio( "rotate", "rotate.wav" );
-    this.load.audio( "slam", "slam.wav" );
+    this.load.audio( "clear1", "clear1.mp3" );
+    this.load.audio( "clear4", "clear4.mp3" );
+    this.load.audio( "crash", "crash.mp3" );
+    this.load.audio( "keep", "keep.mp3" );
+    this.load.audio( "music", "korobeiniki.mp3" );
+    this.load.audio( "music_fast", "korobeiniki_fast.mp3" );
+    this.load.audio( "levelup", "levelup.mp3" );
+    this.load.audio( "move", "movebeep.mp3" );
+    this.load.audio( "pause", "pause.mp3" );
+    this.load.audio( "rotate", "rotate.mp3" );
+    this.load.audio( "slam", "slam.mp3" );
 
     // Load images
     // this.load.image('background', 'background.png');
@@ -58,29 +58,31 @@ Tetris.Preloader.prototype = {
     this.numberOfDecodedSounds = 0;
 
     // Add the loaded audio to the game
-    let clear1 = this.game.add.audio( "clear1" );
-    let clear4 = this.game.add.audio( "clear4" );
-    let crash = this.game.add.audio( "crash" );
-    let keep = this.game.add.audio( "keep" );
-    let music = this.game.add.audio( "music" );
-    let music_fast = this.game.add.audio( "music_fast" );
-    let levelup = this.game.add.audio( "levelup" );
-    let move = this.game.add.audio( "move" );
-    let pause = this.game.add.audio( "pause" );
-    let rotate = this.game.add.audio( "rotate" );
-    let slam = this.game.add.audio( "slam" );
+    Tetris.audio.clear1 = this.game.add.audio( "clear1" );
+    Tetris.audio.clear4 = this.game.add.audio( "clear4" );
+    Tetris.audio.crash = this.game.add.audio( "crash" );
+    Tetris.audio.lock = this.game.add.audio( "keep" );
+    Tetris.audio.music = this.game.add.audio( "music" );
+    Tetris.audio.music.loop = true;
+    Tetris.audio.music_fast = this.game.add.audio( "music_fast" );
+    Tetris.audio.music_fast.loop = true;
+    Tetris.audio.levelup = this.game.add.audio( "levelup" );
+    Tetris.audio.move = this.game.add.audio( "move" );
+    Tetris.audio.pause = this.game.add.audio( "pause" );
+    Tetris.audio.rotate = this.game.add.audio( "rotate" );
+    Tetris.audio.slam = this.game.add.audio( "slam" );
 
-    this.soundList.push( clear1 );
-    this.soundList.push( clear4 );
-    this.soundList.push( crash );
-    this.soundList.push( keep );
-    this.soundList.push( music );
-    this.soundList.push( music_fast );
-    this.soundList.push( levelup );
-    this.soundList.push( move );
-    this.soundList.push( pause );
-    this.soundList.push( rotate );
-    this.soundList.push( slam );
+    this.soundList.push( Tetris.audio.clear1 );
+    this.soundList.push( Tetris.audio.clear4 );
+    this.soundList.push( Tetris.audio.crash );
+    this.soundList.push( Tetris.audio.lock );
+    this.soundList.push( Tetris.audio.music );
+    this.soundList.push( Tetris.audio.music_fast );
+    this.soundList.push( Tetris.audio.levelup );
+    this.soundList.push( Tetris.audio.move );
+    this.soundList.push( Tetris.audio.pause );
+    this.soundList.push( Tetris.audio.rotate );
+    this.soundList.push( Tetris.audio.slam );
 
     // Apply callback to decoding sounds.
     for( let i = 0; i < this.soundList.length; i++ )

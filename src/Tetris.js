@@ -52,7 +52,9 @@ let Tetris =
            rightButton: -1,
            downButton: -1,
            startButton: -1
-          }
+          },
+
+  audio: {}
 };
 
 Tetris.run = function()
