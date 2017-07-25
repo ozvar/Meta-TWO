@@ -58,13 +58,23 @@ Tetris.MainMenu.prototype.update = function() {
     this.gotoNextScreen();
   }
   if (Tetris.gamepad.isDown(Phaser.Gamepad.BUTTON_0)){
+    // assuming a Tomee converted gamepad
     Tetris.config.AButton = Phaser.Gamepad.BUTTON_0;
     Tetris.config.BButton = Phaser.Gamepad.BUTTON_1;
+    Tetris.config.leftButton = Phaser.Gamepad.BUTTON_5;
+    Tetris.config.rightButton = Phaser.Gamepad.BUTTON_6;
+    Tetris.config.downButton = Phaser.Gamepad.BUTTON_4;
+    Tetris.config.startButton = Phaser.Gamepad.BUTTON_3;
     this.gotoNextScreen();
   }
   if (Tetris.gamepad.isDown(Phaser.Gamepad.BUTTON_1)){
+    // assuming NES-Retro gamepad
     Tetris.config.AButton = Phaser.Gamepad.BUTTON_1;
     Tetris.config.BButton = Phaser.Gamepad.BUTTON_0;
+    Tetris.config.leftButton = Phaser.Gamepad.BUTTON_4;
+    Tetris.config.rightButton = Phaser.Gamepad.BUTTON_6;
+    Tetris.config.downButton = Phaser.Gamepad.BUTTON_5;
+    Tetris.config.startButton = Phaser.Gamepad.BUTTON_3;
     this.gotoNextScreen();
   }
 };

@@ -58,6 +58,7 @@ Tetris.Game.prototype = {
   create: function () {
     
     let i, j;
+    this.AButton = this.BButton = this.leftButton = this.rightButton = this.downButton = this.startButton = 0;
     
     // Create background
     this.stage.backgroundColor = 0x050505; 
@@ -443,11 +444,19 @@ Tetris.Game.prototype = {
     this.rotatePrev = this.rotateCurr;
     this.counterRotatePrev = this.counterRotateCurr;
 
-    this.leftCurr = this.leftKey.isDown || (this.gamepad._rawPad.axes[0] === -1);
-    this.rightCurr = this.rightKey.isDown || (this.gamepad._rawPad.axes[0] === 1);
-    this.downCurr = this.downKey.isDown || (this.gamepad._rawPad.axes[1] === 1);
-    this.rotateCurr = this.rotateKey.isDown || this.gamepad.isDown(Tetris.config.AButton);
-    this.counterRotateCurr = this.counterRotateKey.isDown || this.gamepad.isDown(Tetris.config.BButton);;
+    if (Tetris.game.input.gamepad.supported && Tetris.game.input.gamepad.active && this.gamepad.connected){
+        this.AButton = this.gamepad.isDown(Tetris.config.AButton);
+        this.BButton = this.gamepad.isDown(Tetris.config.BButton);
+        this.downButton = this.gamepad.isDown(Tetris.config.downButton);
+        this.leftButton = this.gamepad.isDown(Tetris.config.leftButton);
+        this.rightButton = this.gamepad.isDown(Tetris.config.rightButton);
+    }
+
+    this.leftCurr = this.leftKey.isDown || this.leftButton;
+    this.rightCurr = this.rightKey.isDown || this.rightButton;
+    this.downCurr = this.downKey.isDown || this.downButton;
+    this.rotateCurr = this.rotateKey.isDown || this.AButton;
+    this.counterRotateCurr = this.counterRotateKey.isDown || this.BButton;
     // if (Tetris.game.input.gamepad.supported && Tetris.game.input.gamepad.active && this.gamepad.connected)
     // {
     //     console.log(this.gamepad.isDown(Tetris.config.AButton));
