@@ -43,12 +43,14 @@ Tetris.Game = function (game) {
     this.rightPrev = false;
     this.downCurr = false;
     this.downPrev = false;
+    this.pauseCurr = false;
+    this.pausePrev = false;
     this.rotateCurr = false;
     this.rotatePrev = false;
     this.counterRotateCurr = false;
     this.counterRotatePrev = false;
-    this.keys = {LEFT:0, RIGHT:1, DOWN:2, ROTATE:3, COUNTERROTATE:4};
-
+    this.keys = {LEFT:0, RIGHT:1, DOWN:2, ROTATE:3, COUNTERROTATE:4, PAUSE:5};
+    this.fastMusic = false;
 };
 
 Tetris.Game.stateKey = "Game";
@@ -86,6 +88,7 @@ Tetris.Game.prototype = {
     this.downKey = Tetris.game.input.keyboard.addKey(Phaser.Keyboard.S);
     this.rotateKey = Tetris.game.input.keyboard.addKey(Phaser.Keyboard.L);
     this.counterRotateKey = Tetris.game.input.keyboard.addKey(Phaser.Keyboard.K);
+    this.pauseKey = Tetris.game.input.keyboard.addKey(Phaser.Keyboard.P);
 
     //  Stop the following keys from propagating up to the browser
     Tetris.game.input.keyboard.addKeyCapture([ Phaser.Keyboard.A, Phaser.Keyboard.D, Phaser.Keyboard.S, Phaser.Keyboard.K, Phaser.Keyboard.L ]);
@@ -118,14 +121,27 @@ Tetris.Game.prototype = {
     //A negative value is loaded into the soft drop counter for pre-gravity on the first piece.
     //As such, pre-gravity can be canceled out of by pressing Down to start soft dropping.
     this.softdrop_timer = -this.GRAVITY_START_DELAY;
+    Tetris.audio.music.play();
   },
   
   update: function () {
     this.poll();
-    this.sub_94ee();
-    this.drop++;
-    this.currentTask();
-    this.frames++;
+    if (this.justPressed(this.keys.PAUSE) && (!this.paused)){
+        this.paused = true;
+        Tetris.audio.music.stop();
+        Tetris.audio.music_fast.stop();
+        Tetris.audio.pause.play();
+    }
+    else if (this.justPressed(this.keys.PAUSE) && (this.paused)){
+        this.paused = false;
+        this.fastMusic?Tetris.audio.music_fast.play():Tetris.audio.music.play();
+    }
+    if (this.alive && !this.paused){
+        this.sub_94ee();
+        this.drop++;
+        this.currentTask();
+        this.frames++;
+    }
   },
 
   control: function(){
@@ -201,7 +217,8 @@ Tetris.Game.prototype = {
         if (shift){
             if (!this.zoid.collide(this.board, this.vx, 0, 0)){
                 this.zoid.x += this.vx;
-                //PLAY MOVE SOUND
+
+                Tetris.audio.move.play();
             }
             else{
                 this.das = this.DAS_MAX;
@@ -215,7 +232,8 @@ Tetris.Game.prototype = {
       if (this.vr !== 0){
           //console.log("rotate");
           if (!this.zoid.collide(this.board, 0, 0, this.vr)){
-              //PLAY ROTATE SOUND
+              Tetris.audio.rotate.play();          
+
               this.zoid.r += this.vr;
               this.zoid.r = this.zoid.r & 3;
               //console.log(this.zoid.r);
@@ -235,9 +253,14 @@ Tetris.Game.prototype = {
             this.zoid.y++;
         }
         else{
-            //PLAY LOCK SOUND
             this.sub_9caf();
             this.currentTask = this.updateTask;
+            if (this.drop_points >= 2){
+                Tetris.audio.slam.play();
+            }
+            else{
+                Tetris.audio.lock.play();
+            }
         }
     }
   },
@@ -256,9 +279,19 @@ Tetris.Game.prototype = {
         if(this.board.commit(this.zoid)){
             //GAME OVER
             this.alive = false;
+            Tetris.audio.music.stop();
+            Tetris.audio.music_fast.stop();
+            Tetris.audio.crash.play();
         }
         //console.log(this.board);
     }
+    
+    else if ((!this.fastMusic) && (this.pileHeight() >= 16)){
+        this.fastMusic = true;
+        Tetris.audio.music.stop();
+        Tetris.audio.music_fast.play();
+    }
+
     if (this._49 < 0x20){
         return;
     }
@@ -273,6 +306,7 @@ Tetris.Game.prototype = {
         return;
     }
     let row = Math.max(0, this.zoid.y);
+    
     row += this.are;
 
     if ((row < this.board.height) && (this.board.lineCheck(row))){
@@ -287,15 +321,24 @@ Tetris.Game.prototype = {
         this.are = 0;
         if (this.lines_this !== 0){
             this.currentTask = this.lineAnim;
+            // PLAY LINE SOUND
+            if((this.lines_this > 0) && (this.lines_this < 4)){
+                Tetris.audio.clear1.play();
+            }
+            if (this.lines_this === 4){
+                Tetris.audio.clear4.play();
+    }
         }
         else {
             this.currentTask = this.scoreUpdate;
+            
         }
     }
   },
 
   lineAnim: function(){
-    //this stuff seems to be handled in 94ee
+    
+    // all seems to be handled in 94ee
   },
 
   scoreUpdate: function(){
@@ -307,10 +350,11 @@ Tetris.Game.prototype = {
         hex_trick = parseInt(hex_trick.toString(), 16);
         if (hex_trick > this.level){
             this.level++;
-            //PLAY LEVEL UP SOUND
+            Tetris.audio.levelup.play();
         }
     }
     this.level = this.level & 255;
+    
     this.score += (this.level + 1) * this.scoreVals[this.lines_this];
     // To replicate the drop score bug, we need to convert the last 
     // two digits to packed binary coded decimal.
@@ -328,6 +372,11 @@ Tetris.Game.prototype = {
         }
         this.score -= modScore;
         this.score += parseInt(hex_trick.toString(16), 10);
+    }
+    if ((this.fastMusic) && (this.pileHeight() < 16)){
+        this.fastMusic = false;
+        Tetris.audio.music_fast.stop();
+        Tetris.audio.music.play();
     }
     this.currentTask = this.goalCheck;
   },
@@ -357,6 +406,8 @@ Tetris.Game.prototype = {
     Math.floor(Tetris.mt.random() * 7);
     this.zoid = this.nextZoid;
     this.nextZoid = Zoid.spawn(this.next);
+    
+
     this.currentTask = this.active;
   },
 
@@ -398,31 +449,36 @@ Tetris.Game.prototype = {
   },
 
   render: function(){
-    //debug draw field
-    for(iy = 0; iy<this.board.height; iy++){
-        for(ix = 0; ix<this.board.width; ix++){
-            if(this.board.isFilled(ix, iy)){
-                Tetris.game.debug.geom(new Phaser.Rectangle(ix*25+1+275, iy*25+1+98, 24, 24), 'rgba(0,255,255,1)');
+    if (!this.paused){
+        //debug draw pile
+        for(iy = 0; iy<this.board.height; iy++){
+            for(ix = 0; ix<this.board.width; ix++){
+                if(this.board.isFilled(ix, iy)){
+                    Tetris.game.debug.geom(new Phaser.Rectangle(ix*25+1+275, iy*25+1+98, 24, 24), 'rgba(0,255,255,1)');
+                }
             }
         }
-    }
-    //debug draw zoid
-    if ((this.currentTask === this.active) || (this.currentTask === this.updateTask)){
-        let blocks = this.zoid.getBlocks();
-        for (i=0; i< 4; i++){
-            if(blocks[i][1] >= 0){
-                Tetris.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+1+275, blocks[i][1]*25+1+98, 24, 24), 'rgba(0,0,255,1)');
+        //debug draw zoid
+        if ((this.currentTask === this.active) || (this.currentTask === this.updateTask)){
+            let blocks = this.zoid.getBlocks();
+            for (i=0; i< 4; i++){
+                if(blocks[i][1] >= 0){
+                    Tetris.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+1+275, blocks[i][1]*25+1+98, 24, 24), 'rgba(0,0,255,1)');
+                }
             }
         }
-    }
 
-    //debug draw next
-    //if ((this.currentTask === this.active) || (this.currentTask === this.updateTask)){
-        let blocks = this.nextZoid.getBlocks();
-        for (i=0; i< 4; i++){
-            Tetris.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+ 525, blocks[i][1]*25+125, 24, 24), 'rgba(0,0,255,1)');
-        }
-    //}
+        //debug draw next
+        //if ((this.currentTask === this.active) || (this.currentTask === this.updateTask)){
+            let blocks = this.nextZoid.getBlocks();
+            for (i=0; i< 4; i++){
+                Tetris.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+ 525, blocks[i][1]*25+125, 24, 24), 'rgba(0,0,255,1)');
+            }
+        //}
+    }
+    else { // game is paused
+        Tetris.game.debug.text("Paused", 360, 300, "#ffffff","24px Arial");
+    }
 
     // Tetris.game.debug.text("fps: " + Tetris.game.time.fps, 2, 14, "#00ff00");
     // Tetris.game.debug.text("softdrop: " + this.softdrop_timer, 2, 30, "#00ff00");
@@ -434,6 +490,7 @@ Tetris.Game.prototype = {
     //Tetris.game.debug.geom(das_rect, 'rgba(0,255,0,1)')
 
     //Tetris.game.debug.text("score: " + this.score, 2, 110, "#00ff00", "24px Arial");
+    //etris.game.debug.text("pile: " + this.pileHeight(), 2, 126, "#00ff00", "24px Arial");
     this.scoreDisplay.text = this.score.toString() + "\n\n" + this.lines.toString() + "\n\n" + this.level.toString();
   },
 
@@ -443,6 +500,7 @@ Tetris.Game.prototype = {
     this.downPrev = this.downCurr;
     this.rotatePrev = this.rotateCurr;
     this.counterRotatePrev = this.counterRotateCurr;
+    this.pausePrev = this.pauseCurr;
 
     if (Tetris.game.input.gamepad.supported && Tetris.game.input.gamepad.active && this.gamepad.connected){
         this.AButton = this.gamepad.isDown(Tetris.config.AButton);
@@ -450,6 +508,7 @@ Tetris.Game.prototype = {
         this.downButton = this.gamepad.isDown(Tetris.config.downButton);
         this.leftButton = this.gamepad.isDown(Tetris.config.leftButton);
         this.rightButton = this.gamepad.isDown(Tetris.config.rightButton);
+        this.startButton = this.gamepad.isDown(Tetris.config.startButton);
     }
 
     this.leftCurr = this.leftKey.isDown || this.leftButton;
@@ -457,6 +516,7 @@ Tetris.Game.prototype = {
     this.downCurr = this.downKey.isDown || this.downButton;
     this.rotateCurr = this.rotateKey.isDown || this.AButton;
     this.counterRotateCurr = this.counterRotateKey.isDown || this.BButton;
+    this.pauseCurr = this.pauseKey.isDown || this.startButton;
     // if (Tetris.game.input.gamepad.supported && Tetris.game.input.gamepad.active && this.gamepad.connected)
     // {
     //     console.log(this.gamepad.isDown(Tetris.config.AButton));
@@ -481,6 +541,9 @@ Tetris.Game.prototype = {
           case this.keys.COUNTERROTATE:
             if ((this.counterRotateCurr && !this.counterRotatePrev)) {return true};
             break;
+          case this.keys.PAUSE:
+            if ((this.pauseCurr && !this.pausePrev)) {return true};
+            break;
       }
     return false;
   },
@@ -495,6 +558,18 @@ Tetris.Game.prototype = {
                 return true;
             }
             else {return false; }
+  },
+
+  pileHeight: function(){
+      
+      for(iy = 0; iy < this.board.height; iy++){
+        for(ix = 0; ix < this.board.width; ix++){
+            if(this.board.isFilled(ix, iy)){
+                return this.board.height - iy;
+            }
+        }
+    }
+    return 0;
   }
   
 };
