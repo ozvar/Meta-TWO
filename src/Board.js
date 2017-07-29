@@ -35,6 +35,13 @@
         return (this.contents[y+this.vanish][x] !== 0);
     };
 
+    Board.prototype.getStyle = function (x, y) {
+        let val = this.contents[y+this.vanish][x];
+        if (val < 4){ return 0;}
+        else if ((val ===4) || (val === 6)) {return 1;}
+        else {return 2;}
+    };
+
     Board.prototype.getCell = function (x, y) {
         return this.contents[y+this.vanish][x];
     };

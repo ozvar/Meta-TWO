@@ -51,6 +51,20 @@ Tetris.Game = function (game) {
     this.counterRotatePrev = false;
     this.keys = {LEFT:0, RIGHT:1, DOWN:2, ROTATE:3, COUNTERROTATE:4, PAUSE:5};
     this.fastMusic = false;
+
+    //phaser color format: 'rgba(0,255,255,1)'
+    this.bgColors = [
+            ['rgba( 74, 0, 255, 1)', 'rgba( 0, 165, 255, 1 )'], //L0
+            ['rgba( 0, 148, 0, 1 )', 'rgba( 148, 214, 0, 1 )'], //L1
+            ['rgba( 173, 0, 189, 1 )', 'rgba( 230, 99, 255, 1 )'], //L2
+            ['rgba( 74, 0, 255, 1 )', 'rgba( 0, 230, 0, 1 )'], //L3
+            ['rgba( 189, 0, 82, 1 )', 'rgba( 0, 222, 132, 1 )'], //L4
+            ['rgba( 0, 222, 132, 1 )', 'rgba( 132, 132, 255, 1 )'], //L5
+            ['rgba( 189, 66, 0, 1 )', 'rgba( 107, 107, 107, 1 )'], //L6
+            ['rgba( 123, 0, 255, 1 )', 'rgba( 123, 0, 0, 1 )'], //L7
+            ['rgba( 74, 0, 255, 1 )', 'rgba( 189, 66, 0, 1 )'], //L8
+            ['rgba( 189, 66, 0, 1 )', 'rgba( 239, 166, 0, 1 )'], //L9
+            ]
 };
 
 Tetris.Game.stateKey = "Game";
@@ -454,7 +468,9 @@ Tetris.Game.prototype = {
         for(iy = 0; iy<this.board.height; iy++){
             for(ix = 0; ix<this.board.width; ix++){
                 if(this.board.isFilled(ix, iy)){
-                    Tetris.game.debug.geom(new Phaser.Rectangle(ix*25+1+275, iy*25+1+98, 24, 24), 'rgba(0,255,255,1)');
+                    Tetris.game.debug.geom(new Phaser.Rectangle(ix*25+276, iy*25+99, 24, 24), 'rgba(0,255,255,1)');
+                    this.whiteHighlight(ix*25, iy*25,276,99)
+
                 }
             }
         }
@@ -463,7 +479,8 @@ Tetris.Game.prototype = {
             let blocks = this.zoid.getBlocks();
             for (i=0; i< 4; i++){
                 if(blocks[i][1] >= 0){
-                    Tetris.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+1+275, blocks[i][1]*25+1+98, 24, 24), 'rgba(0,0,255,1)');
+                    Tetris.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+276, blocks[i][1]*25+99, 24, 24), 'rgba(0,0,255,1)');
+                    this.whiteHighlight(blocks[i][0]*25, blocks[i][1]*25,276,99)
                 }
             }
         }
@@ -473,6 +490,7 @@ Tetris.Game.prototype = {
             let blocks = this.nextZoid.getBlocks();
             for (i=0; i< 4; i++){
                 Tetris.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+ 525, blocks[i][1]*25+125, 24, 24), 'rgba(0,0,255,1)');
+                this.whiteHighlight(blocks[i][0]*25, blocks[i][1]*25, 525, 125)
             }
         //}
     }
@@ -480,7 +498,7 @@ Tetris.Game.prototype = {
         Tetris.game.debug.text("Paused", 360, 300, "#ffffff","24px Arial");
     }
 
-    // Tetris.game.debug.text("fps: " + Tetris.game.time.fps, 2, 14, "#00ff00");
+    Tetris.game.debug.text("fps: " + Tetris.game.time.fps, 2, 14, "#00ff00");
     // Tetris.game.debug.text("softdrop: " + this.softdrop_timer, 2, 30, "#00ff00");
     // Tetris.game.debug.text("level: " + this.level, 2, 46, "#00ff00");
     // Tetris.game.debug.text("line count: " + this.lines, 2, 62, "#00ff00");
@@ -492,6 +510,13 @@ Tetris.Game.prototype = {
     //Tetris.game.debug.text("score: " + this.score, 2, 110, "#00ff00", "24px Arial");
     //etris.game.debug.text("pile: " + this.pileHeight(), 2, 126, "#00ff00", "24px Arial");
     this.scoreDisplay.text = this.score.toString() + "\n\n" + this.lines.toString() + "\n\n" + this.level.toString();
+  },
+
+  whiteHighlight: function(x,y,offsetx, offsety){
+    Tetris.game.debug.geom(new Phaser.Rectangle(x + offsetx, y + offsety, 3, 3), 'rgba(255,255,255,1)');
+    Tetris.game.debug.geom(new Phaser.Rectangle(x + offsetx + 3, y + offsety + 3, 6, 3), 'rgba(255,255,255,1)');
+    Tetris.game.debug.geom(new Phaser.Rectangle(x + offsetx + 3, y + offsety + 6, 3, 3), 'rgba(255,255,255,1)');
+
   },
 
   poll: function(){

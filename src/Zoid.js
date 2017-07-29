@@ -28,16 +28,17 @@
             [[[1, 2], [2, 2], [3, 2], [3, 3]], [[2, 1], [2, 2], [1, 3], [2, 3]], [[1, 1], [1, 2], [2, 2], [3, 2]], [[2, 1], [3, 1], [2, 2], [2, 3]]], //J
             [[[1, 2], [2, 2], [3, 2], [1, 3]], [[1, 1], [2, 1], [2, 2], [2, 3]], [[3, 1], [1, 2], [2, 2], [3, 2]], [[2, 1], [2, 2], [2, 3], [3, 3]]] //L          
         ];
-         // colors from spritesheet:
-         // T, O, and I use column 0
-         // J and S use column 1
-         // L and Z use column 2
+         // style refers to one of the three ways a NES block is drawn: 0) large white block with primary border,
+         // 1) primary bg with white highlight, or 2) secondary bg with white highlight
          // so, for IOTSZJL, it's 0001212
+         this.style = 0;
     };
 
     Zoid.spawn = function (typeofZoid) {
         let z = new Zoid();
         z.zoidType = typeofZoid;
+        if ((typeofZoid === 3) || (typeofZoid ===5)){ z.style = 1;}
+        else if (typeofZoid > 2) {z.style = 2;}
         return z;
     };
 
@@ -48,6 +49,7 @@
         for (i = 0; i < 4; i++){
             current_coords.push([original_coords[i][0] + this.x, original_coords[i][1] + this.y]);
         }
+        current_coords.style = this.style;
         return current_coords;
     };
 
