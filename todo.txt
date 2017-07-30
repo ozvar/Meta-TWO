@@ -1,5 +1,5 @@
 line animation?
-block colors?
+//block colors
 //pause
 //entry screen
 game #
