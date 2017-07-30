@@ -12,31 +12,12 @@ let Tetris =
   buttonActiveStyle: { font: "32px Arial", fill: "#ffffff", fontStyle: "italic" },
   
   // Asset Sizes
-  BANNER_HEIGHT: 25, //temp
   LINING_WIDTH: 5,
   BLOCK_WIDTH: 25,
   
   // Board Size
   BOARD_WIDTH: 10,
   BOARD_HEIGHT: 20,
-  
-  // Movement Directions
-  DOWN: 0,
-  LEFT: 1,
-  RIGHT: 2,
-    
-  // Block colors
-  NUM_COLORS: 4,
-  GREEN:  0,
-  RED:    1,
-  BLUE:   2,
-  YELLOW: 3,
-  
-  // Static Data for the position of Blocks within a Zoid.
-  // blockPositions[zoidType][orientation][blockNumber].x = (int) board positions away from Zoid.centerX
-  // in the x direction.
-  zoidsJSON: null,
-  zoids: null,  
   
   // Declare the board.
   // board is a 2d array containing placed Blocks (active blocks are not in 
@@ -54,7 +35,8 @@ let Tetris =
            startButton: -1
           },
 
-  audio: {}
+  audio: {},
+  gameNumber: 1
 };
 
 Tetris.run = function()

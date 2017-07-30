@@ -55,7 +55,7 @@
 
     //not ideal, but given JS doesn't have keyword arguments, this prevents me
     //from having to pass in an object each time I want the blocks.
-    //this should only be called from the collision funcion below
+    //this should only be called from the collision function below
     Zoid.prototype.getBlocksWithRotation = function(r){
         // add current coordinates to master list of original coordinates
         let original_coords = this.all_coord[this.zoidType][r];

@@ -95,6 +95,7 @@ Tetris.Game.prototype = {
     Tetris.game.add.text(580, 300, "Score:\n\nLines:\n\nLevel:", { font: "18px Arial", fill: "#ffffff", align: "right" });
     this.scoreDisplay = Tetris.game.add.text(725, 300, "0\n\n 0\n\n 0", { font: "18px Arial", fill: "#ffffff", align: "right" });
     this.scoreDisplay.anchor.set(1,0);
+    this.gameNumberDisplay = Tetris.game.add.text(370, 30, "game#", { font: "18px Arial", fill: "#ffffff", align: "right" });
 
     //  Register the keys.
     this.leftKey = Tetris.game.input.keyboard.addKey(Phaser.Keyboard.A);
@@ -549,6 +550,7 @@ Tetris.Game.prototype = {
     //Tetris.game.debug.text("score: " + this.score, 2, 110, "#00ff00", "24px Arial");
     //etris.game.debug.text("pile: " + this.pileHeight(), 2, 126, "#00ff00", "24px Arial");
     this.scoreDisplay.text = this.score.toString() + "\n\n" + this.lines.toString() + "\n\n" + this.level.toString();
+    this.gameNumberDisplay.text = "Game: " + Tetris.gameNumber;
   },
 
   whiteHighlight: function(x,y,offsetx, offsety){
