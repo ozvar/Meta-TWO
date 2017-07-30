@@ -537,7 +537,7 @@ Tetris.Game.prototype = {
         Tetris.game.debug.text("Paused", 360, 300, "#ffffff","24px Arial");
     }
 
-    Tetris.game.debug.text("fps: " + Tetris.game.time.fps, 2, 14, "#00ff00");
+    //Tetris.game.debug.text("fps: " + Tetris.game.time.fps, 2, 14, "#00ff00");
     // Tetris.game.debug.text("softdrop: " + this.softdrop_timer, 2, 30, "#00ff00");
     // Tetris.game.debug.text("level: " + this.level, 2, 46, "#00ff00");
     // Tetris.game.debug.text("line count: " + this.lines, 2, 62, "#00ff00");
