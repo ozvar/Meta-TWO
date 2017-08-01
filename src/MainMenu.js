@@ -53,6 +53,7 @@ Tetris.MainMenu.prototype.create = function() {
     type: PhaserInput.InputType.number,
     //blockInput: false
   });
+  subjectNumber.setText(1234);
 
   input = Tetris.game.add.inputField(375,400, {
     font: '18px Arial',

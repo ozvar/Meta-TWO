@@ -28,6 +28,7 @@ let Tetris =
   
   config: {startLevel: 0,
            subjectNumber: 0,
+           ECID: 1212,
            AButton: -1,      // different USB NES pads assign different button values
            BButton: -1,      // to all the buttons. We ask the player to press the A
            leftButton: -1,   // button at the main menu, and assign that to AButton
@@ -37,6 +38,17 @@ let Tetris =
           },
 
   audio: {},
+  
+  log: ["ts","event_type", "SID","ECID","session","game_type","game_number","episode_number","level","score","lines_cleared",
+        "completed","game_duration","avg_ep_duration","zoid_sequence","evt_id","evt_data1","evt_data2",
+        "curr_zoid","next_zoid","danger_mode",
+        "evt_sequence","rots","trans","path_length",
+        "min_rots","min_trans","min_path",
+        "min_rots_diff","min_trans_diff","min_path_diff",
+        "u_drops","s_drops","prop_u_drops",
+        "initial_lat","drop_lat","avg_lat",
+        "tetrises_game","tetrises_level",
+         "agree","delaying","dropping","zoid_rot","zoid_col","zoid_row","board_rep","zoid_rep"].join("\t"),
   gameNumber: 1
 };
 

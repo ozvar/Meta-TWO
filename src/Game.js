@@ -636,6 +636,22 @@ Tetris.Game.prototype = {
         }
     }
     return 0;
+  },
+
+  //LOGGING FUNCTIONS
+  //def log_universal( self, event_type, loglist, complete = False, evt_id = False, evt_data1 = False, evt_data2 = False, eyes = False, features = False):
+  logUniversal(event_type, loglist, {complete = false, evt_id = false, evt_data1 = false, evt_data2 = false}={}){
+    let data = [];
+    let logit = function(val, key){
+        if (loglist.indexOf(key) !== -1){
+            data.push(val);
+        }
+        else {data.push("");}
+    }
+    data.push(Tetris.game.time.totalElapsedSeconds());
+    data.push(event_type);
+    logit(Tetris.config.subjectNumber, "SID");
+    logit(Tetris.config.ECID, "ECID");
+    console.log(data);
   }
-  
 };
