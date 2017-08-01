@@ -17,13 +17,19 @@ Tetris.MainMenu.prototype.create = function() {
     boundsAlignH: "center",
     boundsAlignV: "middle"
   });
-  Tetris.game.add.text(190, 150, "Type in desired start level (default is 0)", {
+  Tetris.game.add.text(310, 150, "Subject Number", {
     font: "bold 24px Arial",
     fill: "#fff",
     boundsAlignH: "center",
     boundsAlignV: "middle"
   });
-  Tetris.game.add.text(210, 200, "Press Enter key or A button to begin", {
+  Tetris.game.add.text(235, 300, "Desired start level (default is 0)", {
+    font: "bold 24px Arial",
+    fill: "#fff",
+    boundsAlignH: "center",
+    boundsAlignV: "middle"
+  });
+  Tetris.game.add.text(210, 350, "Press Enter key or A button to begin", {
     font: "bold 24px Arial",
     fill: "#fff",
     boundsAlignH: "center",
@@ -32,7 +38,23 @@ Tetris.MainMenu.prototype.create = function() {
   //text.setTextBounds(0, 100, 800, 100);
   //spacebar =  Tetris.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
   enter = Tetris.game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
-  input = Tetris.game.add.inputField(375,300, {
+  subjectNumber = Tetris.game.add.inputField(375,200, {
+    font: '18px Arial',
+    fill: '#212121',
+    fontWeight: 'bold',
+    width: 50,
+    padding: 8,
+    borderWidth: 1,
+    borderColor: '#000',
+    borderRadius: 6,
+    placeHolder: '1234',
+    min: 0,
+    max: 9999,
+    type: PhaserInput.InputType.number,
+    //blockInput: false
+  });
+
+  input = Tetris.game.add.inputField(375,400, {
     font: '18px Arial',
     fill: '#212121',
     fontWeight: 'bold',
@@ -83,5 +105,6 @@ Tetris.MainMenu.prototype.gotoNextScreen = function(){
   input.endFocus();
   input.value = input.value===""?0:input.value;
   Tetris.config.startLevel = input.value;
+  Tetris.config.subjectNumber = subjectNumber.value;
   this.state.start(Tetris.Game.stateKey);
 };

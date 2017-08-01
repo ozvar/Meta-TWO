@@ -20,6 +20,8 @@ Tetris.Preloader.prototype = {
     let bmd = this.game.add.bitmapData( preloaderWidth, preloaderHeight );
     bmd.ctx.fillStyle = "#999999";
     bmd.ctx.fillRect( 0, 0, preloaderWidth, preloaderHeight );
+    this.loadingText = Tetris.game.add.text(370, 230, "Loading", { font: "24px Arial", fill: "#ffffff", align: "right" });
+
 
     this.preloader = this.game.add.sprite( 0, 0, bmd );
     this.preloader.anchor.setTo( 0.5, 0.5 );

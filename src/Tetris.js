@@ -27,6 +27,7 @@ let Tetris =
   board: null,
   
   config: {startLevel: 0,
+           subjectNumber: 0,
            AButton: -1,      // different USB NES pads assign different button values
            BButton: -1,      // to all the buttons. We ask the player to press the A
            leftButton: -1,   // button at the main menu, and assign that to AButton
