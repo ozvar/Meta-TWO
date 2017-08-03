@@ -90,7 +90,7 @@ Tetris.Game.prototype = {
     graphics.drawRect(0, 0, 252, 502);
     graphics.drawRect(320,0,120,120)
     let frameImage = graphics.generateTexture();
-    this.bg = Tetris.game.add.image(274,97, frameImage);
+    this.bg = Tetris.game.add.image(274,72, frameImage);
     graphics.destroy();
     Tetris.game.add.text(580, 300, "Score:\n\nLines:\n\nLevel:", { font: "18px Arial", fill: "#ffffff", align: "right" });
     this.scoreDisplay = Tetris.game.add.text(725, 300, "0\n\n 0\n\n 0", { font: "18px Arial", fill: "#ffffff", align: "right" });
@@ -429,8 +429,8 @@ Tetris.Game.prototype = {
   sub_94ee: function(){
     if (this.currentTask === this.lineAnim){
         if ((this.frames & 3) === 0){
-            //PLAY LINE SOUND?
             this.are++;
+            //advance through line animation
         }
         if (this.are >= this.LINECLEAR_STEPS){
             this.are = 0;
@@ -471,17 +471,17 @@ Tetris.Game.prototype = {
                 if(this.board.isFilled(ix, iy)){
                     switch(this.board.getStyle(ix, iy)){
                         case 0: //large white square, primary color
-                        Tetris.game.debug.geom(new Phaser.Rectangle(ix*25+276, iy*25+99, 24, 24), this.bgColors[this.level%10][0]);
-                        Tetris.game.debug.geom(new Phaser.Rectangle(ix*25+276, iy*25+99, 3, 3), 'rgba(255,255,255,1');
-                        Tetris.game.debug.geom(new Phaser.Rectangle(ix*25+279, iy*25+102, 18, 18), 'rgba(255,255,255,1');
+                        Tetris.game.debug.geom(new Phaser.Rectangle(ix*25+276, iy*25+74, 24, 24), this.bgColors[this.level%10][0]);
+                        Tetris.game.debug.geom(new Phaser.Rectangle(ix*25+276, iy*25+74, 3, 3), 'rgba(255,255,255,1');
+                        Tetris.game.debug.geom(new Phaser.Rectangle(ix*25+279, iy*25+77, 18, 18), 'rgba(255,255,255,1');
                         break;
                         case 1: // primary color, white highlight
-                        Tetris.game.debug.geom(new Phaser.Rectangle(ix*25+276, iy*25+99, 24, 24), this.bgColors[this.level%10][0]);
-                        this.whiteHighlight(ix*25, iy*25,276,99)
+                        Tetris.game.debug.geom(new Phaser.Rectangle(ix*25+276, iy*25+74, 24, 24), this.bgColors[this.level%10][0]);
+                        this.whiteHighlight(ix*25, iy*25,276,74)
                         break;
                         case 2: //secondary color, white highlight
-                        Tetris.game.debug.geom(new Phaser.Rectangle(ix*25+276, iy*25+99, 24, 24), this.bgColors[this.level%10][1]);
-                        this.whiteHighlight(ix*25, iy*25,276,99)
+                        Tetris.game.debug.geom(new Phaser.Rectangle(ix*25+276, iy*25+74, 24, 24), this.bgColors[this.level%10][1]);
+                        this.whiteHighlight(ix*25, iy*25,276,74)
                     }
                 }
             }
@@ -493,17 +493,17 @@ Tetris.Game.prototype = {
                 if(blocks[i][1] >= 0){
                     switch (this.zoid.style){
                         case 0: //large white square, primary color
-                        Tetris.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+276, blocks[i][1]*25+99, 24, 24), this.bgColors[this.level%10][0]);
-                        Tetris.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+276, blocks[i][1]*25+99, 3, 3), 'rgba(255,255,255,1');
-                        Tetris.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+279, blocks[i][1]*25+102, 18, 18), 'rgba(255,255,255,1');
+                        Tetris.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+276, blocks[i][1]*25+74, 24, 24), this.bgColors[this.level%10][0]);
+                        Tetris.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+276, blocks[i][1]*25+74, 3, 3), 'rgba(255,255,255,1');
+                        Tetris.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+279, blocks[i][1]*25+77, 18, 18), 'rgba(255,255,255,1');
                         break;
                         case 1: // primary color, white highlight
-                        Tetris.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+276, blocks[i][1]*25+99, 24, 24), this.bgColors[this.level%10][0]);
-                        this.whiteHighlight(blocks[i][0]*25, blocks[i][1]*25,276,99)
+                        Tetris.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+276, blocks[i][1]*25+74, 24, 24), this.bgColors[this.level%10][0]);
+                        this.whiteHighlight(blocks[i][0]*25, blocks[i][1]*25,276,74)
                         break;
                         case 2: //secondary color, white highlight
-                        Tetris.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+276, blocks[i][1]*25+99, 24, 24), this.bgColors[this.level%10][1]);
-                        this.whiteHighlight(blocks[i][0]*25, blocks[i][1]*25,276,99)
+                        Tetris.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+276, blocks[i][1]*25+74, 24, 24), this.bgColors[this.level%10][1]);
+                        this.whiteHighlight(blocks[i][0]*25, blocks[i][1]*25,276,74)
                     }
                     // Tetris.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+276, blocks[i][1]*25+99, 24, 24), 'rgba(0,0,255,1)');
                     // this.whiteHighlight(blocks[i][0]*25, blocks[i][1]*25,276,99)
@@ -517,17 +517,17 @@ Tetris.Game.prototype = {
             for (i=0; i< 4; i++){
                 switch (this.nextZoid.style){
                     case 0: //large white square, primary color
-                    Tetris.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+525, blocks[i][1]*25+125, 24, 24), this.bgColors[this.level%10][0]);
-                    Tetris.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+525, blocks[i][1]*25+125, 3, 3), 'rgba(255,255,255,1');
-                    Tetris.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+528, blocks[i][1]*25+128, 18, 18), 'rgba(255,255,255,1');
+                    Tetris.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+525, blocks[i][1]*25+100, 24, 24), this.bgColors[this.level%10][0]);
+                    Tetris.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+525, blocks[i][1]*25+100, 3, 3), 'rgba(255,255,255,1');
+                    Tetris.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+528, blocks[i][1]*25+103, 18, 18), 'rgba(255,255,255,1');
                     break;
                     case 1: // primary color, white highlight
-                    Tetris.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+525, blocks[i][1]*25+125, 24, 24), this.bgColors[this.level%10][0]);
-                    this.whiteHighlight(blocks[i][0]*25, blocks[i][1]*25,525,128)
+                    Tetris.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+525, blocks[i][1]*25+100, 24, 24), this.bgColors[this.level%10][0]);
+                    this.whiteHighlight(blocks[i][0]*25, blocks[i][1]*25,525,103)
                     break;
                     case 2: //secondary color, white highlight
-                    Tetris.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+525, blocks[i][1]*25+125, 24, 24), this.bgColors[this.level%10][1]);
-                    this.whiteHighlight(blocks[i][0]*25, blocks[i][1]*25,525,128)
+                    Tetris.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+525, blocks[i][1]*25+100, 24, 24), this.bgColors[this.level%10][1]);
+                    this.whiteHighlight(blocks[i][0]*25, blocks[i][1]*25,525,103)
                 }
                 // Tetris.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+ 525, blocks[i][1]*25+125, 24, 24), 'rgba(0,0,255,1)');
                 // this.whiteHighlight(blocks[i][0]*25, blocks[i][1]*25, 525, 125)
@@ -543,6 +543,7 @@ Tetris.Game.prototype = {
     // Tetris.game.debug.text("level: " + this.level, 2, 46, "#00ff00");
     // Tetris.game.debug.text("line count: " + this.lines, 2, 62, "#00ff00");
     // Tetris.game.debug.text("vx: " + this.vx, 2, 78, "#00ff00");
+    Tetris.game.debug.text("are: " + this.are, 2, 94, "#00ff00");
 
     //let das_rect = new Phaser.Rectangle(2, 94, this.das * 10, 12);
     //Tetris.game.debug.geom(das_rect, 'rgba(0,255,0,1)')
