@@ -8,6 +8,7 @@ Tetris.Game = function (game) {
     this.speedLevels = [48, 43, 38, 33, 28, 23, 18, 13, 8, 6, 5, 5, 5, 4, 4, 4, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1];
     this.scoreVals = [0, 40, 100, 300, 1200];
     this.board = new Board();
+    this.dummyBoard = new Board(); //used for animating line clears, since the blocks are gone by the time animation starts
     //this.zoid = Zoid.spawn(0);
     //Math.floor(Tetris.mt.random() * 7);
     this.frames = 0;
@@ -51,6 +52,7 @@ Tetris.Game = function (game) {
     this.counterRotatePrev = false;
     this.keys = {LEFT:0, RIGHT:1, DOWN:2, ROTATE:3, COUNTERROTATE:4, PAUSE:5};
     this.fastMusic = false;
+    this.rowsToClear = [];
 
     //phaser color format: 'rgba(0,255,255,1)'
     this.bgColors = [
@@ -301,7 +303,7 @@ Tetris.Game.prototype = {
         //console.log(this.board);
     }
     
-    else if ((!this.fastMusic) && (this.pileHeight() >= 16)){
+    else if ((!this.fastMusic) && (this.pileHeight() >= 15)){
         this.fastMusic = true;
         Tetris.audio.music.stop();
         Tetris.audio.music_fast.play();
@@ -314,6 +316,10 @@ Tetris.Game.prototype = {
     this.are = 0;
     this.sub_9caf();
     this.currentTask = this.lineCheck;
+    //copy board contents into the backup board, in case there are lines to clear
+    this.dummyBoard.contents = JSON.parse(JSON.stringify(this.board.contents));
+    //console.log(this.board);
+    //console.log(this.dummyBoard);
   },
 
   lineCheck: function(){
@@ -324,9 +330,12 @@ Tetris.Game.prototype = {
     
     row += this.are;
 
-    if ((row < this.board.height) && (this.board.lineCheck(row))){
-        this.board.lineDrop(row);
+    if ((row < this.dummyBoard.height) && (this.dummyBoard.lineCheck(row))){
+        this.dummyBoard.lineDrop(row); //clear lines from "backup" board, copy to actual board at end of animation
         this.lines_this++;
+        this.rowsToClear.push(row);
+        console.log(this.board);
+        console.log(this.dummyBoard);
     }
 
     this.are++;
@@ -342,7 +351,7 @@ Tetris.Game.prototype = {
             }
             if (this.lines_this === 4){
                 Tetris.audio.clear4.play();
-    }
+            }
         }
         else {
             this.currentTask = this.scoreUpdate;
@@ -388,7 +397,7 @@ Tetris.Game.prototype = {
         this.score -= modScore;
         this.score += parseInt(hex_trick.toString(16), 10);
     }
-    if ((this.fastMusic) && (this.pileHeight() < 16)){
+    if ((this.fastMusic) && (this.pileHeight() < 15)){
         this.fastMusic = false;
         Tetris.audio.music_fast.stop();
         Tetris.audio.music.play();
@@ -431,10 +440,42 @@ Tetris.Game.prototype = {
         if ((this.frames & 3) === 0){
             this.are++;
             //advance through line animation
+            for (i=0; i < this.rowsToClear.length; i++)
+                {
+                    switch(this.are){
+                        case 1:
+                        this.board.contents[this.rowsToClear[i]+3][4] = 0;
+                        this.board.contents[this.rowsToClear[i]+3][5] = 0
+                        break;
+                        case 2:
+                        this.board.contents[this.rowsToClear[i]+3][3] = 0;
+                        this.board.contents[this.rowsToClear[i]+3][6] = 0
+                        if (this.rowsToClear.length === 4) {this.stage.backgroundColor = 0xffffff;}
+                        break;
+                        case 3:
+                        this.board.contents[this.rowsToClear[i]+3][2] = 0;
+                        this.board.contents[this.rowsToClear[i]+3][7] = 0
+                        this.stage.backgroundColor = 0x050505; 
+                        break;
+                        case 4:
+                        this.board.contents[this.rowsToClear[i]+3][1] = 0;
+                        this.board.contents[this.rowsToClear[i]+3][8] = 0
+                        if (this.rowsToClear.length === 4) {this.stage.backgroundColor = 0xffffff;}
+                        break;
+                        case 5:
+                        this.board.contents[this.rowsToClear[i]+3][0] = 0;
+                        this.board.contents[this.rowsToClear[i]+3][9] = 0
+                        break;
+                    }
+                }
         }
+        //else {this.stage.backgroundColor = 0x050505;}
         if (this.are >= this.LINECLEAR_STEPS){
             this.are = 0;
             this.currentTask = this.scoreUpdate;
+            this.rowsToClear = [];
+            this.stage.backgroundColor = 0x050505; 
+            this.board.contents = JSON.parse(JSON.stringify(this.dummyBoard.contents)); //animation is done, copy cleared lines to board for rendering
         }
         this._49 = 0;
     }
@@ -466,6 +507,7 @@ Tetris.Game.prototype = {
   render: function(){
     if (!this.paused){
         //debug draw pile
+        // if this.currentTask === this.lineAnim, we want to not drae certain blocks
         for(iy = 0; iy<this.board.height; iy++){
             for(ix = 0; ix<this.board.width; ix++){
                 if(this.board.isFilled(ix, iy)){

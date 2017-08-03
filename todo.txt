@@ -3,8 +3,8 @@
 //entry screen
 //gamepad
 //audio
+//line animation
 
-line animation?
 game #
 more config options
 

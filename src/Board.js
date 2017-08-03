@@ -13,7 +13,7 @@
 }(this, function () {
 
     'use strict';
-    var Board = function () {
+    let Board = function () {
         this.width = 10;
         this.height = 20;
         this.vanish = 3;
