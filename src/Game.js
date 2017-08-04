@@ -299,6 +299,7 @@ Tetris.Game.prototype = {
             Tetris.audio.music.stop();
             Tetris.audio.music_fast.stop();
             Tetris.audio.crash.play();
+            this.state.start(Tetris.GameOver.stateKey);
         }
         //console.log(this.board);
     }
@@ -585,7 +586,7 @@ Tetris.Game.prototype = {
     // Tetris.game.debug.text("level: " + this.level, 2, 46, "#00ff00");
     // Tetris.game.debug.text("line count: " + this.lines, 2, 62, "#00ff00");
     // Tetris.game.debug.text("vx: " + this.vx, 2, 78, "#00ff00");
-    Tetris.game.debug.text("are: " + this.are, 2, 94, "#00ff00");
+    // Tetris.game.debug.text("are: " + this.are, 2, 94, "#00ff00");
 
     //let das_rect = new Phaser.Rectangle(2, 94, this.das * 10, 12);
     //Tetris.game.debug.geom(das_rect, 'rgba(0,255,0,1)')
@@ -680,6 +681,10 @@ Tetris.Game.prototype = {
     }
     return 0;
   },
+
+  shutdown: function(){
+      
+  }
 
   //LOGGING FUNCTIONS
   //def log_universal( self, event_type, loglist, complete = False, evt_id = False, evt_data1 = False, evt_data2 = False, eyes = False, features = False):

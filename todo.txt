@@ -5,6 +5,8 @@
 //audio
 //line animation
 
+input delay - probably can't improve
+diagonals - email out to Alex
 game #
 more config options
 

@@ -63,6 +63,7 @@ Tetris.run = function()
   this.game.state.add( Tetris.Preloader.stateKey, Tetris.Preloader );
   this.game.state.add( Tetris.MainMenu.stateKey, Tetris.MainMenu );
   this.game.state.add( Tetris.Game.stateKey, Tetris.Game );
+  this.game.state.add( Tetris.GameOver.stateKey, Tetris.GameOver );
 
   // Random number generator
   this.mt = new MersenneTwister();
