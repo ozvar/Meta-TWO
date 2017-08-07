@@ -183,12 +183,13 @@ Tetris.Game.prototype = {
 
     if (this.softdrop_timer >= 0){
         if (this.softdrop_timer === 0){
-            if (this.onlyDown()){
-                this.softdrop_timer = 1;
+            if(this.leftCurr || this.rightCurr){} //do nothing - "regular" gravity
+            else  if (this.onlyDownHit()){
+              this.softdrop_timer = 1;
             }
         }
         else{
-            if (this.downCurr){
+            if (this.onlyDown()){
                 this.softdrop_timer ++;
                 if (this.softdrop_timer > 2){
                     this.softdrop_timer = 1;
@@ -661,7 +662,7 @@ Tetris.Game.prototype = {
     return false;
   },
 
-  onlyDown: function(){
+  onlyDownHit: function(){
       //special function to determine if the down key was the only key just pressed
       if (this.justPressed(this.keys.DOWN) &&
             !this.justPressed(this.keys.LEFT) &&
@@ -671,6 +672,18 @@ Tetris.Game.prototype = {
                 return true;
             }
             else {return false; }
+  },
+
+  onlyDown: function(){
+      //special function to determine if the down key is the only one down right now
+      if (this.downCurr &&
+            !this.leftCurr &&
+            !this.rightCurr &&
+            !this.rotateCurr &&
+            !this.counterRotateCurr){
+                return true;
+        }
+        else {return false; }
   },
 
   pileHeight: function(){
