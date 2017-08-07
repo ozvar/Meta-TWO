@@ -588,11 +588,14 @@ Tetris.Game.prototype = {
     // Tetris.game.debug.text("vx: " + this.vx, 2, 78, "#00ff00");
     // Tetris.game.debug.text("are: " + this.are, 2, 94, "#00ff00");
 
-    //let das_rect = new Phaser.Rectangle(2, 94, this.das * 10, 12);
-    //Tetris.game.debug.geom(das_rect, 'rgba(0,255,0,1)')
+    let das_rect = new Phaser.Rectangle(2, 94, this.das * 10, 12);
+    Tetris.game.debug.geom(das_rect, 'rgba(0,255,0,1)')
 
     //Tetris.game.debug.text("score: " + this.score, 2, 110, "#00ff00", "24px Arial");
-    //etris.game.debug.text("pile: " + this.pileHeight(), 2, 126, "#00ff00", "24px Arial");
+    //Tetris.game.debug.text("pile: " + this.pileHeight(), 2, 126, "#00ff00", "24px Arial");
+    Tetris.game.debug.text("Down: " + this.downCurr, 2, 142, "#ffffff");
+    Tetris.game.debug.text("Downhit: " + this.justPressed(this.keys.DOWN), 2, 158, "#ffffff");
+
     this.scoreDisplay.text = this.score.toString() + "\n\n" + this.lines.toString() + "\n\n" + this.level.toString();
     this.gameNumberDisplay.text = "Game: " + Tetris.gameNumber;
   },
@@ -621,12 +624,12 @@ Tetris.Game.prototype = {
         this.startButton = this.gamepad.isDown(Tetris.config.startButton);
     }
 
-    this.leftCurr = this.leftKey.isDown || this.leftButton;
-    this.rightCurr = this.rightKey.isDown || this.rightButton;
-    this.downCurr = this.downKey.isDown || this.downButton;
-    this.rotateCurr = this.rotateKey.isDown || this.AButton;
-    this.counterRotateCurr = this.counterRotateKey.isDown || this.BButton;
-    this.pauseCurr = this.pauseKey.isDown || this.startButton;
+    this.leftCurr =  this.leftButton || this.leftKey.isDown;
+    this.rightCurr =  this.rightButton || this.rightKey.isDown;
+    this.downCurr =  this.downButton || this.downKey.isDown;
+    this.rotateCurr = this.AButton || this.rotateKey.isDown;
+    this.counterRotateCurr = this.BButton || this.counterRotateKey.isDown;
+    this.pauseCurr = this.startButton || this.pauseKey.isDown;
     // if (Tetris.game.input.gamepad.supported && Tetris.game.input.gamepad.active && this.gamepad.connected)
     // {
     //     console.log(this.gamepad.isDown(Tetris.config.AButton));
@@ -683,12 +686,12 @@ Tetris.Game.prototype = {
   },
 
   shutdown: function(){
-      
-  }
+
+  },
 
   //LOGGING FUNCTIONS
   //def log_universal( self, event_type, loglist, complete = False, evt_id = False, evt_data1 = False, evt_data2 = False, eyes = False, features = False):
-  logUniversal(event_type, loglist, {complete = false, evt_id = false, evt_data1 = false, evt_data2 = false}={}){
+  logUniversal: function(event_type, loglist, {complete = false, evt_id = false, evt_data1 = false, evt_data2 = false}={}){
     let data = [];
     let logit = function(val, key){
         if (loglist.indexOf(key) !== -1){
