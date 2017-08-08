@@ -8,7 +8,7 @@ Tetris.GameOver.prototype.preload = function() {};
 
 Tetris.GameOver.prototype.create = function() {
   this.stage.backgroundColor = 0x444444;
-  Tetris.game.add.text(240, 50, "META-TWO Beta test", {
+  Tetris.game.add.text(240, 50, "Game complete.\nPress Enter or A Button to continue", {
     font: "bold 32px Arial",
     fill: "#fff",
     boundsAlignH: "center",
@@ -26,5 +26,6 @@ Tetris.GameOver.prototype.update = function() {
 };
 
 Tetris.GameOver.prototype.gotoNextScreen = function(){
-  this.state.start(Tetris.Game.stateKey); //clear state cache
+  Tetris.gameNumber++;
+  this.state.start(Tetris.Game.stateKey); 
 };

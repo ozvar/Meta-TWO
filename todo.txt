@@ -4,10 +4,11 @@
 //gamepad
 //audio
 //line animation
+//game #
 
 input delay - probably can't improve
 diagonals - probably fixed, email out to Alex
-game #
+
 more config options
 
 LOG - new stuff too! DAS, ARE, softdrop timer, others?

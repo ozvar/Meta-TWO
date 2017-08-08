@@ -144,6 +144,13 @@ Tetris.Game.prototype = {
   },
   
   update: function () {
+    if (Tetris.game.time.totalElapsedSeconds() > Tetris.config.sessionTime){
+        this.alive = false;
+        Tetris.audio.music.stop();
+        Tetris.audio.music_fast.stop();
+        this.state.start(Tetris.TimesUp.stateKey);
+    }
+
     this.poll();
     if (this.justPressed(this.keys.PAUSE) && (!this.paused)){
         this.paused = true;
@@ -338,8 +345,8 @@ Tetris.Game.prototype = {
         this.dummyBoard.lineDrop(row); //clear lines from "backup" board, copy to actual board at end of animation
         this.lines_this++;
         this.rowsToClear.push(row);
-        console.log(this.board);
-        console.log(this.dummyBoard);
+        //console.log(this.board);
+        //console.log(this.dummyBoard);
     }
 
     this.are++;
@@ -591,13 +598,13 @@ Tetris.Game.prototype = {
     // Tetris.game.debug.text("vx: " + this.vx, 2, 78, "#00ff00");
     // Tetris.game.debug.text("are: " + this.are, 2, 94, "#00ff00");
 
-    let das_rect = new Phaser.Rectangle(2, 94, this.das * 10, 12);
-    Tetris.game.debug.geom(das_rect, 'rgba(0,255,0,1)')
+    //let das_rect = new Phaser.Rectangle(2, 94, this.das * 10, 12);
+    //Tetris.game.debug.geom(das_rect, 'rgba(0,255,0,1)')
 
     //Tetris.game.debug.text("score: " + this.score, 2, 110, "#00ff00", "24px Arial");
     //Tetris.game.debug.text("pile: " + this.pileHeight(), 2, 126, "#00ff00", "24px Arial");
-    Tetris.game.debug.text("Down: " + this.downCurr, 2, 142, "#ffffff");
-    Tetris.game.debug.text("Downhit: " + this.justPressed(this.keys.DOWN), 2, 158, "#ffffff");
+    //Tetris.game.debug.text("Down: " + this.downCurr, 2, 142, "#ffffff");
+    //Tetris.game.debug.text("Downhit: " + this.justPressed(this.keys.DOWN), 2, 158, "#ffffff");
 
     this.scoreDisplay.text = this.score.toString() + "\n\n" + this.lines.toString() + "\n\n" + this.level.toString();
     this.gameNumberDisplay.text = "Game: " + Tetris.gameNumber;

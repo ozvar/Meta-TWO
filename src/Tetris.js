@@ -31,10 +31,11 @@ let Tetris =
            ECID: 1212,
            AButton: -1,      // different USB NES pads assign different button values
            BButton: -1,      // to all the buttons. We ask the player to press the A
-           leftButton: -1,   // button at the main menu, and assign that to AButton
+           leftButton: -1,   // button at the main menu, and then assign the buttons
            rightButton: -1,
            downButton: -1,
-           startButton: -1
+           startButton: -1,
+           sessionTime: 60   // total time, in seconds, for this experimental session. 1 hour = 3600 seconds
           },
 
   audio: {},
@@ -64,6 +65,7 @@ Tetris.run = function()
   this.game.state.add( Tetris.MainMenu.stateKey, Tetris.MainMenu );
   this.game.state.add( Tetris.Game.stateKey, Tetris.Game );
   this.game.state.add( Tetris.GameOver.stateKey, Tetris.GameOver );
+  this.game.state.add( Tetris.TimesUp.stateKey, Tetris.TimesUp );
 
   // Random number generator
   this.mt = new MersenneTwister();
