@@ -6,11 +6,11 @@
 //line animation
 
 input delay - probably can't improve
-diagonals - email out to Alex
+diagonals - probably fixed, email out to Alex
 game #
 more config options
 
-LOG
+LOG - new stuff too! DAS, ARE, softdrop timer, others?
                   
 ts	- time stamp in seconds since the beginning of the session
 event_type	- designates the type of entry this row represents in the log

@@ -26,5 +26,5 @@ Tetris.GameOver.prototype.update = function() {
 };
 
 Tetris.GameOver.prototype.gotoNextScreen = function(){
-  this.state.start(Tetris.Game.stateKey, true, true); //clear state cache
+  this.state.start(Tetris.Game.stateKey); //clear state cache
 };
