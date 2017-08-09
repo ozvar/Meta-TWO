@@ -35,7 +35,7 @@ let Tetris =
            rightButton: -1,
            downButton: -1,
            startButton: -1,
-           sessionTime: 60   // total time, in seconds, for this experimental session. 1 hour = 3600 seconds
+           sessionTime: 300   // total time, in seconds, for this experimental session. 1 hour = 3600 seconds
           },
 
   audio: {},
