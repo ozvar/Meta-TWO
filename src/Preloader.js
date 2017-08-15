@@ -1,13 +1,13 @@
 /** @constructor */
-Tetris.Preloader = function()
+MetaTWO.Preloader = function()
 {
   this.soundList = [];
   this.numberOfDecodedSounds = 0;
 };
 
-Tetris.Preloader.stateKey = "Preloader";
+MetaTWO.Preloader.stateKey = "Preloader";
 
-Tetris.Preloader.prototype = {
+MetaTWO.Preloader.prototype = {
   
   init: function () {},
   
@@ -20,7 +20,7 @@ Tetris.Preloader.prototype = {
     let bmd = this.game.add.bitmapData( preloaderWidth, preloaderHeight );
     bmd.ctx.fillStyle = "#999999";
     bmd.ctx.fillRect( 0, 0, preloaderWidth, preloaderHeight );
-    this.loadingText = Tetris.game.add.text(370, 230, "Loading", { font: "24px Arial", fill: "#ffffff", align: "right" });
+    this.loadingText = MetaTWO.game.add.text(370, 230, "Loading", { font: "24px Arial", fill: "#ffffff", align: "right" });
 
 
     this.preloader = this.game.add.sprite( 0, 0, bmd );
@@ -47,7 +47,7 @@ Tetris.Preloader.prototype = {
     // Load images
     // this.load.image('background', 'background.png');
     // this.load.image('banner', 'banner.png');
-    // this.load.spritesheet('block', 'blocks25.png', Tetris.BLOCK_WIDTH, Tetris.BLOCK_WIDTH);
+    // this.load.spritesheet('block', 'blocks25.png', MetaTWO.BLOCK_WIDTH, MetaTWO.BLOCK_WIDTH);
     
    
   },
@@ -60,31 +60,31 @@ Tetris.Preloader.prototype = {
     this.numberOfDecodedSounds = 0;
 
     // Add the loaded audio to the game
-    Tetris.audio.clear1 = this.game.add.audio( "clear1" );
-    Tetris.audio.clear4 = this.game.add.audio( "clear4" );
-    Tetris.audio.crash = this.game.add.audio( "crash" );
-    Tetris.audio.lock = this.game.add.audio( "keep" );
-    Tetris.audio.music = this.game.add.audio( "music" );
-    Tetris.audio.music.loop = true;
-    Tetris.audio.music_fast = this.game.add.audio( "music_fast" );
-    Tetris.audio.music_fast.loop = true;
-    Tetris.audio.levelup = this.game.add.audio( "levelup" );
-    Tetris.audio.move = this.game.add.audio( "move" );
-    Tetris.audio.pause = this.game.add.audio( "pause" );
-    Tetris.audio.rotate = this.game.add.audio( "rotate" );
-    Tetris.audio.slam = this.game.add.audio( "slam" );
+    MetaTWO.audio.clear1 = this.game.add.audio( "clear1" );
+    MetaTWO.audio.clear4 = this.game.add.audio( "clear4" );
+    MetaTWO.audio.crash = this.game.add.audio( "crash" );
+    MetaTWO.audio.lock = this.game.add.audio( "keep" );
+    MetaTWO.audio.music = this.game.add.audio( "music" );
+    MetaTWO.audio.music.loop = true;
+    MetaTWO.audio.music_fast = this.game.add.audio( "music_fast" );
+    MetaTWO.audio.music_fast.loop = true;
+    MetaTWO.audio.levelup = this.game.add.audio( "levelup" );
+    MetaTWO.audio.move = this.game.add.audio( "move" );
+    MetaTWO.audio.pause = this.game.add.audio( "pause" );
+    MetaTWO.audio.rotate = this.game.add.audio( "rotate" );
+    MetaTWO.audio.slam = this.game.add.audio( "slam" );
 
-    this.soundList.push( Tetris.audio.clear1 );
-    this.soundList.push( Tetris.audio.clear4 );
-    this.soundList.push( Tetris.audio.crash );
-    this.soundList.push( Tetris.audio.lock );
-    this.soundList.push( Tetris.audio.music );
-    this.soundList.push( Tetris.audio.music_fast );
-    this.soundList.push( Tetris.audio.levelup );
-    this.soundList.push( Tetris.audio.move );
-    this.soundList.push( Tetris.audio.pause );
-    this.soundList.push( Tetris.audio.rotate );
-    this.soundList.push( Tetris.audio.slam );
+    this.soundList.push( MetaTWO.audio.clear1 );
+    this.soundList.push( MetaTWO.audio.clear4 );
+    this.soundList.push( MetaTWO.audio.crash );
+    this.soundList.push( MetaTWO.audio.lock );
+    this.soundList.push( MetaTWO.audio.music );
+    this.soundList.push( MetaTWO.audio.music_fast );
+    this.soundList.push( MetaTWO.audio.levelup );
+    this.soundList.push( MetaTWO.audio.move );
+    this.soundList.push( MetaTWO.audio.pause );
+    this.soundList.push( MetaTWO.audio.rotate );
+    this.soundList.push( MetaTWO.audio.slam );
 
     // Apply callback to decoding sounds.
     for( let i = 0; i < this.soundList.length; i++ )
@@ -107,7 +107,7 @@ Tetris.Preloader.prototype = {
   
   start: function () {
     // Proceed to main menu, as usual.
-    this.state.start( Tetris.MainMenu.stateKey );
+    this.state.start( MetaTWO.MainMenu.stateKey );
   }
   
 };

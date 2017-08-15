@@ -1,5 +1,5 @@
 /** @constructor */
-let Tetris =
+let MetaTWO =
 {
   SCREEN_WIDTH: 800,
   SCREEN_HEIGHT: 600,
@@ -23,7 +23,7 @@ let Tetris =
   // board is a 2d array containing placed Blocks (active blocks are not in 
   // the board yet. It will be oriented with
   // blocks[0][0] in the top left and blocks[BOARD_HEIGHT-1][BOARD_WIDTH-1]
-  // in the bottom right corner. Initialized in Tetris.Game.create(). 
+  // in the bottom right corner. Initialized in MetaTWO.Game.create(). 
   board: null,
   
   config: {startLevel: 0,
@@ -53,19 +53,19 @@ let Tetris =
   gameNumber: 1
 };
 
-Tetris.run = function()
+MetaTWO.run = function()
 {
   // Create the Phaser game
   this.game = new Phaser.Game( this.SCREEN_WIDTH, this.SCREEN_HEIGHT,
                                Phaser.AUTO, "", this );
 
   // Add all the states to the game
-  this.game.state.add( Tetris.Boot.stateKey, Tetris.Boot );
-  this.game.state.add( Tetris.Preloader.stateKey, Tetris.Preloader );
-  this.game.state.add( Tetris.MainMenu.stateKey, Tetris.MainMenu );
-  this.game.state.add( Tetris.Game.stateKey, Tetris.Game );
-  this.game.state.add( Tetris.GameOver.stateKey, Tetris.GameOver );
-  this.game.state.add( Tetris.TimesUp.stateKey, Tetris.TimesUp );
+  this.game.state.add( MetaTWO.Boot.stateKey, MetaTWO.Boot );
+  this.game.state.add( MetaTWO.Preloader.stateKey, MetaTWO.Preloader );
+  this.game.state.add( MetaTWO.MainMenu.stateKey, MetaTWO.MainMenu );
+  this.game.state.add( MetaTWO.Game.stateKey, MetaTWO.Game );
+  this.game.state.add( MetaTWO.GameOver.stateKey, MetaTWO.GameOver );
+  this.game.state.add( MetaTWO.TimesUp.stateKey, MetaTWO.TimesUp );
 
   // Random number generator
   this.mt = new MersenneTwister();
@@ -73,7 +73,7 @@ Tetris.run = function()
   this.mt.seedArray([1]);
 
   // Boot the game
-  this.game.state.start( Tetris.Boot.stateKey );
+  this.game.state.start( MetaTWO.Boot.stateKey );
 
   
 };

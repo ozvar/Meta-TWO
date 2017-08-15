@@ -1,31 +1,31 @@
-Tetris.GameOver = function() {};
+MetaTWO.GameOver = function() {};
 
-Tetris.GameOver.stateKey = "GameOver";
+MetaTWO.GameOver.stateKey = "GameOver";
 
-Tetris.GameOver.prototype.init = function() {};
+MetaTWO.GameOver.prototype.init = function() {};
 
-Tetris.GameOver.prototype.preload = function() {};
+MetaTWO.GameOver.prototype.preload = function() {};
 
-Tetris.GameOver.prototype.create = function() {
+MetaTWO.GameOver.prototype.create = function() {
   this.stage.backgroundColor = 0x444444;
-  Tetris.game.add.text(240, 50, "Game complete.\nPress Enter or A Button to continue", {
+  MetaTWO.game.add.text(240, 50, "Game complete.\nPress Enter or A Button to continue", {
     font: "bold 32px Arial",
     fill: "#fff",
     boundsAlignH: "center",
     boundsAlignV: "middle"
   });
   
-  this.enter = Tetris.game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
-  this.gamepad = Tetris.gamepad;
+  this.enter = MetaTWO.game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
+  this.gamepad = MetaTWO.gamepad;
 }; // end create function
 
-Tetris.GameOver.prototype.update = function() {
-  if (this.enter.isDown || this.gamepad.isDown(Tetris.config.AButton)) {
+MetaTWO.GameOver.prototype.update = function() {
+  if (this.enter.isDown || this.gamepad.isDown(MetaTWO.config.AButton)) {
     this.gotoNextScreen();
   }
 };
 
-Tetris.GameOver.prototype.gotoNextScreen = function(){
-  Tetris.gameNumber++;
-  this.state.start(Tetris.Game.stateKey); 
+MetaTWO.GameOver.prototype.gotoNextScreen = function(){
+  MetaTWO.gameNumber++;
+  this.state.start(MetaTWO.Game.stateKey); 
 };

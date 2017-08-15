@@ -1,4 +1,4 @@
-Tetris.Game = function (game) {
+MetaTWO.Game = function (game) {
   
     this.DAS_NEGATIVE_EDGE=10;
     this.DAS_MAX=16;
@@ -26,15 +26,15 @@ Tetris.Game = function (game) {
             ]
 };
 
-Tetris.Game.stateKey = "Game";
+MetaTWO.Game.stateKey = "Game";
 
-Tetris.Game.prototype = {
+MetaTWO.Game.prototype = {
     
   create: function () {
     this.board = new Board();
     this.dummyBoard = new Board(); //used for animating line clears, since the blocks are gone by the time animation starts
     //this.zoid = Zoid.spawn(0);
-    //Math.floor(Tetris.mt.random() * 7);
+    //Math.floor(MetaTWO.mt.random() * 7);
     this.frames = 0;
     this.alive = true;
     this.paused = false;
@@ -84,51 +84,51 @@ Tetris.Game.prototype = {
     this.stage.backgroundColor = 0x050505; 
     
     //allows us to view FPS   
-    Tetris.game.time.advancedTiming = true;
+    MetaTWO.game.time.advancedTiming = true;
 
-    this.gamepad = Tetris.gamepad;
+    this.gamepad = MetaTWO.gamepad;
 
     //add graphics object for drawing frames, etc
-    let graphics = Tetris.game.add.graphics();
+    let graphics = MetaTWO.game.add.graphics();
     graphics.lineStyle(2, 0x00FF00, 1);    
-    graphics.drawRect(0, 0, 252, 502);
+    graphics.drawRect(0, 0, 252, 503);
     graphics.drawRect(320,0,120,120)
     let frameImage = graphics.generateTexture();
-    this.bg = Tetris.game.add.image(274,72, frameImage);
+    this.bg = MetaTWO.game.add.image(274,71, frameImage);
     graphics.destroy();
-    Tetris.game.add.text(580, 300, "Score:\n\nLines:\n\nLevel:", { font: "18px Arial", fill: "#ffffff", align: "right" });
-    this.scoreDisplay = Tetris.game.add.text(725, 300, "0\n\n 0\n\n 0", { font: "18px Arial", fill: "#ffffff", align: "right" });
+    MetaTWO.game.add.text(580, 300, "Score:\n\nLines:\n\nLevel:", { font: "18px Arial", fill: "#ffffff", align: "right" });
+    this.scoreDisplay = MetaTWO.game.add.text(725, 300, "0\n\n 0\n\n 0", { font: "18px Arial", fill: "#ffffff", align: "right" });
     this.scoreDisplay.anchor.set(1,0);
-    this.gameNumberDisplay = Tetris.game.add.text(370, 30, "game#", { font: "18px Arial", fill: "#ffffff", align: "right" });
+    this.gameNumberDisplay = MetaTWO.game.add.text(370, 30, "game#", { font: "18px Arial", fill: "#ffffff", align: "right" });
 
     //  Register the keys.
-    this.leftKey = Tetris.game.input.keyboard.addKey(Phaser.Keyboard.A);
-    this.rightKey = Tetris.game.input.keyboard.addKey(Phaser.Keyboard.D);
-    this.downKey = Tetris.game.input.keyboard.addKey(Phaser.Keyboard.S);
-    this.rotateKey = Tetris.game.input.keyboard.addKey(Phaser.Keyboard.L);
-    this.counterRotateKey = Tetris.game.input.keyboard.addKey(Phaser.Keyboard.K);
-    this.pauseKey = Tetris.game.input.keyboard.addKey(Phaser.Keyboard.P);
+    this.leftKey = MetaTWO.game.input.keyboard.addKey(Phaser.Keyboard.A);
+    this.rightKey = MetaTWO.game.input.keyboard.addKey(Phaser.Keyboard.D);
+    this.downKey = MetaTWO.game.input.keyboard.addKey(Phaser.Keyboard.S);
+    this.rotateKey = MetaTWO.game.input.keyboard.addKey(Phaser.Keyboard.L);
+    this.counterRotateKey = MetaTWO.game.input.keyboard.addKey(Phaser.Keyboard.K);
+    this.pauseKey = MetaTWO.game.input.keyboard.addKey(Phaser.Keyboard.P);
 
     //  Stop the following keys from propagating up to the browser
-    Tetris.game.input.keyboard.addKeyCapture([ Phaser.Keyboard.A, Phaser.Keyboard.D, Phaser.Keyboard.S, Phaser.Keyboard.K, Phaser.Keyboard.L ]);
+    MetaTWO.game.input.keyboard.addKeyCapture([ Phaser.Keyboard.A, Phaser.Keyboard.D, Phaser.Keyboard.S, Phaser.Keyboard.K, Phaser.Keyboard.L ]);
 
   },
 
   start: function(){
-    Tetris.mt.seedArray([1]);
-    this.curr = Math.floor(Tetris.mt.random() * 7);
+    MetaTWO.mt.seedArray([1]);
+    this.curr = Math.floor(MetaTWO.mt.random() * 7);
     //throw away next value, because current Mersenne Twister implementation
     //only matches Python value every other iteration. No idea why
-    Math.floor(Tetris.mt.random() * 7);
-    this.next = Math.floor(Tetris.mt.random() * 7);
-    Math.floor(Tetris.mt.random() * 7);
+    Math.floor(MetaTWO.mt.random() * 7);
+    this.next = Math.floor(MetaTWO.mt.random() * 7);
+    Math.floor(MetaTWO.mt.random() * 7);
     this.zoid = Zoid.spawn(this.curr);
     this.nextZoid = Zoid.spawn(this.next);
     this.paused = false;
         
     this.alive = true;
     this.currentTask = this.active; 
-    this.level = Tetris.config.startLevel; //this.start_level;
+    this.level = MetaTWO.config.startLevel; //this.start_level;
     this.lines = 0;
     this.score = 0;
     
@@ -140,27 +140,27 @@ Tetris.Game.prototype = {
     //A negative value is loaded into the soft drop counter for pre-gravity on the first piece.
     //As such, pre-gravity can be canceled out of by pressing Down to start soft dropping.
     this.softdrop_timer = -this.GRAVITY_START_DELAY;
-    Tetris.audio.music.play();
+    MetaTWO.audio.music.play();
   },
   
   update: function () {
-    if (Tetris.game.time.totalElapsedSeconds() > Tetris.config.sessionTime){
+    if (MetaTWO.game.time.totalElapsedSeconds() > MetaTWO.config.sessionTime){
         this.alive = false;
-        Tetris.audio.music.stop();
-        Tetris.audio.music_fast.stop();
-        this.state.start(Tetris.TimesUp.stateKey);
+        MetaTWO.audio.music.stop();
+        MetaTWO.audio.music_fast.stop();
+        this.state.start(MetaTWO.TimesUp.stateKey);
     }
 
     this.poll();
     if (this.justPressed(this.keys.PAUSE) && (!this.paused)){
         this.paused = true;
-        Tetris.audio.music.stop();
-        Tetris.audio.music_fast.stop();
-        Tetris.audio.pause.play();
+        MetaTWO.audio.music.stop();
+        MetaTWO.audio.music_fast.stop();
+        MetaTWO.audio.pause.play();
     }
     else if (this.justPressed(this.keys.PAUSE) && (this.paused)){
         this.paused = false;
-        this.fastMusic?Tetris.audio.music_fast.play():Tetris.audio.music.play();
+        this.fastMusic?MetaTWO.audio.music_fast.play():MetaTWO.audio.music.play();
     }
     if (this.alive && !this.paused){
         this.sub_94ee();
@@ -245,7 +245,7 @@ Tetris.Game.prototype = {
             if (!this.zoid.collide(this.board, this.vx, 0, 0)){
                 this.zoid.x += this.vx;
 
-                Tetris.audio.move.play();
+                MetaTWO.audio.move.play();
             }
             else{
                 this.das = this.DAS_MAX;
@@ -259,7 +259,7 @@ Tetris.Game.prototype = {
       if (this.vr !== 0){
           //console.log("rotate");
           if (!this.zoid.collide(this.board, 0, 0, this.vr)){
-              Tetris.audio.rotate.play();          
+              MetaTWO.audio.rotate.play();          
 
               this.zoid.r += this.vr;
               this.zoid.r = this.zoid.r & 3;
@@ -283,10 +283,10 @@ Tetris.Game.prototype = {
             this.sub_9caf();
             this.currentTask = this.updateTask;
             if (this.drop_points >= 2){
-                Tetris.audio.slam.play();
+                MetaTWO.audio.slam.play();
             }
             else{
-                Tetris.audio.lock.play();
+                MetaTWO.audio.lock.play();
             }
         }
     }
@@ -306,18 +306,18 @@ Tetris.Game.prototype = {
         if(this.board.commit(this.zoid)){
             //GAME OVER
             this.alive = false;
-            Tetris.audio.music.stop();
-            Tetris.audio.music_fast.stop();
-            Tetris.audio.crash.play();
-            this.state.start(Tetris.GameOver.stateKey);
+            MetaTWO.audio.music.stop();
+            MetaTWO.audio.music_fast.stop();
+            MetaTWO.audio.crash.play();
+            this.state.start(MetaTWO.GameOver.stateKey);
         }
         //console.log(this.board);
     }
     
     else if ((!this.fastMusic) && (this.pileHeight() >= 15)){
         this.fastMusic = true;
-        Tetris.audio.music.stop();
-        Tetris.audio.music_fast.play();
+        MetaTWO.audio.music.stop();
+        MetaTWO.audio.music_fast.play();
     }
 
     if (this._49 < 0x20){
@@ -358,10 +358,10 @@ Tetris.Game.prototype = {
             this.currentTask = this.lineAnim;
             // PLAY LINE SOUND
             if((this.lines_this > 0) && (this.lines_this < 4)){
-                Tetris.audio.clear1.play();
+                MetaTWO.audio.clear1.play();
             }
             if (this.lines_this === 4){
-                Tetris.audio.clear4.play();
+                MetaTWO.audio.clear4.play();
             }
         }
         else {
@@ -385,7 +385,7 @@ Tetris.Game.prototype = {
         hex_trick = parseInt(hex_trick.toString(), 16);
         if (hex_trick > this.level){
             this.level++;
-            Tetris.audio.levelup.play();
+            MetaTWO.audio.levelup.play();
         }
     }
     this.level = this.level & 255;
@@ -410,14 +410,14 @@ Tetris.Game.prototype = {
     }
     if ((this.fastMusic) && (this.pileHeight() < 15)){
         this.fastMusic = false;
-        Tetris.audio.music_fast.stop();
-        Tetris.audio.music.play();
+        MetaTWO.audio.music_fast.stop();
+        MetaTWO.audio.music.play();
     }
     this.currentTask = this.goalCheck;
   },
 
   goalCheck: function(){
-      //not applicable in A-Type Tetris
+      //not applicable in A-Type MetaTWO
       this.currentTask = this.dummy;
   },
 
@@ -437,8 +437,8 @@ Tetris.Game.prototype = {
     this.drop = 0;
     this.vy = 0;
     this.curr = this.next;
-    this.next = Math.floor(Tetris.mt.random() * 7);
-    Math.floor(Tetris.mt.random() * 7);
+    this.next = Math.floor(MetaTWO.mt.random() * 7);
+    Math.floor(MetaTWO.mt.random() * 7);
     this.zoid = this.nextZoid;
     this.nextZoid = Zoid.spawn(this.next);
     
@@ -524,16 +524,16 @@ Tetris.Game.prototype = {
                 if(this.board.isFilled(ix, iy)){
                     switch(this.board.getStyle(ix, iy)){
                         case 0: //large white square, primary color
-                        Tetris.game.debug.geom(new Phaser.Rectangle(ix*25+276, iy*25+74, 24, 24), this.bgColors[this.level%10][0]);
-                        Tetris.game.debug.geom(new Phaser.Rectangle(ix*25+276, iy*25+74, 3, 3), 'rgba(255,255,255,1');
-                        Tetris.game.debug.geom(new Phaser.Rectangle(ix*25+279, iy*25+77, 18, 18), 'rgba(255,255,255,1');
+                        MetaTWO.game.debug.geom(new Phaser.Rectangle(ix*25+276, iy*25+74, 24, 24), this.bgColors[this.level%10][0]);
+                        MetaTWO.game.debug.geom(new Phaser.Rectangle(ix*25+276, iy*25+74, 3, 3), 'rgba(255,255,255,1');
+                        MetaTWO.game.debug.geom(new Phaser.Rectangle(ix*25+279, iy*25+77, 18, 18), 'rgba(255,255,255,1');
                         break;
                         case 1: // primary color, white highlight
-                        Tetris.game.debug.geom(new Phaser.Rectangle(ix*25+276, iy*25+74, 24, 24), this.bgColors[this.level%10][0]);
+                        MetaTWO.game.debug.geom(new Phaser.Rectangle(ix*25+276, iy*25+74, 24, 24), this.bgColors[this.level%10][0]);
                         this.whiteHighlight(ix*25, iy*25,276,74)
                         break;
                         case 2: //secondary color, white highlight
-                        Tetris.game.debug.geom(new Phaser.Rectangle(ix*25+276, iy*25+74, 24, 24), this.bgColors[this.level%10][1]);
+                        MetaTWO.game.debug.geom(new Phaser.Rectangle(ix*25+276, iy*25+74, 24, 24), this.bgColors[this.level%10][1]);
                         this.whiteHighlight(ix*25, iy*25,276,74)
                     }
                 }
@@ -546,19 +546,19 @@ Tetris.Game.prototype = {
                 if(blocks[i][1] >= 0){
                     switch (this.zoid.style){
                         case 0: //large white square, primary color
-                        Tetris.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+276, blocks[i][1]*25+74, 24, 24), this.bgColors[this.level%10][0]);
-                        Tetris.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+276, blocks[i][1]*25+74, 3, 3), 'rgba(255,255,255,1');
-                        Tetris.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+279, blocks[i][1]*25+77, 18, 18), 'rgba(255,255,255,1');
+                        MetaTWO.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+276, blocks[i][1]*25+74, 24, 24), this.bgColors[this.level%10][0]);
+                        MetaTWO.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+276, blocks[i][1]*25+74, 3, 3), 'rgba(255,255,255,1');
+                        MetaTWO.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+279, blocks[i][1]*25+77, 18, 18), 'rgba(255,255,255,1');
                         break;
                         case 1: // primary color, white highlight
-                        Tetris.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+276, blocks[i][1]*25+74, 24, 24), this.bgColors[this.level%10][0]);
+                        MetaTWO.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+276, blocks[i][1]*25+74, 24, 24), this.bgColors[this.level%10][0]);
                         this.whiteHighlight(blocks[i][0]*25, blocks[i][1]*25,276,74)
                         break;
                         case 2: //secondary color, white highlight
-                        Tetris.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+276, blocks[i][1]*25+74, 24, 24), this.bgColors[this.level%10][1]);
+                        MetaTWO.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+276, blocks[i][1]*25+74, 24, 24), this.bgColors[this.level%10][1]);
                         this.whiteHighlight(blocks[i][0]*25, blocks[i][1]*25,276,74)
                     }
-                    // Tetris.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+276, blocks[i][1]*25+99, 24, 24), 'rgba(0,0,255,1)');
+                    // MetaTWO.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+276, blocks[i][1]*25+99, 24, 24), 'rgba(0,0,255,1)');
                     // this.whiteHighlight(blocks[i][0]*25, blocks[i][1]*25,276,99)
                 }
             }
@@ -570,50 +570,50 @@ Tetris.Game.prototype = {
             for (i=0; i< 4; i++){
                 switch (this.nextZoid.style){
                     case 0: //large white square, primary color
-                    Tetris.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+525, blocks[i][1]*25+100, 24, 24), this.bgColors[this.level%10][0]);
-                    Tetris.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+525, blocks[i][1]*25+100, 3, 3), 'rgba(255,255,255,1');
-                    Tetris.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+528, blocks[i][1]*25+103, 18, 18), 'rgba(255,255,255,1');
+                    MetaTWO.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+525, blocks[i][1]*25+100, 24, 24), this.bgColors[this.level%10][0]);
+                    MetaTWO.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+525, blocks[i][1]*25+100, 3, 3), 'rgba(255,255,255,1');
+                    MetaTWO.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+528, blocks[i][1]*25+103, 18, 18), 'rgba(255,255,255,1');
                     break;
                     case 1: // primary color, white highlight
-                    Tetris.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+525, blocks[i][1]*25+100, 24, 24), this.bgColors[this.level%10][0]);
+                    MetaTWO.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+525, blocks[i][1]*25+100, 24, 24), this.bgColors[this.level%10][0]);
                     this.whiteHighlight(blocks[i][0]*25, blocks[i][1]*25,525,103)
                     break;
                     case 2: //secondary color, white highlight
-                    Tetris.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+525, blocks[i][1]*25+100, 24, 24), this.bgColors[this.level%10][1]);
+                    MetaTWO.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+525, blocks[i][1]*25+100, 24, 24), this.bgColors[this.level%10][1]);
                     this.whiteHighlight(blocks[i][0]*25, blocks[i][1]*25,525,103)
                 }
-                // Tetris.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+ 525, blocks[i][1]*25+125, 24, 24), 'rgba(0,0,255,1)');
+                // MetaTWO.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+ 525, blocks[i][1]*25+125, 24, 24), 'rgba(0,0,255,1)');
                 // this.whiteHighlight(blocks[i][0]*25, blocks[i][1]*25, 525, 125)
             }
         //}
     }
     else { // game is paused
-        Tetris.game.debug.text("Paused", 360, 300, "#ffffff","24px Arial");
+        MetaTWO.game.debug.text("Paused", 360, 300, "#ffffff","24px Arial");
     }
 
-    //Tetris.game.debug.text("fps: " + Tetris.game.time.fps, 2, 14, "#00ff00");
-    // Tetris.game.debug.text("softdrop: " + this.softdrop_timer, 2, 30, "#00ff00");
-    // Tetris.game.debug.text("level: " + this.level, 2, 46, "#00ff00");
-    // Tetris.game.debug.text("line count: " + this.lines, 2, 62, "#00ff00");
-    // Tetris.game.debug.text("vx: " + this.vx, 2, 78, "#00ff00");
-    // Tetris.game.debug.text("are: " + this.are, 2, 94, "#00ff00");
+    //MetaTWO.game.debug.text("fps: " + MetaTWO.game.time.fps, 2, 14, "#00ff00");
+    // MetaTWO.game.debug.text("softdrop: " + this.softdrop_timer, 2, 30, "#00ff00");
+    // MetaTWO.game.debug.text("level: " + this.level, 2, 46, "#00ff00");
+    // MetaTWO.game.debug.text("line count: " + this.lines, 2, 62, "#00ff00");
+    // MetaTWO.game.debug.text("vx: " + this.vx, 2, 78, "#00ff00");
+    // MetaTWO.game.debug.text("are: " + this.are, 2, 94, "#00ff00");
 
     //let das_rect = new Phaser.Rectangle(2, 94, this.das * 10, 12);
-    //Tetris.game.debug.geom(das_rect, 'rgba(0,255,0,1)')
+    //MetaTWO.game.debug.geom(das_rect, 'rgba(0,255,0,1)')
 
-    //Tetris.game.debug.text("score: " + this.score, 2, 110, "#00ff00", "24px Arial");
-    //Tetris.game.debug.text("pile: " + this.pileHeight(), 2, 126, "#00ff00", "24px Arial");
-    //Tetris.game.debug.text("Down: " + this.downCurr, 2, 142, "#ffffff");
-    //Tetris.game.debug.text("Downhit: " + this.justPressed(this.keys.DOWN), 2, 158, "#ffffff");
+    //MetaTWO.game.debug.text("score: " + this.score, 2, 110, "#00ff00", "24px Arial");
+    //MetaTWO.game.debug.text("pile: " + this.pileHeight(), 2, 126, "#00ff00", "24px Arial");
+    //MetaTWO.game.debug.text("Down: " + this.downCurr, 2, 142, "#ffffff");
+    //MetaTWO.game.debug.text("Downhit: " + this.justPressed(this.keys.DOWN), 2, 158, "#ffffff");
 
     this.scoreDisplay.text = this.score.toString() + "\n\n" + this.lines.toString() + "\n\n" + this.level.toString();
-    this.gameNumberDisplay.text = "Game: " + Tetris.gameNumber;
+    this.gameNumberDisplay.text = "Game: " + MetaTWO.gameNumber;
   },
 
   whiteHighlight: function(x,y,offsetx, offsety){
-    Tetris.game.debug.geom(new Phaser.Rectangle(x + offsetx, y + offsety, 3, 3), 'rgba(255,255,255,1)');
-    Tetris.game.debug.geom(new Phaser.Rectangle(x + offsetx + 3, y + offsety + 3, 6, 3), 'rgba(255,255,255,1)');
-    Tetris.game.debug.geom(new Phaser.Rectangle(x + offsetx + 3, y + offsety + 6, 3, 3), 'rgba(255,255,255,1)');
+    MetaTWO.game.debug.geom(new Phaser.Rectangle(x + offsetx, y + offsety, 3, 3), 'rgba(255,255,255,1)');
+    MetaTWO.game.debug.geom(new Phaser.Rectangle(x + offsetx + 3, y + offsety + 3, 6, 3), 'rgba(255,255,255,1)');
+    MetaTWO.game.debug.geom(new Phaser.Rectangle(x + offsetx + 3, y + offsety + 6, 3, 3), 'rgba(255,255,255,1)');
 
   },
 
@@ -625,13 +625,13 @@ Tetris.Game.prototype = {
     this.counterRotatePrev = this.counterRotateCurr;
     this.pausePrev = this.pauseCurr;
 
-    if (Tetris.game.input.gamepad.supported && Tetris.game.input.gamepad.active && this.gamepad.connected){
-        this.AButton = this.gamepad.isDown(Tetris.config.AButton);
-        this.BButton = this.gamepad.isDown(Tetris.config.BButton);
-        this.downButton = this.gamepad.isDown(Tetris.config.downButton);
-        this.leftButton = this.gamepad.isDown(Tetris.config.leftButton);
-        this.rightButton = this.gamepad.isDown(Tetris.config.rightButton);
-        this.startButton = this.gamepad.isDown(Tetris.config.startButton);
+    if (MetaTWO.game.input.gamepad.supported && MetaTWO.game.input.gamepad.active && this.gamepad.connected){
+        this.AButton = this.gamepad.isDown(MetaTWO.config.AButton);
+        this.BButton = this.gamepad.isDown(MetaTWO.config.BButton);
+        this.downButton = this.gamepad.isDown(MetaTWO.config.downButton);
+        this.leftButton = this.gamepad.isDown(MetaTWO.config.leftButton);
+        this.rightButton = this.gamepad.isDown(MetaTWO.config.rightButton);
+        this.startButton = this.gamepad.isDown(MetaTWO.config.startButton);
     }
 
     this.leftCurr =  this.leftButton || this.leftKey.isDown;
@@ -640,9 +640,9 @@ Tetris.Game.prototype = {
     this.rotateCurr = this.AButton || this.rotateKey.isDown;
     this.counterRotateCurr = this.BButton || this.counterRotateKey.isDown;
     this.pauseCurr = this.startButton || this.pauseKey.isDown;
-    // if (Tetris.game.input.gamepad.supported && Tetris.game.input.gamepad.active && this.gamepad.connected)
+    // if (MetaTWO.game.input.gamepad.supported && MetaTWO.game.input.gamepad.active && this.gamepad.connected)
     // {
-    //     console.log(this.gamepad.isDown(Tetris.config.AButton));
+    //     console.log(this.gamepad.isDown(MetaTWO.config.AButton));
     // }
     //console.log(this.gamepad._rawPad.axes[0]);
   },
@@ -721,10 +721,10 @@ Tetris.Game.prototype = {
         }
         else {data.push("");}
     }
-    data.push(Tetris.game.time.totalElapsedSeconds());
+    data.push(MetaTWO.game.time.totalElapsedSeconds());
     data.push(event_type);
-    logit(Tetris.config.subjectNumber, "SID");
-    logit(Tetris.config.ECID, "ECID");
+    logit(MetaTWO.config.subjectNumber, "SID");
+    logit(MetaTWO.config.ECID, "ECID");
     console.log(data);
   }
 };

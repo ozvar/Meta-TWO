@@ -1,12 +1,12 @@
 /** @constructor */
-Tetris.Boot = function()
+MetaTWO.Boot = function()
 {
   
 };
 
-Tetris.Boot.stateKey = "Boot";
+MetaTWO.Boot.stateKey = "Boot";
 
-Tetris.Boot.prototype.init = function()
+MetaTWO.Boot.prototype.init = function()
 {
   this.stage.backgroundColor = 0x000000;
   this.stage.disableVisibilityChange = false;
@@ -18,17 +18,17 @@ Tetris.Boot.prototype.init = function()
   this.stage.forcePortrait = true;
 };
 
-Tetris.Boot.prototype.preload = function()
+MetaTWO.Boot.prototype.preload = function()
 {
   // load assets needed for the preloader here 
 };
 
-Tetris.Boot.prototype.create = function()
+MetaTWO.Boot.prototype.create = function()
 { 
-  Tetris.game.input.gamepad.start();
-  Tetris.gamepad = Tetris.game.input.gamepad.pad1;
+  MetaTWO.game.input.gamepad.start();
+  MetaTWO.gamepad = MetaTWO.game.input.gamepad.pad1;
   //Enable plugin for text field in menu
-  Tetris.game.add.plugin(PhaserInput.Plugin);
+  MetaTWO.game.add.plugin(PhaserInput.Plugin);
   // Go straight to the Preloader
-  this.state.start( Tetris.Preloader.stateKey );
+  this.state.start( MetaTWO.Preloader.stateKey );
 };

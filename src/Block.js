@@ -1,4 +1,4 @@
-Tetris.Block = function () {
+MetaTWO.Block = function () {
 
   this.color = null;
   this.x = null;
@@ -9,7 +9,7 @@ Tetris.Block = function () {
   return this;
 };
 
-Tetris.Block.prototype = {
+MetaTWO.Block.prototype = {
   
   makeBlock: function (newX, newY, newColor) {
 
@@ -19,7 +19,7 @@ Tetris.Block.prototype = {
     
     let spriteLocation = this.getSpriteLocation();
     
-    this.sprite = Tetris.game.add.sprite(spriteLocation.x, spriteLocation.y, 'block', this.color);
+    this.sprite = MetaTWO.game.add.sprite(spriteLocation.x, spriteLocation.y, 'block', this.color);
   },
   
   clean: function() {
@@ -35,8 +35,8 @@ Tetris.Block.prototype = {
     
     let spriteX, spriteY;
     
-    spriteX = Tetris.LINING_WIDTH + (this.x * Tetris.BLOCK_WIDTH);
-    spriteY = Tetris.BANNER_HEIGHT + (this.y * Tetris.BLOCK_WIDTH);
+    spriteX = MetaTWO.LINING_WIDTH + (this.x * MetaTWO.BLOCK_WIDTH);
+    spriteY = MetaTWO.BANNER_HEIGHT + (this.y * MetaTWO.BLOCK_WIDTH);
     
     return {"x": spriteX, "y": spriteY};
   },
