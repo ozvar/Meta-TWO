@@ -5,10 +5,9 @@
 //audio
 //line animation
 //game #
+//diagonals - confirmed correct by Alex
 
 input delay - probably can't improve
-diagonals - probably fixed, email out to Alex
-
 more config options
 
 LOG - new stuff too! DAS, ARE, softdrop timer, others?
