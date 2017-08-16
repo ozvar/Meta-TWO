@@ -767,9 +767,9 @@ MetaTWO.Game.prototype = {
     }
     else {data.push("");}
 
-    logit(this.curr_zoid.names[this.curr], "curr_zoid");
-    logit(this.next_zoid.names[this.next], "next_zoid");
+    logit(this.zoid.names[this.curr], "curr_zoid");
+    logit(this.nextZoid.names[this.next], "next_zoid");
    
-    console.log(data);
+    //console.log(data);
   }
 };
