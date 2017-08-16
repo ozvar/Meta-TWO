@@ -1,3 +1,5 @@
+// All gameplay logic. Algorithms genereously mined from ROM by Alex Kerr. See reference/Player.py
+
 MetaTWO.Game = function (game) {
   
     this.DAS_NEGATIVE_EDGE=10;

@@ -1,4 +1,5 @@
 Remaining items to be logged - new stuff too! DAS, ARE, softdrop timer, others?
+Please see reference/world.py for Lindstedt's original code
                   
 danger_mode	- whether the maximum height of any one column is greater than 15 (game music speeds up!)
 delaying	- whether the game is currently delaying, waiting for a new zoid to appear
