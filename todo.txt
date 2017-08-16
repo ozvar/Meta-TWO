@@ -1,45 +1,5 @@
-//block colors
-//pause
-//entry screen
-//gamepad
-//audio
-//line animation
-//game #
-//diagonals - confirmed correct by Alex
-
-input delay - probably can't improve
-more config options
-
-LOG - new stuff too! DAS, ARE, softdrop timer, others?
+Remaining items to be logged - new stuff too! DAS, ARE, softdrop timer, others?
                   
-ts	- time stamp in seconds since the beginning of the session
-event_type	- designates the type of entry this row represents in the log
-SID	- the Subject ID
-ECID	- the Experimental Condition ID
-session	- the date and time of the start of the session
-game_type	- the game type label
-game_number	- the number of the current game this session
-episode_number	- the number of the current episode this game
-level	- the current level this game
-score	- the current score this game
-lines_cleared	- the number of lines cleared this game
-tetrises_game	- number of tetrises scored this game
-tetrises_level	- number of tetrises scored this level
-
-Game summary
-completed	- whether or not a game was completed or terminated early (manually or by failure)
-game_duration	- length in seconds of the game
-avg_ep_duration	- length of the average episode this game
-zoid_sequence	- the exact sequence of zoids seen this game (of the types I, O, T, S, Z, J, and L)
-
-Immediate event data
-evt_id	- the ID of the current event. This is highly flexible and depends on the event.
-evt_data1	- the first value of the current event. depends heavily on evt_id
-evt_data2	- the second value of the current event. depends heavily on evt_id
-
-Game state information
-curr_zoid	- the current zoid this episode (of I, O, T, S, Z, J, and L)
-next_zoid	- the upcoming zoid for the next episode (of I, O, T, S, Z, J, and L)
 danger_mode	- whether the maximum height of any one column is greater than 15 (game music speeds up!)
 delaying	- whether the game is currently delaying, waiting for a new zoid to appear
 dropping	- whether the player is currently dropping the zoid

@@ -19,13 +19,10 @@ let MetaTWO =
   BOARD_WIDTH: 10,
   BOARD_HEIGHT: 20,
   
-  // Declare the board.
-  // board is a 2d array containing placed Blocks (active blocks are not in 
-  // the board yet. It will be oriented with
-  // blocks[0][0] in the top left and blocks[BOARD_HEIGHT-1][BOARD_WIDTH-1]
-  // in the bottom right corner. Initialized in MetaTWO.Game.create(). 
+  // The actual board is initialized in MetaTWO.Game.create(). 
   board: null,
   
+  // The preliminary configuration. Many of these values will be overridden before play begins
   config: {startLevel: 0,
            subjectNumber: 0,
            ECID: 1212,
@@ -35,11 +32,16 @@ let MetaTWO =
            rightButton: -1,
            downButton: -1,
            startButton: -1,
-           sessionTime: 300   // total time, in seconds, for this experimental session. 1 hour = 3600 seconds
+           session: Date().toString(),
+           gameType: "standard",
+           sessionTime: 300,   // total time, in seconds, for this experimental session. 1 hour = 3600 seconds
+           seed: -1 // seed for the Mersenne Twister (random number generator). -1 means use the current time
           },
 
+  // The audio files are loaded in the Preloader state
   audio: {},
   
+  // The header for the log file. We will append new strings to this array
   log: ["ts","event_type", "SID","ECID","session","game_type","game_number","episode_number","level","score","lines_cleared",
         "completed","game_duration","avg_ep_duration","zoid_sequence","evt_id","evt_data1","evt_data2",
         "curr_zoid","next_zoid","danger_mode",
@@ -70,7 +72,12 @@ MetaTWO.run = function()
   // Random number generator
   this.mt = new MersenneTwister();
   // to get "identical" results to Python 2.7.x, we seed with seedArray(), not seed()
-  this.mt.seedArray([1]);
+  if (MetaTWO.config.seed === -1){
+    this.mt.seedArray([Date.now()]);
+  }
+  else {
+    this.mt.seedArray([MetaTWO.config.seed]);
+  }
 
   // Boot the game
   this.game.state.start( MetaTWO.Boot.stateKey );

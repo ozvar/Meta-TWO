@@ -33,35 +33,36 @@ MetaTWO.Game.prototype = {
   create: function () {
     this.board = new Board();
     this.dummyBoard = new Board(); //used for animating line clears, since the blocks are gone by the time animation starts
-    //this.zoid = Zoid.spawn(0);
-    //Math.floor(MetaTWO.mt.random() * 7);
     this.frames = 0;
     this.alive = true;
     this.paused = false;
     this.currentTask = this.start;
     this.are = 0;
     this._49 = 0;
-    this.vx = 0
-    this.vy = 0
-    this.vr = 0
+    this.vx = 0;
+    this.vy = 0;
+    this.vr = 0;
+    this.gameStartTime = MetaTWO.game.time.totalElapsedSeconds();
     
-    this.das = 0
-    this.softdrop_timer = 0
-    this.drop = 0
+    this.das = 0;
+    this.softdrop_timer = 0;
+    this.drop = 0;
     
     //this.start_level = 0;
-    this.level = 0
-    this.lines = 0
-    this.score = 0
+    this.level = 0;
+    this.lines = 0;
+    this.score = 0;
+    this.episode = 0;
+    this.zoidBuff = [];
     
-    this.drop_points = 0
-    this.lines_this = 0
-    this.lines_flagged = 0
+    this.drop_points = 0;
+    this.lines_this = 0;
+    this.lines_flagged = 0;
     
-    this.curr = 0
-    this.next = 0
+    this.curr = 0;
+    this.next = 0;
     
-    this.piece_count = 0
+    this.piece_count = 0;
     this.leftCurr = false;
     this.leftPrev = false;
     this.rightCurr = false;
@@ -115,14 +116,16 @@ MetaTWO.Game.prototype = {
   },
 
   start: function(){
-    MetaTWO.mt.seedArray([1]);
     this.curr = Math.floor(MetaTWO.mt.random() * 7);
     //throw away next value, because current Mersenne Twister implementation
     //only matches Python value every other iteration. No idea why
     Math.floor(MetaTWO.mt.random() * 7);
+
     this.next = Math.floor(MetaTWO.mt.random() * 7);
     Math.floor(MetaTWO.mt.random() * 7);
     this.zoid = Zoid.spawn(this.curr);
+    //add to zoid buffer
+    this.zoidBuff.push(this.zoid.names[this.curr]);
     this.nextZoid = Zoid.spawn(this.next);
     this.paused = false;
         
@@ -141,17 +144,21 @@ MetaTWO.Game.prototype = {
     //As such, pre-gravity can be canceled out of by pressing Down to start soft dropping.
     this.softdrop_timer = -this.GRAVITY_START_DELAY;
     MetaTWO.audio.music.play();
+
   },
   
+  // The "core loop" of the game, called automatically by Phaser when the player is in the Game state
   update: function () {
     if (MetaTWO.game.time.totalElapsedSeconds() > MetaTWO.config.sessionTime){
         this.alive = false;
         MetaTWO.audio.music.stop();
         MetaTWO.audio.music_fast.stop();
+        // LOG END-OF-GAME info
         this.state.start(MetaTWO.TimesUp.stateKey);
     }
-
+    // Get user input
     this.poll();
+
     if (this.justPressed(this.keys.PAUSE) && (!this.paused)){
         this.paused = true;
         MetaTWO.audio.music.stop();
@@ -162,14 +169,21 @@ MetaTWO.Game.prototype = {
         this.paused = false;
         this.fastMusic?MetaTWO.audio.music_fast.play():MetaTWO.audio.music.play();
     }
+    // While the game is running, these functions execute every frame
     if (this.alive && !this.paused){
-        this.sub_94ee();
+        this.sub_94ee(); // a housekeeping function, named after its original ROM address
         this.drop++;
-        this.currentTask();
+        this.currentTask(); // only one real "job" is handled every frame, 
+                            // this can be moving the zoid, checking for line clears, or updating the score
+                            // currentTask is a function pointer
         this.frames++;
     }
   },
 
+  // Possibly the most delicate and important function in the game, translating user input into game commands.
+  // This logic is critical for certain advanced strategies once the game becomes super-fast, including charging DAS
+  // and allowing for the "Chinese Fireball" maneuver. PLEASE don't modify unless you're explicitly trying to trip up the experts
+  // as an experimental condition
   control: function(){
     if (!this.downCurr){
         if(this.justPressed(this.keys.RIGHT) || this.justPressed(this.keys.LEFT)){
@@ -229,6 +243,7 @@ MetaTWO.Game.prototype = {
 
   },
 
+  // translates the zoid based on input and DAS
   move: function(){
     if (this.vx !== 0){
         let shift = false;
@@ -254,16 +269,15 @@ MetaTWO.Game.prototype = {
     }
   },
 
+  // rotates the zoid depending on input and possibility
   rotate: function(){
       
       if (this.vr !== 0){
-          //console.log("rotate");
           if (!this.zoid.collide(this.board, 0, 0, this.vr)){
               MetaTWO.audio.rotate.play();          
 
               this.zoid.r += this.vr;
               this.zoid.r = this.zoid.r & 3;
-              //console.log(this.zoid.r);
           }
 
       }
@@ -280,6 +294,7 @@ MetaTWO.Game.prototype = {
             this.zoid.y++;
         }
         else{
+            // we're playing the "lock" sound now, but technically the piece doesn't commit until the next frame (in updateTask)
             this.sub_9caf();
             this.currentTask = this.updateTask;
             if (this.drop_points >= 2){
@@ -292,6 +307,7 @@ MetaTWO.Game.prototype = {
     }
   },
 
+  // the dominant "currentTask" of the master loop. We switch out at the end of each episode
   active: function(){
     this.control();
     this.move();
@@ -302,16 +318,15 @@ MetaTWO.Game.prototype = {
   updateTask: function(){
     if (this.are === 0){
         this.are = 1;
-        //console.log(this.zoid);
         if(this.board.commit(this.zoid)){
             //GAME OVER
             this.alive = false;
             MetaTWO.audio.music.stop();
             MetaTWO.audio.music_fast.stop();
             MetaTWO.audio.crash.play();
+            // LOG END-OF-GAME INFO
             this.state.start(MetaTWO.GameOver.stateKey);
         }
-        //console.log(this.board);
     }
     
     else if ((!this.fastMusic) && (this.pileHeight() >= 15)){
@@ -329,8 +344,6 @@ MetaTWO.Game.prototype = {
     this.currentTask = this.lineCheck;
     //copy board contents into the backup board, in case there are lines to clear
     this.dummyBoard.contents = JSON.parse(JSON.stringify(this.board.contents));
-    //console.log(this.board);
-    //console.log(this.dummyBoard);
   },
 
   lineCheck: function(){
@@ -345,8 +358,6 @@ MetaTWO.Game.prototype = {
         this.dummyBoard.lineDrop(row); //clear lines from "backup" board, copy to actual board at end of animation
         this.lines_this++;
         this.rowsToClear.push(row);
-        //console.log(this.board);
-        //console.log(this.dummyBoard);
     }
 
     this.are++;
@@ -413,6 +424,10 @@ MetaTWO.Game.prototype = {
         MetaTWO.audio.music_fast.stop();
         MetaTWO.audio.music.play();
     }
+    // LOG EPISODE info
+    this.logUniversal("EP_SUMM", ["SID","ECID","session","game_type","game_number","episode_number","level","score",
+    "lines_cleared", "game_duration", "avg_ep_duration", "zoid_sequence"]);
+    
     this.currentTask = this.goalCheck;
   },
 
@@ -430,6 +445,7 @@ MetaTWO.Game.prototype = {
     if(this._49 < 0x20){
         return;
     }
+    this.episode++;
     this.are = 0;
     this.lines_this = 0;
     this.drop_points = 0;
@@ -440,6 +456,8 @@ MetaTWO.Game.prototype = {
     this.next = Math.floor(MetaTWO.mt.random() * 7);
     Math.floor(MetaTWO.mt.random() * 7);
     this.zoid = this.nextZoid;
+    //add to zoid buffer
+    this.zoidBuff.push(this.zoid.names[this.curr]);
     this.nextZoid = Zoid.spawn(this.next);
     
 
@@ -640,11 +658,6 @@ MetaTWO.Game.prototype = {
     this.rotateCurr = this.AButton || this.rotateKey.isDown;
     this.counterRotateCurr = this.BButton || this.counterRotateKey.isDown;
     this.pauseCurr = this.startButton || this.pauseKey.isDown;
-    // if (MetaTWO.game.input.gamepad.supported && MetaTWO.game.input.gamepad.active && this.gamepad.connected)
-    // {
-    //     console.log(this.gamepad.isDown(MetaTWO.config.AButton));
-    // }
-    //console.log(this.gamepad._rawPad.axes[0]);
   },
 
   justPressed: function(key){
@@ -711,6 +724,8 @@ MetaTWO.Game.prototype = {
 
   },
 
+  //test loglist
+  //loglist = ["SID","ECID","session","game_type","game_number","episode_number","level","score","lines_cleared"];
   //LOGGING FUNCTIONS
   //def log_universal( self, event_type, loglist, complete = False, evt_id = False, evt_data1 = False, evt_data2 = False, eyes = False, features = False):
   logUniversal: function(event_type, loglist, {complete = false, evt_id = false, evt_data1 = false, evt_data2 = false}={}){
@@ -725,6 +740,36 @@ MetaTWO.Game.prototype = {
     data.push(event_type);
     logit(MetaTWO.config.subjectNumber, "SID");
     logit(MetaTWO.config.ECID, "ECID");
+    logit(MetaTWO.config.session, "session");
+    logit(MetaTWO.config.gameType, "game_type");
+    logit(MetaTWO.gameNumber, "game_number")
+    logit(this.episode, "episode_number")
+    logit(this.level, "level");
+    logit(this.score, "score");
+    logit(this.lines, "lines_cleared");
+    logit(complete, "completed");
+    logit(MetaTWO.game.time.totalElapsedSeconds() - this.gameStartTime, "game_duration")
+    logit((MetaTWO.game.time.totalElapsedSeconds() - this.gameStartTime) / (this.episode + 1), "avg_ep_duration");
+    //comes in GAME_SUMM and looks like"
+    // '["T", "Z", "O", "O", "T", "I", "T", "Z", "L", "I", "I", "O", "S", "Z", "T"]'
+    logit(JSON.stringify(this.zoidBuff), "zoid_sequence");
+    
+    if (evt_id){
+        data.push(evt_id);
+    }
+    else {data.push("");}
+    if (evt_data1){
+        data.push(evt_data1);
+    }
+    else {data.push("");}
+    if (evt_data2){
+        data.push(evt_data2);
+    }
+    else {data.push("");}
+
+    logit(this.curr_zoid.names[this.curr], "curr_zoid");
+    logit(this.next_zoid.names[this.next], "next_zoid");
+   
     console.log(data);
   }
 };

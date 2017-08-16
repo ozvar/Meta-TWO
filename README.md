@@ -4,6 +4,8 @@ This is a web-enabled version of the Cogworks Lab's Meta-T app. It is written in
 
 `index.html` will load all the scripts, and launch the app by invoking `MetaTWO.run();`
 
+Each game state is contained within a separate JS file
+
 1. `MetaTWO.js` loads all the game states, initializes the random number generator, and transitions to the Boot stage
 2. `Boot.js` scales the game window, initializes the gamepad, and transitions to the Preloader stage
 3. `Preloader.js` loads all the audio files (bulk of the app's total size) with a progress bar, and transitions to the main menu
