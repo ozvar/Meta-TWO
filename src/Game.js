@@ -428,7 +428,7 @@ MetaTWO.Game.prototype = {
     }
     // LOG EPISODE info
     this.logUniversal("EP_SUMM", ["SID","ECID","session","game_type","game_number","episode_number","level","score",
-    "lines_cleared", "game_duration", "avg_ep_duration", "zoid_sequence"]);
+    "lines_cleared", "game_duration", "avg_ep_duration", "zoid_sequence", "curr_zoid", "next_zoid", "board_rep", "zoid_rep"]);
     
     this.currentTask = this.goalCheck;
   },
@@ -771,7 +771,11 @@ MetaTWO.Game.prototype = {
 
     logit(this.zoid.names[this.curr], "curr_zoid");
     logit(this.nextZoid.names[this.next], "next_zoid");
+
+    logit(JSON.stringify(this.board.contents.slice(3,23)), "board_rep"); //hiding the three invisible rows at the top
+    logit(JSON.stringify(this.zoid.zoidRep()), "zoid_rep");
    
-    //console.log(data);
+    console.log(data);
+    //console.log();
   }
 };
