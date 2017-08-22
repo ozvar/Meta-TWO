@@ -157,6 +157,7 @@ MetaTWO.Game.prototype = {
         MetaTWO.audio.music.stop();
         MetaTWO.audio.music_fast.stop();
         // LOG END-OF-GAME info
+        this.logGameSumm();
         this.state.start(MetaTWO.TimesUp.stateKey);
     }
     // Get user input
@@ -828,6 +829,8 @@ MetaTWO.Game.prototype = {
     "level","score","lines_cleared","completed",
     "game_duration","avg_ep_duration","zoid_sequence"]
     this.logUniversal("GAME_SUMM", loglist);
+    // EXCEEDED QUOTA ON A FIVE-MINUTE GAME
+    localStorage.setItem("data", this.masterLog);    
   },
 
   logEvent: function(id, evt_data1, evt_data2){
