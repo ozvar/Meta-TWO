@@ -79,6 +79,7 @@ MetaTWO.Game.prototype = {
     this.counterRotatePrev = false;
     this.fastMusic = false;
     this.rowsToClear = [];
+    this.masterLog = "";
     
     let i, j;
     this.AButton = this.BButton = this.leftButton = this.rightButton = this.downButton = this.startButton = 0;
@@ -146,7 +147,7 @@ MetaTWO.Game.prototype = {
     //As such, pre-gravity can be canceled out of by pressing Down to start soft dropping.
     this.softdrop_timer = -this.GRAVITY_START_DELAY;
     MetaTWO.audio.music.play();
-
+    this.logEvent("GAME", "BEGIN");
   },
   
   // The "core loop" of the game, called automatically by Phaser when the player is in the Game state
@@ -179,6 +180,7 @@ MetaTWO.Game.prototype = {
                             // this can be moving the zoid, checking for line clears, or updating the score
                             // currentTask is a function pointer
         this.frames++;
+        this.logWorld();
     }
   },
 
@@ -261,7 +263,7 @@ MetaTWO.Game.prototype = {
         if (shift){
             if (!this.zoid.collide(this.board, this.vx, 0, 0)){
                 this.zoid.x += this.vx;
-
+                this.logEvent("ZOID", "TRANSLATE", this.vx.toString());
                 MetaTWO.audio.move.play();
             }
             else{
@@ -276,7 +278,8 @@ MetaTWO.Game.prototype = {
       
       if (this.vr !== 0){
           if (!this.zoid.collide(this.board, 0, 0, this.vr)){
-              MetaTWO.audio.rotate.play();          
+              MetaTWO.audio.rotate.play();  
+              this.logEvent("ZOID", "ROTATE", this.vr.toString());        
 
               this.zoid.r += this.vr;
               this.zoid.r = this.zoid.r & 3;
@@ -290,6 +293,8 @@ MetaTWO.Game.prototype = {
         return;
     }
     if ((this.vy !== 0) || (this.drop >= this.speedLevels[this.level<29?this.level:29])){
+        if (this.vy !== 0) {this.logEvent("ZOID", "U-DOWN", "");}
+            else {this.logEvent("ZOID", "DOWN", "");}
         this.vy = 0;
         this.drop = 0;
         if (!this.zoid.collide(this.board, 0, 1, 0)){
@@ -299,8 +304,10 @@ MetaTWO.Game.prototype = {
             // we're playing the "lock" sound now, but technically the piece doesn't commit until the next frame (in updateTask)
             this.sub_9caf();
             this.currentTask = this.updateTask;
+            this.logEvent("PLACED", this.zoid.names[this.curr], "");
             if (this.drop_points >= 2){
                 MetaTWO.audio.slam.play();
+                this.logEvent("ZOID", "SLAMMED", "");
             }
             else{
                 MetaTWO.audio.lock.play();
@@ -325,8 +332,9 @@ MetaTWO.Game.prototype = {
             this.alive = false;
             MetaTWO.audio.music.stop();
             MetaTWO.audio.music_fast.stop();
-            MetaTWO.audio.crash.play();
+            MetaTWO.audio.crash.play();     
             // LOG END-OF-GAME INFO
+            this.logGameSumm();
             this.state.start(MetaTWO.GameOver.stateKey);
         }
     }
@@ -427,9 +435,8 @@ MetaTWO.Game.prototype = {
         MetaTWO.audio.music.play();
     }
     // LOG EPISODE info
-    this.logUniversal("EP_SUMM", ["SID","ECID","session","game_type","game_number","episode_number","level","score",
-    "lines_cleared", "game_duration", "avg_ep_duration", "zoid_sequence", "curr_zoid", "next_zoid", "board_rep", "zoid_rep"]);
-    
+    this.logEpisode();
+    this.logEvent("EPISODE", "END", "");    
     this.currentTask = this.goalCheck;
   },
 
@@ -461,8 +468,8 @@ MetaTWO.Game.prototype = {
     //add to zoid buffer
     this.zoidBuff.push(this.zoid.names[this.curr]);
     this.nextZoid = Zoid.spawn(this.next);
-    
-
+    this.logEvent("ZOID", "NEW", this.zoid.names[this.curr]);
+    this.logEvent("EPISODE", "BEGIN", "");
     this.currentTask = this.active;
   },
 
@@ -660,6 +667,19 @@ MetaTWO.Game.prototype = {
     this.rotateCurr = this.AButton || this.rotateKey.isDown;
     this.counterRotateCurr = this.BButton || this.counterRotateKey.isDown;
     this.pauseCurr = this.startButton || this.pauseKey.isDown;
+
+    if (this.leftCurr && !this.leftPrev) {this.logEvent("KEYPRESS", "PRESS", "LEFT");}
+    if (!this.leftCurr && this.leftPrev) {this.logEvent("KEYPRESS", "RELEASE", "LEFT");}
+    if (this.rightCurr && !this.rightPrev) {this.logEvent("KEYPRESS", "PRESS", "RIGHT");}
+    if (!this.rightCurr && this.rightPrev) {this.logEvent("KEYPRESS", "RELEASE", "RIGHT");}
+    if (this.downCurr && !this.downPrev) {this.logEvent("KEYPRESS", "PRESS", "DOWN");}
+    if (!this.downCurr && this.downPrev) {this.logEvent("KEYPRESS", "RELEASE", "DOWN");}
+    if (this.rotateCurr && !this.rotatePrev) {this.logEvent("KEYPRESS", "PRESS", "A");}
+    if (!this.rotateCurr && this.rotatePrev) {this.logEvent("KEYPRESS", "RELEASE", "A");}
+    if (this.counterRotateCurr && !this.counterRotatePrev) {this.logEvent("KEYPRESS", "PRESS", "B");}
+    if (!this.counterRotateCurr && this.counterRotatePrev) {this.logEvent("KEYPRESS", "RELEASE", "B");}
+    if (this.pauseCurr && !this.pausePrev) {this.logEvent("KEYPRESS", "PRESS", "PAUSE");}
+    if (!this.pauseCurr && this.pausePrev) {this.logEvent("KEYPRESS", "RELEASE", "PAUSE");}
   },
 
   justPressed: function(key){
@@ -775,7 +795,47 @@ MetaTWO.Game.prototype = {
     logit(JSON.stringify(this.board.contents.slice(3,23)), "board_rep"); //hiding the three invisible rows at the top
     logit(JSON.stringify(this.zoid.zoidRep()), "zoid_rep");
    
-    console.log(data);
+    data = data.join("\t");
+    this.masterLog += data + '\n';
     //console.log();
+  },
+
+  logEpisode: function(){
+      let loglist = ["SID","ECID","session","game_type","game_number","episode_number",
+      "level","score","lines_cleared",
+      "curr_zoid","next_zoid","danger_mode",
+      "zoid_rot","zoid_col","zoid_row",
+      "board_rep","zoid_rep","evt_sequence","rots","trans","path_length",
+      "min_rots","min_trans","min_path",
+      "min_rots_diff","min_trans_diff","min_path_diff",
+      "u_drops","s_drops","prop_u_drops",
+      "initial_lat","drop_lat","avg_lat",
+      "tetrises_game","tetrises_level",
+      "agree"];
+    this.logUniversal("EP_SUMM", loglist);
+  },
+
+  logWorld: function(){
+    let loglist = ["SID","ECID","session","game_type","game_number","episode_number",
+    "level","score","lines_cleared","danger_mode",
+    "delaying","dropping","curr_zoid","next_zoid",
+    "zoid_rot","zoid_col","zoid_row","board_rep","zoid_rep"];
+    this.logUniversal("GAME_STATE", loglist);
+  },
+
+  logGameSumm: function(){
+    let loglist = ["SID","ECID","session","game_type","game_number","episode_number",
+    "level","score","lines_cleared","completed",
+    "game_duration","avg_ep_duration","zoid_sequence"]
+    this.logUniversal("GAME_SUMM", loglist);
+  },
+
+  logEvent: function(id, evt_data1, evt_data2){
+      let loglist = ["SID","ECID","session","game_type","game_number","episode_number",
+      "level","score","lines_cleared",
+      "curr_zoid","next_zoid","danger_mode",
+      "delaying","dropping",
+      "zoid_rot","zoid_col","zoid_row"];
+    this.logUniversal("GAME_EVENT", loglist, {"evt_id":id, "evt_data1": evt_data1, "evt_data2":evt_data2});
   }
 };

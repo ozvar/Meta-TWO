@@ -88,7 +88,9 @@
         for (index = 0; index < coords.length ; ++index){
             let row = coords[index][1];
             let column = coords[index][0];
-            tempBoard[row][column] = this.zoidType + 1;
+            if (row >= 0 && column >= 0){
+                tempBoard[row][column] = this.zoidType + 1;
+            }
         }
         return tempBoard;
     }
