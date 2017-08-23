@@ -149,11 +149,7 @@ MetaTWO.Game.prototype = {
     MetaTWO.audio.music.play();
     this.logEvent("GAME", "BEGIN");
 
-    let data = new FormData();
-    data.append("data" , "the_text_you_want_to_save");
-    let xhr = new XMLHttpRequest();
-    xhr.open( 'post', '/data/datastorage.php', true );
-    xhr.send(data);
+    
   },
   
   // The "core loop" of the game, called automatically by Phaser when the player is in the Game state
@@ -836,7 +832,12 @@ MetaTWO.Game.prototype = {
     "game_duration","avg_ep_duration","zoid_sequence"]
     this.logUniversal("GAME_SUMM", loglist);
     // EXCEEDED QUOTA ON A FIVE-MINUTE GAME
-    localStorage.setItem("data", this.masterLog);    
+    //localStorage.setItem("data", this.masterLog);    
+    let data = new FormData();
+    data.append("data" , this.masterLog);
+    let xhr = new XMLHttpRequest();
+    xhr.open( 'post', '/data/datastorage.php', true );
+    xhr.send(data);
   },
 
   logEvent: function(id, evt_data1, evt_data2){

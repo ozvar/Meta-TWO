@@ -1,32 +1,22 @@
 import SimpleHTTPServer
 import SocketServer
-import logging
-import cgi
+import datetime
 
-PORT = 8000
-
-class ServerHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
-
+class MyRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
     def do_GET(self):
-        logging.error(self.headers)
-        SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
-
+        return SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
+        
     def do_POST(self):
-        logging.error(self.headers)
-        form = cgi.FieldStorage(
-            fp=self.rfile,
-            headers=self.headers,
-            environ={'REQUEST_METHOD':'POST',
-                     'CONTENT_TYPE':self.headers['Content-Type'],
-                     })
-        for item in form.list:
-            logging.error(item)
-        SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
+        length = self.headers['content-length']
+        data = self.rfile.read(int(length))
 
+        with open('data/{:%Y-%m-%d-%H-%M-%S}.txt'.format(datetime.datetime.now()), 'w') as fh:
+            fh.write(data.decode())
 
-Handler = ServerHandler
+        self.send_response(200)
+    
 
-httpd = SocketServer.TCPServer(("", PORT), Handler)
+Handler = MyRequestHandler
 
-print "serving at port", PORT
-httpd.serve_forever()
+server = SocketServer.TCPServer(('', 8000), Handler)
+server.serve_forever()
