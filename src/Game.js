@@ -148,6 +148,12 @@ MetaTWO.Game.prototype = {
     this.softdrop_timer = -this.GRAVITY_START_DELAY;
     MetaTWO.audio.music.play();
     this.logEvent("GAME", "BEGIN");
+
+    let data = new FormData();
+    data.append("data" , "the_text_you_want_to_save");
+    let xhr = new XMLHttpRequest();
+    xhr.open( 'post', '/data/datastorage.php', true );
+    xhr.send(data);
   },
   
   // The "core loop" of the game, called automatically by Phaser when the player is in the Game state
