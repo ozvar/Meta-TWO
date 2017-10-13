@@ -234,6 +234,7 @@ MetaTWO.Game.prototype = {
             else{
                 this.softdrop_timer = 0;
                 this.vy = 0;
+                // right now drop_points gets reset to 0 if you're no longer holding down. 
                 this.drop_points = 0;
             }
         }
@@ -817,6 +818,13 @@ MetaTWO.Game.prototype = {
       "tetrises_game","tetrises_level",
       "agree"];
     this.logUniversal("EP_SUMM", loglist);
+    let data = new FormData();
+    data.append("data" , this.masterLog);
+    let xhr = new XMLHttpRequest();
+    xhr.open( 'post', '/data/datastorage.php', true );
+    xhr.send(data);
+    this.masterLog = "";
+    
   },
 
   logWorld: function(){
@@ -834,11 +842,18 @@ MetaTWO.Game.prototype = {
     this.logUniversal("GAME_SUMM", loglist);
     // EXCEEDED QUOTA ON A FIVE-MINUTE GAME
     //localStorage.setItem("data", this.masterLog);    
+
     let data = new FormData();
     data.append("data" , this.masterLog);
     let xhr = new XMLHttpRequest();
     xhr.open( 'post', '/data/datastorage.php', true );
     xhr.send(data);
+    
+    //This code was used to ensure that the data streaming issue was caused by data size not by connection termination.
+//     var data2 = new FormData();
+//     curd = this.masterLog.length + "\n"
+//     data2.append('data', curd);
+//     xhr.send(data2);
   },
 
   logEvent: function(id, evt_data1, evt_data2){

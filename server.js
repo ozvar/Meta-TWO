@@ -15,6 +15,8 @@ var log = console.log;
 const hostname = '127.0.0.1';
 const port = 3000;
 
+
+function filetime() {
 const d = new Date();
 
 var dd = d.getDate();
@@ -39,11 +41,11 @@ if(m<10){
 if(sec<10){
     sec='0'+sec;
 } 
-
-var starttime = yyyy + '-' + mm + '-' + dd + "_" + h + "-" + m + "-" + sec;
+var ret = yyyy + '-' + mm + '-' + dd + "_" + h + "-" + m + "-" + sec;
+return String(ret);
 // document.getElementById("DATE").value = today;
 
-
+}
 function contentType(ext) {
     var ct;
 
@@ -84,7 +86,7 @@ const server = http.createServer((req, res) => {
 //     req.flushHeaders();
 //     req.removeHeader('Content-Type');
 //     log(req.getHeader('Content-Type'));
-    filePath = __dirname + '/data/data_' + starttime + '.txt' ;
+    filePath = __dirname + '/data/data_' + module.starttime + '.txt' ;
     
     
 //     var stream = fs.appendFile(filePath, body, 'utf8')
@@ -164,6 +166,10 @@ const server = http.createServer((req, res) => {
                 return res.end('Error loading index.html');
         }
         //log(data);
+        if(filename == "/src/MainMenu.js"){
+            module.starttime = filetime();
+            log("Set starttime");
+            }
         log(filename + " has read");
 
         res.setHeader('content-type', contentType(ext));
@@ -200,7 +206,7 @@ const server = http.createServer((req, res) => {
     
   });
 
-
+server.setTimeout(10*60*1000); // 10 * 60 seconds * 1000 msecs
 server.listen(port, hostname, () => {
   console.log(`Server running at http://${hostname}:${port}/`);
 });
