@@ -147,7 +147,8 @@ MetaTWO.Game.prototype = {
     //As such, pre-gravity can be canceled out of by pressing Down to start soft dropping.
     this.softdrop_timer = -this.GRAVITY_START_DELAY;
     MetaTWO.audio.music.play();
-    this.logEvent("GAME", "BEGIN");
+    cur = Date.now()
+    this.logEvent("GAME", "BEGIN", cur);
 
     
   },
