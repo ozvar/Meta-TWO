@@ -46,7 +46,7 @@
         // add current coordinates to master list of original coordinates
         let original_coords = this.all_coord[this.zoidType][this.r];
         let current_coords = [];
-        for (i = 0; i < 4; i++){
+        for (let i = 0; i < 4; i++){
             current_coords.push([original_coords[i][0] + this.x, original_coords[i][1] + this.y]);
         }
         current_coords.style = this.style;
@@ -60,7 +60,7 @@
         // add current coordinates to master list of original coordinates
         let original_coords = this.all_coord[this.zoidType][r];
         let current_coords = [];
-        for (i = 0; i < 4; i++){
+        for (let i = 0; i < 4; i++){
             current_coords.push([original_coords[i][0] + this.x, original_coords[i][1] + this.y]);
         }
         return current_coords;

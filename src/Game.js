@@ -115,10 +115,6 @@ MetaTWO.Game.prototype = {
 
     //  Stop the following keys from propagating up to the browser
     MetaTWO.game.input.keyboard.addKeyCapture([ Phaser.Keyboard.A, Phaser.Keyboard.D, Phaser.Keyboard.S, Phaser.Keyboard.K, Phaser.Keyboard.L ]);
-
-  },
-
-  start: function(){
     this.curr = Math.floor(MetaTWO.mt.random() * 7);
     //throw away next value, because current Mersenne Twister implementation
     //only matches Python value every other iteration. No idea why
@@ -141,6 +137,10 @@ MetaTWO.Game.prototype = {
     this.are = 0;
     this._49 = 0;
     this.drop = 0;
+  },
+
+  start: function(){
+    
     
     //From Alex:
     //A negative value is loaded into the soft drop counter for pre-gravity on the first piece.
