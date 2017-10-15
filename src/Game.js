@@ -132,7 +132,7 @@ MetaTWO.Game.prototype = {
     if(typeof MetaTWO.config.startLevel === "number"){
         this.level = MetaTWO.config.startLevel; //this.start_level;
         }else{
-            if(MetaTWO.config.startLevel.indexOf(MetaTWO.gameNumber) !== -1){
+            if(MetaTWO.config.startLevel.indexOf(MetaTWO.gameNumber-1) !== -1){
                 this.level = MetaTWO.config.startLevel[MetaTWO.gameNumber-1]; //this.start_level;
                 } else{
                 this.level = MetaTWO.config.startLevel[MetaTWO.config.startLevel.length-1]; //this.start_level;
