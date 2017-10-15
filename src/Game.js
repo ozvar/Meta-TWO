@@ -129,8 +129,17 @@ MetaTWO.Game.prototype = {
     this.paused = false;
         
     this.alive = true;
-
-    this.level = MetaTWO.config.startLevel; //this.start_level;
+    if(typeof MetaTWO.config.startLevel === "number"){
+        this.level = MetaTWO.config.startLevel; //this.start_level;
+        }else{
+            if(MetaTWO.config.startLevel.indexOf(MetaTWO.gameNumber) !== -1){
+                this.level = MetaTWO.config.startLevel[MetaTWO.gameNumber-1]; //this.start_level;
+                } else{
+                this.level = MetaTWO.config.startLevel[MetaTWO.config.startLevel.length-1]; //this.start_level;
+            }
+        }
+    
+//     this.level = MetaTWO.config.startLevel;
     this.lines = 0;
     this.score = 0;
     
@@ -756,6 +765,7 @@ MetaTWO.Game.prototype = {
   //LOGGING FUNCTIONS
   //def log_universal( self, event_type, loglist, complete = False, evt_id = False, evt_data1 = False, evt_data2 = False, eyes = False, features = False):
   logUniversal: function(event_type, loglist, {complete = false, evt_id = false, evt_data1 = false, evt_data2 = false}={}){
+    
     let data = [];
     let logit = function(val, key){
         if (loglist.indexOf(key) !== -1){

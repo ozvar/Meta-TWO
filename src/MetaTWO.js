@@ -23,7 +23,7 @@ let MetaTWO =
   board: null,
   
   // The preliminary configuration. Many of these values will be overridden before play begins
-  config: {startLevel: 0,
+  config: {startLevel: [0,0,0,9], //if you set to a list, it will cycle through and then repeat the last startLevel
            subjectNumber: 0,
            ECID: 1212,
            AButton: -1,      // different USB NES pads assign different button values
@@ -35,7 +35,8 @@ let MetaTWO =
            session: Date().toString(),
            gameType: "standard",
            sessionTime: 3600,   // total time, in seconds, for this experimental session. 1 hour = 3600 seconds
-           seed: -1 // seed for the Mersenne Twister (random number generator). -1 means use the current time
+           seed: -1, // seed for the Mersenne Twister (random number generator). -1 means use the current time
+           fixedLevel: true, // disregard MainMenu input
           },
 
   // The audio files are loaded in the Preloader state

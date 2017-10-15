@@ -105,7 +105,12 @@ MetaTWO.MainMenu.prototype.update = function() {
 MetaTWO.MainMenu.prototype.gotoNextScreen = function(){
   input.endFocus();
   input.value = input.value===""?0:input.value;
+  if(typeof MetaTWO.config.startLevel !== "number"){
+    MetaTWO.config.fixedLevel = true;
+  }
+  if(MetaTWO.config.fixedLevel === false){
   MetaTWO.config.startLevel = input.value;
+  }
   MetaTWO.config.subjectNumber = subjectNumber.value;
   this.state.start(MetaTWO.Game.stateKey);
 };
