@@ -796,6 +796,11 @@ MetaTWO.Game.prototype = {
 
     logit(this.zoid.names[this.curr], "curr_zoid");
     logit(this.nextZoid.names[this.next], "next_zoid");
+    
+    //Timers!
+    logit(this.are.toString(), "are");
+    logit(this.das.toString(), "das");
+    logit(this.softdrop_timer.toString(), "softdrop");
 
     logit(JSON.stringify(this.board.contents.slice(3,23)), "board_rep"); //hiding the three invisible rows at the top
     logit(JSON.stringify(this.zoid.zoidRep()), "zoid_rep");
@@ -831,7 +836,7 @@ MetaTWO.Game.prototype = {
     let loglist = ["SID","ECID","session","game_type","game_number","episode_number",
     "level","score","lines_cleared","danger_mode",
     "delaying","dropping","curr_zoid","next_zoid",
-    "zoid_rot","zoid_col","zoid_row","board_rep","zoid_rep"];
+    "zoid_rot","zoid_col","zoid_row", "are","das","softdrop","board_rep","zoid_rep",];
     this.logUniversal("GAME_STATE", loglist);
   },
 
@@ -861,7 +866,7 @@ MetaTWO.Game.prototype = {
       "level","score","lines_cleared",
       "curr_zoid","next_zoid","danger_mode",
       "delaying","dropping",
-      "zoid_rot","zoid_col","zoid_row"];
+      "zoid_rot","zoid_col","zoid_row", "das","are", "softdrop"];
     this.logUniversal("GAME_EVENT", loglist, {"evt_id":id, "evt_data1": evt_data1, "evt_data2":evt_data2});
   }
 };
