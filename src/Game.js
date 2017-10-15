@@ -129,7 +129,7 @@ MetaTWO.Game.prototype = {
     this.paused = false;
         
     this.alive = true;
-    this.currentTask = this.active; 
+
     this.level = MetaTWO.config.startLevel; //this.start_level;
     this.lines = 0;
     this.score = 0;
@@ -141,7 +141,7 @@ MetaTWO.Game.prototype = {
 
   start: function(){
     
-    
+        this.currentTask = this.active; 
     //From Alex:
     //A negative value is loaded into the soft drop counter for pre-gravity on the first piece.
     //As such, pre-gravity can be canceled out of by pressing Down to start soft dropping.
