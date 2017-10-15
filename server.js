@@ -166,7 +166,7 @@ const server = http.createServer((req, res) => {
                 return res.end('Error loading index.html');
         }
         //log(data);
-        if(filename === "/src/MainMenu.js" || filename === "\src\MainMenu.js"){
+        if(filename === "/src/MainMenu.js" || filename === "\\src\\MainMenu.js"){
             module.starttime = filetime();
             log("Set starttime");
             }
