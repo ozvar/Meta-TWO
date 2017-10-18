@@ -669,9 +669,15 @@ MetaTWO.Game.prototype = {
     if (MetaTWO.game.input.gamepad.supported && MetaTWO.game.input.gamepad.active && this.gamepad.connected){
         this.AButton = this.gamepad.isDown(MetaTWO.config.AButton);
         this.BButton = this.gamepad.isDown(MetaTWO.config.BButton);
+        if(MetaTWO.config.pad === "axis"){
+                this.downButton = (this.gamepad.axis(Phaser.Gamepad.AXIS_1) > 0.1);
+                this.leftButton = (this.gamepad.axis(Phaser.Gamepad.AXIS_0) < -0.1);
+                this.rightButton = (this.gamepad.axis(Phaser.Gamepad.AXIS_0) > 0.1)
+                } else{
         this.downButton = this.gamepad.isDown(MetaTWO.config.downButton);
         this.leftButton = this.gamepad.isDown(MetaTWO.config.leftButton);
         this.rightButton = this.gamepad.isDown(MetaTWO.config.rightButton);
+        }
         this.startButton = this.gamepad.isDown(MetaTWO.config.startButton);
     }
 

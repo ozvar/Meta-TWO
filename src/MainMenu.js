@@ -80,6 +80,7 @@ MetaTWO.MainMenu.prototype.update = function() {
   if (enter.isDown) {
     this.gotoNextScreen();
   }
+  
   if (MetaTWO.gamepad.isDown(Phaser.Gamepad.BUTTON_0)){
     // assuming a Tomee converted gamepad
     MetaTWO.config.AButton = Phaser.Gamepad.BUTTON_0;
@@ -88,6 +89,9 @@ MetaTWO.MainMenu.prototype.update = function() {
     MetaTWO.config.rightButton = Phaser.Gamepad.BUTTON_6;
     MetaTWO.config.downButton = Phaser.Gamepad.BUTTON_4;
     MetaTWO.config.startButton = Phaser.Gamepad.BUTTON_3;
+    MetaTWO.config.pad = "axis"
+    
+
     this.gotoNextScreen();
   }
   if (MetaTWO.gamepad.isDown(Phaser.Gamepad.BUTTON_1)){
