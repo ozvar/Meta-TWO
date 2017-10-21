@@ -129,7 +129,7 @@ MetaTWO.Game.prototype = {
     this.paused = false;
         
     this.alive = true;
-    if(typeof MetaTWO.config.startLevel === "number"){
+    if(typeof MetaTWO.config.startLevel === "string"){
         this.level = MetaTWO.config.startLevel; //this.start_level;
         }else{
             if(MetaTWO.config.startLevel.length >= MetaTWO.gameNumber){
