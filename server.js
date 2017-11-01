@@ -14,6 +14,7 @@ var log = console.log;
 
 const hostname = '127.0.0.1';
 const port = 3000;
+const debug = false; 
 
 
 function filetime() {
@@ -75,9 +76,13 @@ const server = http.createServer((req, res) => {
     uri = "index.html";
     }
   var filename = path.join(dir, uri);
-  log(filename);
-  var ext = path.extname(filename)
-  log(contentType(ext));  
+
+  var ext = path.extname(filename);
+  if(debug === true){
+    log(filename);
+    log(contentType(ext));  
+  }
+
 
   if (req.method == 'POST') {
     var form = new multiparty.Form(uploadDir = __dirname + '/data');
@@ -168,10 +173,13 @@ const server = http.createServer((req, res) => {
         //log(data);
         if(filename === "/src/MainMenu.js" || filename === "\\src\\MainMenu.js"){
             module.starttime = filetime();
+            if(debug === true){
             log("Set starttime");
             }
+            }
+        if(debug === true){
         log(filename + " has read");
-
+        }
         res.setHeader('content-type', contentType(ext));
         
         res.statusCode = 200;
