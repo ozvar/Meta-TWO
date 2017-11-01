@@ -37,7 +37,9 @@ let MetaTWO =
            sessionTime: 3600,   // total time, in seconds, for this experimental session. 1 hour = 3600 seconds
            seed: -1, // seed for the Mersenne Twister (random number generator). -1 means use the current time
            fixedLevel: true, // disregard MainMenu input
-           pad: "standard"
+           pad: "standard",
+           pressSensitivity: 0.1,
+           releaseSensitivity: 0.6,
           },
 
   // The audio files are loaded in the Preloader state

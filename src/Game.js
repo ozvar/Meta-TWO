@@ -105,6 +105,7 @@ MetaTWO.Game.prototype = {
     this.scoreDisplay.anchor.set(1,0);
     this.gameNumberDisplay = MetaTWO.game.add.text(370, 30, "game#", { font: "18px Arial", fill: "#ffffff", align: "right" });
 
+
     //  Register the keys.
     this.leftKey = MetaTWO.game.input.keyboard.addKey(Phaser.Keyboard.A);
     this.rightKey = MetaTWO.game.input.keyboard.addKey(Phaser.Keyboard.D);
@@ -670,9 +671,21 @@ MetaTWO.Game.prototype = {
         this.AButton = this.gamepad.isDown(MetaTWO.config.AButton);
         this.BButton = this.gamepad.isDown(MetaTWO.config.BButton);
         if(MetaTWO.config.pad === "axis"){
-                this.downButton = (this.gamepad.axis(Phaser.Gamepad.AXIS_1) > 0.1);
-                this.leftButton = (this.gamepad.axis(Phaser.Gamepad.AXIS_0) < -0.1);
-                this.rightButton = (this.gamepad.axis(Phaser.Gamepad.AXIS_0) > 0.1)
+                if(this.downCurr){
+                this.downButton = (this.gamepad.axis(Phaser.Gamepad.AXIS_1) > MetaTWO.config.releaseSensitivity);
+                } else{
+                this.downButton = (this.gamepad.axis(Phaser.Gamepad.AXIS_1) > MetaTWO.config.pressSensitivity);
+                }
+                if(this.leftCurr){
+                this.leftButton = (this.gamepad.axis(Phaser.Gamepad.AXIS_0) < -(MetaTWO.config.releaseSensitivity));
+                }else{
+                this.leftButton = (this.gamepad.axis(Phaser.Gamepad.AXIS_0) < -(MetaTWO.config.pressSensitivity));
+                }
+                if(this.rightCurr){
+                this.rightButton = (this.gamepad.axis(Phaser.Gamepad.AXIS_0) > MetaTWO.config.releaseSensitivity);
+                }else{
+                this.rightButton = (this.gamepad.axis(Phaser.Gamepad.AXIS_0) > MetaTWO.config.pressSensitivity);
+                }
                 } else{
         this.downButton = this.gamepad.isDown(MetaTWO.config.downButton);
         this.leftButton = this.gamepad.isDown(MetaTWO.config.leftButton);
