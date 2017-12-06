@@ -39,7 +39,7 @@ let MetaTWO =
            fixedLevel: false, // disregard MainMenu input
            pad: "standard",
            pressSensitivity: 0.1,
-           releaseSensitivity: 0.6,
+           releaseSensitivity: 0.1,
           },
 
   // The audio files are loaded in the Preloader state
