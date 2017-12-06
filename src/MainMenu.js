@@ -64,12 +64,13 @@ MetaTWO.MainMenu.prototype.create = function() {
     borderWidth: 1,
     borderColor: '#000',
     borderRadius: 6,
-    placeHolder: '0',
+    placeHolder: MetaTWO.config.startLevel,
     min: 0,
     max: 29,
     type: PhaserInput.InputType.number,
     //blockInput: false
   });
+  input.setText(MetaTWO.config.startLevel);
   input.blockInput = false;
   //input.setText(0);
   input.startFocus();
@@ -112,7 +113,7 @@ MetaTWO.MainMenu.prototype.gotoNextScreen = function(){
   if(typeof MetaTWO.config.startLevel !== "number"){
     MetaTWO.config.fixedLevel = true;
   }
-  if(MetaTWO.config.fixedLevel === false){
+  if(MetaTWO.config.fixedLevel == false){
   MetaTWO.config.startLevel = input.value;
   }
   MetaTWO.config.subjectNumber = subjectNumber.value;

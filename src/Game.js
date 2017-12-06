@@ -131,7 +131,11 @@ MetaTWO.Game.prototype = {
         
     this.alive = true;
     if(typeof MetaTWO.config.startLevel === "string"){
+        MetaTWO.config.startLevel = parseInt(MetaTWO.config.startLevel);
+        }
+    if(typeof MetaTWO.config.startLevel === "number"){
         this.level = MetaTWO.config.startLevel; //this.start_level;
+//         this.level = 0;
         }else{
             if(MetaTWO.config.startLevel.length >= MetaTWO.gameNumber){
                 this.level = MetaTWO.config.startLevel[MetaTWO.gameNumber-1]; //this.start_level;
