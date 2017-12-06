@@ -151,7 +151,7 @@ MetaTWO.Game.prototype = {
 
   start: function(){
     
-        this.currentTask = this.active; 
+    this.currentTask = this.active; 
     //From Alex:
     //A negative value is loaded into the soft drop counter for pre-gravity on the first piece.
     //As such, pre-gravity can be canceled out of by pressing Down to start soft dropping.
@@ -159,7 +159,6 @@ MetaTWO.Game.prototype = {
     MetaTWO.audio.music.play();
     cur = Date.now()
     this.logEvent("GAME", "BEGIN", cur);
-
     
   },
   
@@ -196,6 +195,8 @@ MetaTWO.Game.prototype = {
         this.frames++;
         this.logWorld();
     }
+    MetaTWO.game.updateRender()
+
   },
 
   // Possibly the most delicate and important function in the game, translating user input into game commands.
