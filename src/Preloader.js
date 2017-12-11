@@ -8,9 +8,9 @@ MetaTWO.Preloader = function()
 MetaTWO.Preloader.stateKey = "Preloader";
 
 MetaTWO.Preloader.prototype = {
-  
+
   init: function () {},
-  
+
   preload: function () {
     this.stage.backgroundColor = 0x111111;
 
@@ -48,13 +48,13 @@ MetaTWO.Preloader.prototype = {
     // this.load.image('background', 'background.png');
     // this.load.image('banner', 'banner.png');
     // this.load.spritesheet('block', 'blocks25.png', MetaTWO.BLOCK_WIDTH, MetaTWO.BLOCK_WIDTH);
-    
-   
+
+
   },
-  
+
   create: function () {
     this.stage.backgroundColor = 0x222222;
-    
+
     // create block buffs
 
     this.numberOfDecodedSounds = 0;
@@ -94,20 +94,20 @@ MetaTWO.Preloader.prototype = {
 
     this.sound.setDecodedCallback( this.soundList, this.allSoundsDecoded, this );
   },
-    
+
   soundDecoded: function () {
     // Start scaling the preloader sprite towards 200% for audio decoding.
     this.numberOfDecodedSounds++;
     this.preloader.scale.set( 1.0 + ( this.numberOfDecodedSounds / this.soundList.length ), 1.0 );
   },
-  
+
   allSoundsDecoded: function () {
     this.start();
   },
-  
+
   start: function () {
     // Proceed to main menu, as usual.
     this.state.start( MetaTWO.MainMenu.stateKey );
   }
-  
+
 };

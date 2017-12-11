@@ -64,13 +64,12 @@ MetaTWO.MainMenu.prototype.create = function() {
     borderWidth: 1,
     borderColor: '#000',
     borderRadius: 6,
-    placeHolder: MetaTWO.config.startLevel,
+    placeHolder: '0',
     min: 0,
     max: 29,
     type: PhaserInput.InputType.number,
     //blockInput: false
   });
-  input.setText(MetaTWO.config.startLevel);
   input.blockInput = false;
   //input.setText(0);
   input.startFocus();
@@ -81,7 +80,6 @@ MetaTWO.MainMenu.prototype.update = function() {
   if (enter.isDown) {
     this.gotoNextScreen();
   }
-  
   if (MetaTWO.gamepad.isDown(Phaser.Gamepad.BUTTON_0)){
     // assuming a Tomee converted gamepad
     MetaTWO.config.AButton = Phaser.Gamepad.BUTTON_0;
@@ -90,9 +88,6 @@ MetaTWO.MainMenu.prototype.update = function() {
     MetaTWO.config.rightButton = Phaser.Gamepad.BUTTON_6;
     MetaTWO.config.downButton = Phaser.Gamepad.BUTTON_4;
     MetaTWO.config.startButton = Phaser.Gamepad.BUTTON_3;
-    MetaTWO.config.pad = "axis"
-    
-
     this.gotoNextScreen();
   }
   if (MetaTWO.gamepad.isDown(Phaser.Gamepad.BUTTON_1)){
@@ -110,12 +105,7 @@ MetaTWO.MainMenu.prototype.update = function() {
 MetaTWO.MainMenu.prototype.gotoNextScreen = function(){
   input.endFocus();
   input.value = input.value===""?0:input.value;
-  if(typeof MetaTWO.config.startLevel !== "number"){
-    MetaTWO.config.fixedLevel = true;
-  }
-  if(MetaTWO.config.fixedLevel == false){
   MetaTWO.config.startLevel = input.value;
-  }
   MetaTWO.config.subjectNumber = subjectNumber.value;
   this.state.start(MetaTWO.Game.stateKey);
 };

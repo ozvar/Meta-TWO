@@ -10,20 +10,20 @@ let MetaTWO =
   buttonTextOverColor: 0xffff00,
   buttonStyle: { font: "32px Arial", fill: "#ffffff" },
   buttonActiveStyle: { font: "32px Arial", fill: "#ffffff", fontStyle: "italic" },
-  
+
   // Asset Sizes
   LINING_WIDTH: 5,
   BLOCK_WIDTH: 25,
-  
+
   // Board Size
   BOARD_WIDTH: 10,
   BOARD_HEIGHT: 20,
-  
-  // The actual board is initialized in MetaTWO.Game.create(). 
+
+  // The actual board is initialized in MetaTWO.Game.create().
   board: null,
-  
+
   // The preliminary configuration. Many of these values will be overridden before play begins
-  config: {startLevel: 0, //if you set to a list, it will cycle through and then repeat the last startLevel
+  config: {startLevel: 0,
            subjectNumber: 0,
            ECID: 1212,
            AButton: -1,      // different USB NES pads assign different button values
@@ -34,17 +34,13 @@ let MetaTWO =
            startButton: -1,
            session: Date().toString(),
            gameType: "standard",
-           sessionTime: 3600,   // total time, in seconds, for this experimental session. 1 hour = 3600 seconds
-           seed: -1, // seed for the Mersenne Twister (random number generator). -1 means use the current time
-           fixedLevel: false, // disregard MainMenu input
-           pad: "standard",
-           pressSensitivity: 0.1,
-           releaseSensitivity: 0.1,
+           sessionTime: 300,   // total time, in seconds, for this experimental session. 1 hour = 3600 seconds
+           seed: -1 // seed for the Mersenne Twister (random number generator). -1 means use the current time
           },
 
   // The audio files are loaded in the Preloader state
   audio: {},
-  
+
   // The header for the log file. We will append new strings to this array
   log: ["ts","event_type", "SID","ECID","session","game_type","game_number","episode_number","level","score","lines_cleared",
         "completed","game_duration","avg_ep_duration","zoid_sequence","evt_id","evt_data1","evt_data2",
@@ -86,5 +82,5 @@ MetaTWO.run = function()
   // Boot the game
   this.game.state.start( MetaTWO.Boot.stateKey );
 
-  
+
 };

@@ -1,0 +1,190 @@
+body {
+  width: 80%;
+  min-width: 150px;
+  margin: 2% auto 0 auto;
+  font-family: 'Open Sans', sans-serif;
+  background-color: #F0F8FF;
+}
+
+a{
+  color: #0740c7;
+}
+
+a:hover{
+  color: #0740c7;
+}
+
+a:link{
+  text-decoration: none;
+  font-size: 1.5em;
+  color: #0740c7;
+}
+
+li.active a {
+  font-weight: bold;
+}
+
+#menu{
+  border-bottom: 2px solid #333;
+  margin-bottom: 5px;
+  text-align: center;
+}
+
+#menu ul{
+  padding: 0;
+  margin: 0;
+  line-height: 200%;
+  font-size: 1.5em;
+}
+
+#menu li{
+  display: inline;
+  list-style-type: none;
+  padding: 0 1% 0 1%;
+}
+
+h2{
+  margin-bottom: 0;
+}
+
+.btn {
+    display: inline-block;
+    float: left;
+    padding: 5px 10px;
+    margin-top: 1em;
+    margin-right: 1em;
+    font-size: 12px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    outline: none;
+    color: #fff;
+    background-color: #35b7e5;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 3px #aaa;
+}
+
+.btn:hover {
+  background-color: #247d9c
+}
+
+.btn:active {
+  background-color: #247d9c;
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
+}
+
+
+
+input[type=text], input[type=password] {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+/* Set a style for all buttons */
+button {
+  background-color: #4CAF50;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+}
+
+button:hover {
+  opacity: 0.8;
+}
+
+
+#tables {
+  width: 100%;
+  border-radius: 20px;
+}
+#tables h2 {
+  clear: both;
+}
+#tables {
+  width: 100%;
+  border-radius: 20px;
+  padding-bottom: 5%;
+}
+#tables table {
+  border: 0px groove;
+  border-radius: 25px;
+  border-collapse: collapse;
+  width: 100%;
+}
+#tables .data {
+  background-color: #aaa;
+  margin: 1px 0 0 0;
+  border-top: 1px solid #ddd;
+}
+#tables .data td {
+  padding: 15px;
+  text-align: left;
+  color: black;
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+}
+#tables table#admin .data td {
+  padding: 5px;
+  color: black;
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+}
+#tables .data td.center {
+  text-align: center;
+}
+#tables .data input[type=submit] {
+  background-color: #fff;
+  border: 0px solid;
+  padding: 10px;
+  border-radius: 10px;
+}
+#tables .data input[type=submit]:hover {
+  background-color: #ddd;
+}
+#tables .data select {
+  background-color: #fff;
+  margin-bottom: 4px;
+  padding: 4px;
+}
+#tables .data select:focus {
+  background-color: #ddd;
+}
+#tables .data select:hover {
+  background-color: #ddd;
+}
+#tables .emptyData {
+  background-color: #aaa;
+  margin: 1px 0 0 0;
+}
+#tables .emptyData td {
+  text-align: center;
+  padding: 15px;
+  color: #555;
+  font-style: italic;
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+}
+#tables .head {
+  background-color: #333;
+  color: white;
+}
+#tables .head th {
+  padding: 15px;
+  text-align: center;
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+}
+
+#right {
+    float: right;
+    margin-left: 1em;
+}

@@ -8,9 +8,10 @@ MetaTWO.GameOver.prototype.preload = function() {};
 
 MetaTWO.GameOver.prototype.create = function() {
   this.stage.backgroundColor = 0x444444;
-  MetaTWO.game.add.text(240, 50, "Game complete.\nPress Enter or A Button to continue", {
+  MetaTWO.game.add.text(125, 50, "Game complete.\nPress Enter or A Button to continue", {
     font: "bold 32px Arial",
     fill: "#fff",
+    align: "center",
     boundsAlignH: "center",
     boundsAlignV: "middle"
   });
