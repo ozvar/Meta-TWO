@@ -40,6 +40,7 @@ let MetaTWO =
            pad: "standard",
            pressSensitivity: 0.1,
            releaseSensitivity: 0.6,
+           logging: false, 
           },
 
   // The audio files are loaded in the Preloader state

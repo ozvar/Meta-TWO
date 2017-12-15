@@ -789,7 +789,7 @@ MetaTWO.Game.prototype = {
   //LOGGING FUNCTIONS
   //def log_universal( self, event_type, loglist, complete = False, evt_id = False, evt_data1 = False, evt_data2 = False, eyes = False, features = False):
   logUniversal: function(event_type, loglist, {complete = false, evt_id = false, evt_data1 = false, evt_data2 = false}={}){
-    
+        if(MetaTWO.config.logging == true){
     let data = [];
     let logit = function(val, key){
         if (loglist.indexOf(key) !== -1){
@@ -841,10 +841,12 @@ MetaTWO.Game.prototype = {
    
     data = data.join("\t");
     this.masterLog += data + '\n';
+    }
     //console.log();
   },
 
   logEpisode: function(){
+      if(MetaTWO.config.logging == true){
       let loglist = ["SID","ECID","session","game_type","game_number","episode_number",
       "level","score","lines_cleared",
       "curr_zoid","next_zoid","danger_mode",
@@ -863,18 +865,22 @@ MetaTWO.Game.prototype = {
     xhr.open( 'post', '/data/datastorage.php', true );
     xhr.send(data);
     this.masterLog = "";
+    }
     
   },
 
   logWorld: function(){
+      if(MetaTWO.config.logging == true){
     let loglist = ["SID","ECID","session","game_type","game_number","episode_number",
     "level","score","lines_cleared","danger_mode",
     "delaying","dropping","curr_zoid","next_zoid",
     "zoid_rot","zoid_col","zoid_row", "are","das","softdrop","board_rep","zoid_rep",];
     this.logUniversal("GAME_STATE", loglist);
+    }
   },
 
   logGameSumm: function(){
+      if(MetaTWO.config.logging == true){
     let loglist = ["SID","ECID","session","game_type","game_number","episode_number",
     "level","score","lines_cleared","completed",
     "game_duration","avg_ep_duration","zoid_sequence"]
@@ -887,6 +893,7 @@ MetaTWO.Game.prototype = {
     let xhr = new XMLHttpRequest();
     xhr.open( 'post', '/data/datastorage.php', true );
     xhr.send(data);
+    }
     
     //This code was used to ensure that the data streaming issue was caused by data size not by connection termination.
 //     var data2 = new FormData();
@@ -896,11 +903,13 @@ MetaTWO.Game.prototype = {
   },
 
   logEvent: function(id, evt_data1, evt_data2){
+    if(MetaTWO.config.logging == true){
       let loglist = ["SID","ECID","session","game_type","game_number","episode_number",
       "level","score","lines_cleared",
       "curr_zoid","next_zoid","danger_mode",
       "delaying","dropping",
       "zoid_rot","zoid_col","zoid_row", "das","are", "softdrop"];
     this.logUniversal("GAME_EVENT", loglist, {"evt_id":id, "evt_data1": evt_data1, "evt_data2":evt_data2});
+  }
   }
 };
