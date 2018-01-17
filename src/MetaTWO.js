@@ -19,6 +19,13 @@ let MetaTWO =
   BOARD_WIDTH: 10,
   BOARD_HEIGHT: 20,
   
+  // Block colors
+  NUM_COLORS: 4,
+  GREEN:  0,
+  RED:    1,
+  BLUE:   2,
+  YELLOW: 3,
+  
   // The actual board is initialized in MetaTWO.Game.create(). 
   board: null,
   

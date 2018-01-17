@@ -26,6 +26,15 @@ MetaTWO.Game = function (game) {
             ['rgba( 74, 0, 255, 1 )', 'rgba( 189, 66, 0, 1 )'], //L8
             ['rgba( 189, 66, 0, 1 )', 'rgba( 239, 166, 0, 1 )'], //L9
             ]
+//     this.rotCenter = [
+//             [5.5,0.5], //I
+//             [4.5,1.5], //O
+//             [5.5,0.5], //T
+//             [4.5,1.5], //S
+//             [4.5,1.5], //Z
+//             [4.5,1.5], //J
+//             [4.5,1.5], //L
+//     ]
 };
 
 MetaTWO.Game.stateKey = "Game";
@@ -80,6 +89,11 @@ MetaTWO.Game.prototype = {
     this.fastMusic = false;
     this.rowsToClear = [];
     this.masterLog = "";
+    this.changeOccured = false; 
+    this.renderClear = this.add.group();
+    this.primPool0 = this.add.group();
+    this.primPool1 = this.add.group();
+    this.primPool2 = this.add.group();
     
     let i, j;
     this.AButton = this.BButton = this.leftButton = this.rightButton = this.downButton = this.startButton = 0;
@@ -97,6 +111,13 @@ MetaTWO.Game.prototype = {
     graphics.lineStyle(2, 0x00FF00, 1);    
     graphics.drawRect(0, 0, 252, 503);
     graphics.drawRect(320,0,120,120)
+    
+//     graphics.lineStyle(2, 0xFFFFFF, 1);
+//     graphics.beginFill(0xFFFFFF);
+//     graphics.drawRect(0, 0, 24, 24);//, this.bgColors[this.level%10][0]);
+//     graphics.endFill();
+//     
+    
     let frameImage = graphics.generateTexture();
     this.bg = MetaTWO.game.add.image(274,71, frameImage);
     graphics.destroy();
@@ -124,9 +145,17 @@ MetaTWO.Game.prototype = {
     this.next = Math.floor(MetaTWO.mt.random() * 7);
     Math.floor(MetaTWO.mt.random() * 7);
     this.zoid = Zoid.spawn(this.curr);
+    
+    
+    this.firstDraw = 1;
+    this.zoid_prim();
+//     this.create_zoid_prims();
+    this.pile = this.add.group();
     //add to zoid buffer
     this.zoidBuff.push(this.zoid.names[this.curr]);
     this.nextZoid = Zoid.spawn(this.next);
+
+    this.create_zoid_render();
     this.paused = false;
         
     this.alive = true;
@@ -199,7 +228,17 @@ MetaTWO.Game.prototype = {
         this.frames++;
         this.logWorld();
     }
-    MetaTWO.game.updateRender()
+    //make sure, every frame, we move the current zoidRender to the right spot
+    if (this.changeOccured === true ){
+              let blocks = this.zoid.getBlocks();
+                for (i=0; i< 4; i++){
+                        this.zoidRender.xy(i, blocks[i][0]*25+276, blocks[i][1]*25+74);
+        }
+        
+
+    }
+    this.changeOccured = false; 
+//     MetaTWO.game.updateRender()
 
   },
 
@@ -257,9 +296,11 @@ MetaTWO.Game.prototype = {
 
     if (this.justPressed(this.keys.ROTATE)){
         this.vr = 1;
+        this.changeOccured = true; 
     }
     else if (this.justPressed(this.keys.COUNTERROTATE)){
         this.vr = -1;
+        this.changeOccured = true; 
     }
     else{
         this.vr = 0;
@@ -283,6 +324,8 @@ MetaTWO.Game.prototype = {
         if (shift){
             if (!this.zoid.collide(this.board, this.vx, 0, 0)){
                 this.zoid.x += this.vx;
+                this.changeOccured = true; 
+//                 this.zoidRender.position.x += this.vx*25
                 this.logEvent("ZOID", "TRANSLATE", this.vx.toString());
                 MetaTWO.audio.move.play();
             }
@@ -299,14 +342,16 @@ MetaTWO.Game.prototype = {
       if (this.vr !== 0){
           if (!this.zoid.collide(this.board, 0, 0, this.vr)){
               MetaTWO.audio.rotate.play();  
-              this.logEvent("ZOID", "ROTATE", this.vr.toString());        
+              this.logEvent("ZOID", "ROTATE", this.vr.toString());
 
               this.zoid.r += this.vr;
               this.zoid.r = this.zoid.r & 3;
+//               this.zoidRender.angle += this.vr*90;
           }
 
       }
   },
+
 
   gravity: function(){
     if (this.softdrop_timer < 0){
@@ -319,6 +364,8 @@ MetaTWO.Game.prototype = {
         this.drop = 0;
         if (!this.zoid.collide(this.board, 0, 1, 0)){
             this.zoid.y++;
+            this.changeOccured = true; 
+//             this.zoidRender.position.y += 25
         }
         else{
             // we're playing the "lock" sound now, but technically the piece doesn't commit until the next frame (in updateTask)
@@ -334,6 +381,7 @@ MetaTWO.Game.prototype = {
             }
         }
     }
+    
   },
 
   // the dominant "currentTask" of the master loop. We switch out at the end of each episode
@@ -388,6 +436,11 @@ MetaTWO.Game.prototype = {
         this.dummyBoard.lineDrop(row); //clear lines from "backup" board, copy to actual board at end of animation
         this.lines_this++;
         this.rowsToClear.push(row);
+        // compile zoid to pile
+        this.zoidRender.moveAll(this.pile);
+        this.zoidRender = this.add.group();
+        this.renderClear.addMultiple(this.pile.getAll('y', row*25+74));
+        
     }
 
     this.are++;
@@ -425,6 +478,17 @@ MetaTWO.Game.prototype = {
         hex_trick = Math.floor(this.lines/10);
         hex_trick = parseInt(hex_trick.toString(), 16);
         if (hex_trick > this.level){
+            this.primPool0.killAll();
+            this.primPool0.removeAll();
+            this.primPool0.destroy();
+            this.primPool1.killAll();
+            this.primPool1.removeAll();
+            this.primPool1.destroy();
+            this.primPool2.killAll();
+            this.primPool2.removeAll();
+            this.primPool2.destroy();
+            this.zoid_prim();
+            this.recolor_pile();
             this.level++;
             MetaTWO.audio.levelup.play();
         }
@@ -488,14 +552,21 @@ MetaTWO.Game.prototype = {
     //add to zoid buffer
     this.zoidBuff.push(this.zoid.names[this.curr]);
     this.nextZoid = Zoid.spawn(this.next);
+    this.firstDraw = 1;
+    //move rendered curr zoid to pile
+    this.zoidRender.moveAll(this.pile);
+    //render new zoid
+    this.zoidNext.destroy();
+    this.create_zoid_render();
     this.logEvent("ZOID", "NEW", this.zoid.names[this.curr]);
     this.logEvent("EPISODE", "BEGIN", "");
     this.currentTask = this.active;
   },
-
+  
   sub_94ee: function(){
     if (this.currentTask === this.lineAnim){
         if ((this.frames & 3) === 0){
+            this.update_pile();
             this.are++;
             //advance through line animation
             for (i=0; i < this.rowsToClear.length; i++)
@@ -503,32 +574,47 @@ MetaTWO.Game.prototype = {
                     switch(this.are){
                         case 1:
                         this.board.contents[this.rowsToClear[i]+3][4] = 0;
-                        this.board.contents[this.rowsToClear[i]+3][5] = 0
+                        this.board.contents[this.rowsToClear[i]+3][5] = 0;
+                        
+//                         this.renderClear.remove(this.renderClear.getClosestTo(new Phaser.Point(4*25 + 276, (this.rowsToClear[i]+1)*25 + 74)));
+//                         this.renderClear.remove(this.renderClear.getClosestTo(new Phaser.Point(5*25 + 276, (this.rowsToClear[i])*25 + 74)));
                         break;
                         case 2:
                         this.board.contents[this.rowsToClear[i]+3][3] = 0;
-                        this.board.contents[this.rowsToClear[i]+3][6] = 0
+                        this.board.contents[this.rowsToClear[i]+3][6] = 0;
                         if (this.rowsToClear.length === 4) {this.stage.backgroundColor = 0xffffff;}
+//                         this.renderClear.remove(this.renderClear.getClosestTo(new Phaser.Point(3*25 + 276, (this.rowsToClear[i]+1)*25 + 74)));
+//                         this.renderClear.remove(this.renderClear.getClosestTo(new Phaser.Point(6*25 + 276, (this.rowsToClear[i]+1)*25 + 74)));
+
                         break;
                         case 3:
                         this.board.contents[this.rowsToClear[i]+3][2] = 0;
                         this.board.contents[this.rowsToClear[i]+3][7] = 0
                         this.stage.backgroundColor = 0x050505; 
+//                         this.renderClear.remove(this.renderClear.getClosestTo(new Phaser.Point(2*25 + 276, (this.rowsToClear[i]+1)*25 + 74)));
+//                         this.renderClear.remove(this.renderClear.getClosestTo(new Phaser.Point(7*25 + 276, (this.rowsToClear[i]+1)*25 + 74)));
+
                         break;
                         case 4:
                         this.board.contents[this.rowsToClear[i]+3][1] = 0;
                         this.board.contents[this.rowsToClear[i]+3][8] = 0
                         if (this.rowsToClear.length === 4) {this.stage.backgroundColor = 0xffffff;}
+//                         this.renderClear.remove(this.renderClear.getClosestTo(new Phaser.Point(1*25 + 276, (this.rowsToClear[i]+1)*25 + 74)));
+//                         this.renderClear.remove(this.renderClear.getClosestTo(new Phaser.Point(8*25 + 276, (this.rowsToClear[i]+1)*25 + 74)));
+                        
                         break;
                         case 5:
                         this.board.contents[this.rowsToClear[i]+3][0] = 0;
-                        this.board.contents[this.rowsToClear[i]+3][9] = 0
+                        this.board.contents[this.rowsToClear[i]+3][9] = 0;
+//                         this.renderClear.remove(this.renderClear.getClosestTo(new Phaser.Point(0*25 + 276, (this.rowsToClear[i])*25 + 74)));
+//                         this.renderClear.remove(this.renderClear.getClosestTo(new Phaser.Point(9*25 + 276, (this.rowsToClear[i])*25 + 74)));
                         break;
                     }
                 }
         }
         //else {this.stage.backgroundColor = 0x050505;}
         if (this.are >= this.LINECLEAR_STEPS){
+            this.update_pile();
             this.are = 0;
             this.currentTask = this.scoreUpdate;
             this.rowsToClear = [];
@@ -543,7 +629,72 @@ MetaTWO.Game.prototype = {
         }
     }
   },
+  
+  update_pile: function(){
+    curDestroy = this.add.group();
+    switch(this.are){
 
+    case 1:
+    curDestroy.addMultiple(this.renderClear.getAll('x', 4*25+276));
+    curDestroy.addMultiple(this.renderClear.getAll('x', 5*25+276));
+    curDestroy.killAll();
+//     curDestroy.destroy();
+    break;
+    
+    case 2:
+    curDestroy.addMultiple(this.renderClear.getAll('x', 3*25+276));
+    curDestroy.addMultiple(this.renderClear.getAll('x', 6*25+276));
+    curDestroy.killAll();
+//     curDestroy.destroy();
+    break;
+    
+    case 3:
+    curDestroy.addMultiple(this.renderClear.getAll('x', 2*25+276));
+    curDestroy.addMultiple(this.renderClear.getAll('x', 7*25+276));
+    curDestroy.killAll();
+//     curDestroy.destroy();
+    break;
+    
+    case 4:
+    curDestroy.addMultiple(this.renderClear.getAll('x', 1*25+276));
+    curDestroy.addMultiple(this.renderClear.getAll('x', 8*25+276));
+    curDestroy.killAll();
+//     curDestroy.destroy();
+    break;
+    
+    case 5:
+    curDestroy.killAll();
+//     curDestroy.destroy();
+    this.renderClear.killAll();
+//     this.renderClear.destroy();
+    this.renderClear = this.add.group();
+    for(i=0; i < this.rowsToClear.length; i++){
+        this.tempI = this.rowsToClear[i]+1
+        
+        var index = -1;
+        //phaser's filter isn't working, so here's it manual
+        var length = this.pile.children.length;
+        var results = [];
+
+        while (++index < length){
+            var child = this.pile.children[index];
+            if (child.exists){
+                if (child.position.y < (71+25*this.rowsToClear[i])){
+                    child.position.y += 25;
+                }
+            }
+        }
+        
+//         MetaTWO.game.debug.text("childs: " + this.tempGroup.length, 2, 195, "#00ff00");
+//         MetaTWO.game.debug.text("childs: " + Object.getOwnPropertyNames(this.tempGroup), 2, 210, "#00ff00");
+//         tempGroup.addAll("position.y", 25);
+    }
+    break;
+    
+   }
+  //basically we need to do the Line Drop function...
+  },
+  
   sub_9725: function(){
     if(this._49 > 0x15){
         return;
@@ -561,84 +712,258 @@ MetaTWO.Game.prototype = {
         this._49 = 0;
     }
   },
+  
+  zoid_prim: function(){
+    
+//     this.zoidPrim0 = this.add.group();
+    let zp = MetaTWO.game.add.graphics();
+    zp.beginFill(Phaser.Color.webToColor(this.bgColors[this.level%10][0]).color);
+    zp.drawRect(0, 0, 24, 24);//, this.bgColors[this.level%10][0]);
+    zp.endFill();
+//                         zr.lineStyle(1, 0xffffff, 1);
+    zp.beginFill(0xffffff, 1); // rgba(255,255,255,1)
+    zp.drawRect(0, 0, 3, 3);//, 'rgba(255,255,255,1');
+    zp.drawRect(3, 3, 18, 18);//, 'rgba(255,255,255,1');
+    zp.endFill();
+    this.zoidPrim0 = zp.generateTexture();
+//     this.zoidPrim0 = MetaTWO.game.add.image(274,71, zoidPrim0);
+    zp.destroy();
 
-  render: function(){
-    if (!this.paused){
-        //debug draw pile
-        // if this.currentTask === this.lineAnim, we want to not drae certain blocks
-        for(iy = 0; iy<this.board.height; iy++){
-            for(ix = 0; ix<this.board.width; ix++){
-                if(this.board.isFilled(ix, iy)){
-                    switch(this.board.getStyle(ix, iy)){
+    
+//     this.zoidPrim1 = this.add.group();
+    zp = MetaTWO.game.add.graphics();
+    zp.beginFill(Phaser.Color.webToColor(this.bgColors[this.level%10][0]).color);
+    zp.drawRect(0, 0, 24, 24);
+    zp.endFill();
+
+
+    zp.beginFill(0xffffff, 1);
+    zp.drawRect(0, 0, 3, 3);
+    zp.drawRect(3, 3, 6, 3);
+    zp.drawRect(3, 6, 3, 3);
+    zp.endFill();
+    this.zoidPrim1 = zp.generateTexture();
+    zp.destroy();    
+    
+//     this.zoidPrim2 = this.add.group();
+    zp = MetaTWO.game.add.graphics();
+    zp.beginFill(Phaser.Color.webToColor(this.bgColors[this.level%10][1]).color);
+    zp.drawRect(0, 0, 24, 24);
+    zp.endFill();
+    zp.beginFill(0xffffff, 1);
+    zp.drawRect(0, 0, 3, 3);
+    zp.drawRect(3, 3, 6, 3);
+    zp.drawRect(3, 6, 3, 3);
+    zp.endFill();
+    this.zoidPrim2 = zp.generateTexture();
+    zp.destroy();
+    
+    //debug
+    zp = MetaTWO.game.add.graphics();
+    zp.beginFill(0xff00000);
+    zp.drawRect(0, 0, 24, 24);
+    zp.endFill();
+    this.debugPrim = zp.generateTexture();
+    zp.destroy();    
+
+    this.create_zoid_prims()
+  },
+  create_zoid_prims: function(){
+    var prim;
+
+  // define obstacle group
+  this.prims = MetaTWO.game.add.group();
+  this.prims.enableBody = true;
+  
+  for(t = 0; t <3; t++){
+    for (i = 0; i < (MetaTWO.BOARD_WIDTH * MetaTWO.BOARD_HEIGHT); i++) {
+        switch(t){
                         case 0: //large white square, primary color
-                        MetaTWO.game.debug.geom(new Phaser.Rectangle(ix*25+276, iy*25+74, 24, 24), this.bgColors[this.level%10][0]);
-                        MetaTWO.game.debug.geom(new Phaser.Rectangle(ix*25+276, iy*25+74, 3, 3), 'rgba(255,255,255,1');
-                        MetaTWO.game.debug.geom(new Phaser.Rectangle(ix*25+279, iy*25+77, 18, 18), 'rgba(255,255,255,1');
+                        prim = this.prims.create(-1000, -1000, this.zoidPrim0)
+                        prim.checkWorldBounds = true;
+                        prim.outOfBoundsKill = true;
+                        prim.kill();
+                        this.primPool0.add(prim);
+                        
                         break;
                         case 1: // primary color, white highlight
-                        MetaTWO.game.debug.geom(new Phaser.Rectangle(ix*25+276, iy*25+74, 24, 24), this.bgColors[this.level%10][0]);
-                        this.whiteHighlight(ix*25, iy*25,276,74)
+                        prim = this.prims.create(-1000, -1000, this.zoidPrim1)
+                        prim.checkWorldBounds = true;
+                                
+                        prim.outOfBoundsKill = true;
+                        prim.kill();
+                        this.primPool1.add(prim);
+
                         break;
                         case 2: //secondary color, white highlight
-                        MetaTWO.game.debug.geom(new Phaser.Rectangle(ix*25+276, iy*25+74, 24, 24), this.bgColors[this.level%10][1]);
-                        this.whiteHighlight(ix*25, iy*25,276,74)
+                        prim = this.prims.create(-1000, -1000, this.zoidPrim2)
+                        prim.checkWorldBounds = true;
+                        prim.outOfBoundsKill = true;
+                        prim.kill();
+                        this.primPool2.add(prim);
+        }
+
+        
+        }
+    }
+  },
+  recolor_pile: function(){
+    this.pile.killAll();
+    this.pile.removeAll();
+    this.pile.destroy();
+    this.pile = this.add.group()
+    for(iy = 0; iy<this.board.height; iy++){
+        for(ix = 0; ix<this.board.width; ix++){
+            if(this.board.isFilled(ix, iy)){
+                switch(this.board.getStyle(ix, iy)){
+                        case 0:
+                        var zprim = this.primPool0.getFirstExists(exists=false);
+                        zprim.reset(ix*25+276, iy*25+74);
+                        this.pile.add(zprim)
+                        break;
+                        
+                        case 1:
+                        var zprim = this.primPool1.getFirstExists(exists=false);
+                        zprim.reset(ix*25+276, iy*25+74);
+                        this.pile.add(zprim);
+                        break;
+                        
+                        case 2:
+                        var zprim = this.primPool2.getFirstExists(exists=false)
+                        zprim.reset(ix*25+276, iy*25+74);
+                        this.pile.add(zprim);
+                        break;
+                        }
                     }
                 }
             }
-        }
-        //debug draw zoid
-        if ((this.currentTask === this.active) || (this.currentTask === this.updateTask)){
+                
+},
+  create_zoid_render: function(){
+//       let graphics = MetaTWO.game.add.graphics();
+//     graphics.lineStyle(2, 0x00FF00, 1);    
+//     graphics.drawRect(0, 0, 252, 503);
+//     graphics.drawRect(320,0,120,120)
+//     let frameImage = graphics.generateTexture();
+
+//             let zr = MetaTWO.game.add.graphics();
+            
             let blocks = this.zoid.getBlocks();
+            this.zoidNext = this.add.group()
+            this.zoidRender = this.add.group();
+            
+//             this.zoidRender.x = 276+25*this.rotCenter[this.zoid.zoidType][0];
+//             this.zoidRender.y = 74+25*this.rotCenter[this.zoid.zoidType][1];
+
+
+            var mask = MetaTWO.game.add.graphics(276, 74);
+
+    //  Shapes drawn to the Graphics object must be filled.
+            mask.beginFill(0x00FFFFF);
+
+    //  Here we'll draw a rectangle for each group sprite
+            mask.drawRect(0, 0, 252, 503);
+            mask.endFill();
+
+//             let group = this.add.group();
             for (i=0; i< 4; i++){
                 if(blocks[i][1] >= 0){
-                    switch (this.zoid.style){
-                        case 0: //large white square, primary color
-                        MetaTWO.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+276, blocks[i][1]*25+74, 24, 24), this.bgColors[this.level%10][0]);
-                        MetaTWO.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+276, blocks[i][1]*25+74, 3, 3), 'rgba(255,255,255,1');
-                        MetaTWO.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+279, blocks[i][1]*25+77, 18, 18), 'rgba(255,255,255,1');
+                    switch(this.zoid.style){
+                        case 0:
+                        var zprim = this.primPool0.getFirstExists(exists=false);
+//                         if(!zprim){
+//                         MetaTWO.game.debug.text("Helpful Text: " + this.zoid.style, 2, 28, "#00ff00");
+//                         }
+                        zprim.reset((blocks[i][0])*25+276, (blocks[i][1])*25+74);
+                        this.zoidRender.add(zprim)
                         break;
-                        case 1: // primary color, white highlight
-                        MetaTWO.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+276, blocks[i][1]*25+74, 24, 24), this.bgColors[this.level%10][0]);
-                        this.whiteHighlight(blocks[i][0]*25, blocks[i][1]*25,276,74)
+                        
+                        case 1:
+                        var zprim = this.primPool1.getFirstExists(exists=false);
+//                         if(!zprim){
+//                         MetaTWO.game.debug.text("Helpful Text: " + this.zoid.style, 2, 28, "#00ff00");
+//                         }
+                        zprim.reset((blocks[i][0])*25+276, (blocks[i][1])*25+74);
+                        this.zoidRender.add(zprim);
                         break;
-                        case 2: //secondary color, white highlight
-                        MetaTWO.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+276, blocks[i][1]*25+74, 24, 24), this.bgColors[this.level%10][1]);
-                        this.whiteHighlight(blocks[i][0]*25, blocks[i][1]*25,276,74)
+                        
+                        case 2:
+                        var zprim = this.primPool2.getFirstExists(exists=false);
+                        
+//                         if(!zprim){
+//                         MetaTWO.game.debug.text("Helpful Text: " + this.zoid.style, 2, 28, "#00ff00");
+//                         }
+                        zprim.reset((blocks[i][0])*25+276, (blocks[i][1])*25+74);
+                        this.zoidRender.add(zprim);
+                        break;
+                        
+                        
+                        }
                     }
-                    // MetaTWO.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+276, blocks[i][1]*25+99, 24, 24), 'rgba(0,0,255,1)');
-                    // this.whiteHighlight(blocks[i][0]*25, blocks[i][1]*25,276,99)
-                }
-            }
-        }
 
-        //debug draw next
-        //offset 525, 125
-            let blocks = this.nextZoid.getBlocks();
-            for (i=0; i< 4; i++){
-                switch (this.nextZoid.style){
-                    case 0: //large white square, primary color
-                    MetaTWO.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+525, blocks[i][1]*25+100, 24, 24), this.bgColors[this.level%10][0]);
-                    MetaTWO.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+525, blocks[i][1]*25+100, 3, 3), 'rgba(255,255,255,1');
-                    MetaTWO.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+528, blocks[i][1]*25+103, 18, 18), 'rgba(255,255,255,1');
-                    break;
-                    case 1: // primary color, white highlight
-                    MetaTWO.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+525, blocks[i][1]*25+100, 24, 24), this.bgColors[this.level%10][0]);
-                    this.whiteHighlight(blocks[i][0]*25, blocks[i][1]*25,525,103)
-                    break;
-                    case 2: //secondary color, white highlight
-                    MetaTWO.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+525, blocks[i][1]*25+100, 24, 24), this.bgColors[this.level%10][1]);
-                    this.whiteHighlight(blocks[i][0]*25, blocks[i][1]*25,525,103)
                 }
-                // MetaTWO.game.debug.geom(new Phaser.Rectangle(blocks[i][0]*25+ 525, blocks[i][1]*25+125, 24, 24), 'rgba(0,0,255,1)');
-                // this.whiteHighlight(blocks[i][0]*25, blocks[i][1]*25, 525, 125)
+    
+            blocks = this.nextZoid.getBlocks();
+            for (i=0; i< 4; i++){
+                if(blocks[i][1] >= 0){
+                    switch (this.nextZoid.style){
+                        case 0:
+                        var zprim = this.primPool0.getFirstExists(exists=false);
+                        zprim.reset((blocks[i][0])*25+525, (blocks[i][1])*25+100);
+                        this.zoidNext.add(zprim)
+                        break;
+                        
+                        case 1:
+                        var zprim = this.primPool1.getFirstExists(exists=false);
+                        zprim.reset((blocks[i][0])*25+525, (blocks[i][1])*25+100);
+                        this.zoidNext.add(zprim);
+                        break;
+                        
+                        case 2:
+                        var zprim = this.primPool2.getFirstExists(exists=false)
+                        zprim.reset((blocks[i][0])*25+525, (blocks[i][1])*25+100);
+                        this.zoidNext.add(zprim);
+                        break;
+                        
+                    }
+
+                }
             }
-        //}
-    }
-    else { // game is paused
+            this.zoidRender.mask = mask;
+//             this.zoidRender.add(zr);
+  },
+
+  render: function(){
+//     c2 =Phaser.Color.webToColor(this.bgColors[this.level%10][0])
+//     this.zoidRender.pivot.x += 1
+//     this.zoidRender.pivot.y += 1
+//     if(this.rowsToClear.length >0){
+//     this.test2 = this.rowsToClear;
+//     }
+//     this.renderClear = this.pile.getAll('y', 19*25+74)
+// 
+//     MetaTWO.game.debug.text("fps: " + Object.getOwnPropertyNames(this.zoid), 2, 15, "#00ff00");
+    MetaTWO.game.debug.text("pivotx: " + Object.getOwnPropertyNames(this.primPool0.children[0]), 2, 30, "#00ff00");
+//     MetaTWO.game.debug.text("pivoty: " + this.zoidRender.pivot.y, 2, 45, "#00ff00");
+//     MetaTWO.game.debug.text("top: " + this.zoidRender.top, 2, 60, "#00ff00");
+//     MetaTWO.game.debug.text("left: " + this.zoidRender.left, 2, 75, "#00ff00");
+//     MetaTWO.game.debug.text("bottom: " + this.zoidRender.bottom, 2, 90, "#00ff00");
+//     MetaTWO.game.debug.text("centerX: " + this.zoidRender.centerX, 2, 105, "#00ff00");
+//     MetaTWO.game.debug.text("centerY: " + this.zoidRender.centerY, 2, 120, "#00ff00");
+//         MetaTWO.game.debug.text("childs: " + this.test2, 2, 135, "#00ff00");
+//         MetaTWO.game.debug.text("childs: " + this.renderClear, 2, 150, "#00ff00");
+//         MetaTWO.game.debug.text("childs: " + Object.getOwnPropertyNames(this.renderClear), 2, 165, "#00ff00");
+//          MetaTWO.game.debug.text("childs: " + this.pile.length, 2, 180, "#00ff00");
+
+
+
+//     MetaTWO.game.debug.text("fps: " + this.zoid.type, 2, 34, "#00ff00");
+//     
+    if (this.paused){ // game is paused
         MetaTWO.game.debug.text("Paused", 360, 300, "#ffffff","24px Arial");
     }
 
-    //MetaTWO.game.debug.text("fps: " + MetaTWO.game.time.fps, 2, 14, "#00ff00");
+    MetaTWO.game.debug.text("fps: " + MetaTWO.game.time.fps, 2, 14, "#00ff00");
     // MetaTWO.game.debug.text("softdrop: " + this.softdrop_timer, 2, 30, "#00ff00");
     // MetaTWO.game.debug.text("level: " + this.level, 2, 46, "#00ff00");
     // MetaTWO.game.debug.text("line count: " + this.lines, 2, 62, "#00ff00");
