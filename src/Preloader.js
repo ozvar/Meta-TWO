@@ -47,7 +47,7 @@ MetaTWO.Preloader.prototype = {
     // Load images
     // this.load.image('background', 'background.png');
     // this.load.image('banner', 'banner.png');
-    this.load.spritesheet('block', 'blocks_sprites.png', MetaTWO.BLOCK_WIDTH, MetaTWO.BLOCK_WIDTH);
+//     this.load.spritesheet('block', 'blocks_sprites.png', MetaTWO.BLOCK_WIDTH, MetaTWO.BLOCK_WIDTH);
     
    
   },

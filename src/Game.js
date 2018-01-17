@@ -26,15 +26,6 @@ MetaTWO.Game = function (game) {
             ['rgba( 74, 0, 255, 1 )', 'rgba( 189, 66, 0, 1 )'], //L8
             ['rgba( 189, 66, 0, 1 )', 'rgba( 239, 166, 0, 1 )'], //L9
             ]
-//     this.rotCenter = [
-//             [5.5,0.5], //I
-//             [4.5,1.5], //O
-//             [5.5,0.5], //T
-//             [4.5,1.5], //S
-//             [4.5,1.5], //Z
-//             [4.5,1.5], //J
-//             [4.5,1.5], //L
-//     ]
 };
 
 MetaTWO.Game.stateKey = "Game";
@@ -91,9 +82,12 @@ MetaTWO.Game.prototype = {
     this.masterLog = "";
     this.changeOccured = false; 
     this.renderClear = this.add.group();
+    this.whitePool = this.add.group();
     this.primPool0 = this.add.group();
     this.primPool1 = this.add.group();
     this.primPool2 = this.add.group();
+    this.test1 = 0;
+    this.test2 = 0;
     
     let i, j;
     this.AButton = this.BButton = this.leftButton = this.rightButton = this.downButton = this.startButton = 0;
@@ -229,10 +223,11 @@ MetaTWO.Game.prototype = {
         this.logWorld();
     }
     //make sure, every frame, we move the current zoidRender to the right spot
-    if (this.changeOccured === true ){
+    if ((this.changeOccured === true) && (this.zoidRender.children.length > 0)){
               let blocks = this.zoid.getBlocks();
                 for (i=0; i< 4; i++){
-                        this.zoidRender.xy(i, blocks[i][0]*25+276, blocks[i][1]*25+74);
+                        this.zoidRender.xy(i*2, blocks[i][0]*25+278, blocks[i][1]*25+74);
+                        this.zoidRender.xy(i*2+1, blocks[i][0]*25+278, blocks[i][1]*25+74);
         }
         
 
@@ -340,6 +335,7 @@ MetaTWO.Game.prototype = {
   rotate: function(){
       
       if (this.vr !== 0){
+
           if (!this.zoid.collide(this.board, 0, 0, this.vr)){
               MetaTWO.audio.rotate.play();  
               this.logEvent("ZOID", "ROTATE", this.vr.toString());
@@ -478,17 +474,39 @@ MetaTWO.Game.prototype = {
         hex_trick = Math.floor(this.lines/10);
         hex_trick = parseInt(hex_trick.toString(), 16);
         if (hex_trick > this.level){
-            this.primPool0.killAll();
-            this.primPool0.removeAll();
-            this.primPool0.destroy();
-            this.primPool1.killAll();
-            this.primPool1.removeAll();
-            this.primPool1.destroy();
-            this.primPool2.killAll();
-            this.primPool2.removeAll();
-            this.primPool2.destroy();
-            this.zoid_prim();
-            this.recolor_pile();
+            
+//             this.primPool0.killAll();
+//             this.primPool0.removeAll();
+//             this.primPool0.destroy();
+//             this.primPool1.killAll();
+//             this.primPool1.removeAll();
+//             this.primPool1.destroy();
+//             this.primPool2.killAll();
+//             this.primPool2.removeAll();
+//             this.primPool2.destroy();
+//             
+//             this.zoid_prim();
+//             this.recolor_pile();
+//             var col1o = Phaser.Color.webToColor(this.bgColors[this.level%10][0]);
+//             var col2o = Phaser.Color.webToColor(this.bgColors[this.level%10][1]);
+            var col1 = Phaser.Color.webToColor(this.bgColors[(this.level+1)%10][0]);            
+            var col2 = Phaser.Color.webToColor(this.bgColors[(this.level+1)%10][1]);
+//             primPool0 = MetaTWO.game.make.bitmapData();
+//             primPool0.drawGroup(this.primPool0);
+//             primPool0.replaceRGB(col1o.r,col1o.g,col1o.b,col1n.r,col1n.g,col1n.b);
+//             this.primPool0 = primPool0
+            this.primPool0.setAllChildren('tint', Phaser.Color.RGBtoString(col1.r,col1.g,col1.b,"#")); 
+            this.primPool1.setAllChildren('tint', Phaser.Color.RGBtoString(col1.r,col1.g,col1.b,"#"));
+            this.primPool2.setAllChildren('tint',Phaser.Color.RGBtoString(col2.r,col2.g,col2.b,"#"));
+//             primPool1 = MetaTWO.game.make.bitmapData(); 
+//             primPool1.drawGroup(this.primPool1);
+//             primPool1.replaceRGB(col1o.r,col1o.g,col1o.b,col1n.r,col1n.g,col1n.b);
+//             this.primPool1 = primPool1;
+//             
+//             primPool2 = MetaTWO.game.make.bitmapData();
+//             primPool2.drawGroup(this.primPool2);
+//             primPool2.replaceRGB(col2o.r,col2o.g,col2o.b,col2n.r,col2n.g,col2n.b);
+//             this.primPool2 = primPool2;
             this.level++;
             MetaTWO.audio.levelup.play();
         }
@@ -637,37 +655,71 @@ MetaTWO.Game.prototype = {
     case 1:
     curDestroy.addMultiple(this.renderClear.getAll('x', 4*25+276));
     curDestroy.addMultiple(this.renderClear.getAll('x', 5*25+276));
-    curDestroy.killAll();
+    curDestroy.callAll('kill');
+    curDestroy.setAllChildren('x', -1000)
+    curDestroy.setAllChildren('y', -1000)
+    curDestroy.callAll('revive');
 //     curDestroy.destroy();
     break;
     
     case 2:
     curDestroy.addMultiple(this.renderClear.getAll('x', 3*25+276));
     curDestroy.addMultiple(this.renderClear.getAll('x', 6*25+276));
-    curDestroy.killAll();
+    curDestroy.callAll('kill');
+    curDestroy.setAllChildren('x', -1000)
+    curDestroy.setAllChildren('y', -1000)
+    curDestroy.callAll('revive');
 //     curDestroy.destroy();
     break;
     
     case 3:
     curDestroy.addMultiple(this.renderClear.getAll('x', 2*25+276));
     curDestroy.addMultiple(this.renderClear.getAll('x', 7*25+276));
-    curDestroy.killAll();
+    curDestroy.callAll('kill');
+    curDestroy.setAllChildren('x', -1000)
+    curDestroy.setAllChildren('y', -1000)
+    curDestroy.callAll('revive');
 //     curDestroy.destroy();
     break;
     
     case 4:
     curDestroy.addMultiple(this.renderClear.getAll('x', 1*25+276));
     curDestroy.addMultiple(this.renderClear.getAll('x', 8*25+276));
-    curDestroy.killAll();
+    curDestroy.callAll('kill');
+    curDestroy.setAllChildren('x', -1000)
+    curDestroy.setAllChildren('y', -1000)
+    curDestroy.callAll('revive');
 //     curDestroy.destroy();
     break;
     
     case 5:
+    {
+    this.are = 0;
     curDestroy.killAll();
 //     curDestroy.destroy();
-    this.renderClear.killAll();
+    this.renderClear.callAll('kill');
+    this.renderClear.setAllChildren('x', -1000)
+    this.renderClear.setAllChildren('y', -1000)
+    this.renderClear.callAll('revive');
+    
+
+    curbin = this.add.group();
+
+    this.test1 = this.renderClear.length;
+
+//     curbin.addMultiple(this.renderClear.getAll('home', 0));
+//     curbin.moveAll(this.whitePool);
+    curbin.addMultiple(this.renderClear.getAll('home', 1));
+    curbin.moveAll(this.primPool0);
+    curbin.addMultiple(this.renderClear.getAll('home', 2));
+    curbin.moveAll(this.primPool1);
+    curbin.addMultiple(this.renderClear.getAll('home', 3));
+    curbin.moveAll(this.primPool2);
+    this.renderClear.moveAll(this.whitePool)
+    this.test2 = this.renderClear.length;
 //     this.renderClear.destroy();
     this.renderClear = this.add.group();
+    this.stage.backgroundColor = 0x050505;
     for(i=0; i < this.rowsToClear.length; i++){
         this.tempI = this.rowsToClear[i]+1
         
@@ -685,9 +737,10 @@ MetaTWO.Game.prototype = {
             }
         }
         
-//         MetaTWO.game.debug.text("childs: " + this.tempGroup.length, 2, 195, "#00ff00");
+
 //         MetaTWO.game.debug.text("childs: " + Object.getOwnPropertyNames(this.tempGroup), 2, 210, "#00ff00");
 //         tempGroup.addAll("position.y", 25);
+    }
     }
     break;
     
@@ -717,46 +770,80 @@ MetaTWO.Game.prototype = {
     
 //     this.zoidPrim0 = this.add.group();
     let zp = MetaTWO.game.add.graphics();
-    zp.beginFill(Phaser.Color.webToColor(this.bgColors[this.level%10][0]).color);
-    zp.drawRect(0, 0, 24, 24);//, this.bgColors[this.level%10][0]);
+    
+    //whitespace object
+    zp.beginFill(0xffffff, 1);
+    zp.drawRect(0, 0, 3, 3);
+    zp.drawRect(3, 3, 6, 3);
+    zp.drawRect(3, 6, 3, 3);
     zp.endFill();
-//                         zr.lineStyle(1, 0xffffff, 1);
-    zp.beginFill(0xffffff, 1); // rgba(255,255,255,1)
-    zp.drawRect(0, 0, 3, 3);//, 'rgba(255,255,255,1');
-    zp.drawRect(3, 3, 18, 18);//, 'rgba(255,255,255,1');
-    zp.endFill();
-    this.zoidPrim0 = zp.generateTexture();
-//     this.zoidPrim0 = MetaTWO.game.add.image(274,71, zoidPrim0);
-    zp.destroy();
+    this.whitespace = zp.generateTexture();
+    zp.destroy();    
+    
+//     zp = MetaTWO.game.add.graphics();
+//     zp.lineStyle(3, Phaser.Color.webToColor(this.bgColors[this.level%10][0]).color, 1);
+//     zp.beginFill(0xffffff);
+//     zp.drawRect(0, 0, 24, 24);//, this.bgColors[this.level%10][0]);
+//     zp.endFill();
+//     this.zoidPrim0 = zp.generateTexture();
+// //     this.zoidPrim0 = MetaTWO.game.add.image(274,71, zoidPrim0);
+//     zp.destroy();
 
     
 //     this.zoidPrim1 = this.add.group();
-    zp = MetaTWO.game.add.graphics();
-    zp.beginFill(Phaser.Color.webToColor(this.bgColors[this.level%10][0]).color);
-    zp.drawRect(0, 0, 24, 24);
-    zp.endFill();
+    var col1 = Phaser.Color.webToColor(this.bgColors[this.level%10][0]);
+    var col2 = Phaser.Color.webToColor(this.bgColors[this.level%10][1]);
+    this.zoidPrim0 = MetaTWO.game.make.bitmapData(); 
+    this.zoidPrim0.ctx.lineWidth = 3;
+    this.zoidPrim0.ctx.strokeStyle =  Phaser.Color.RGBtoString(col1.r,col1.g,col1.b,"#");
+    this.zoidPrim0.ctx.beginPath();
+
+    this.zoidPrim0.ctx.rect(1, 1, 20, 20);
+    this.zoidPrim0.ctx.fillStyle = '#ffffff';
+    this.zoidPrim0.ctx.fill();
+    this.zoidPrim0.ctx.stroke();
 
 
-    zp.beginFill(0xffffff, 1);
-    zp.drawRect(0, 0, 3, 3);
-    zp.drawRect(3, 3, 6, 3);
-    zp.drawRect(3, 6, 3, 3);
-    zp.endFill();
-    this.zoidPrim1 = zp.generateTexture();
-    zp.destroy();    
+
+    this.zoidPrim1 = MetaTWO.game.make.bitmapData(); 
+    this.zoidPrim1.ctx.lineWidth = 3;
+    this.zoidPrim1.ctx.strokeStyle =  Phaser.Color.RGBtoString(col1.r,col1.g,col1.b,"#");
+    this.zoidPrim1.ctx.beginPath();
+
+    this.zoidPrim1.ctx.rect(1, 1, 20, 20);
+    this.zoidPrim1.ctx.fillStyle = Phaser.Color.RGBtoString(col1.r,col1.g,col1.b,"#");
+    this.zoidPrim1.ctx.fill();
+    this.zoidPrim1.ctx.stroke();
+    
+    
+//     zp = MetaTWO.game.add.graphics();
+//     zp.lineStyle(3, Phaser.Color.webToColor(this.bgColors[this.level%10][0]).color, 1);
+//     zp.beginFill(Phaser.Color.webToColor(this.bgColors[this.level%10][0]).color);
+//     zp.drawRect(0, 0, 24, 24);
+//     zp.endFill();
+//     this.zoidPrim1 = zp.generateTexture();
+//     zp.destroy();   
+
+
     
 //     this.zoidPrim2 = this.add.group();
-    zp = MetaTWO.game.add.graphics();
-    zp.beginFill(Phaser.Color.webToColor(this.bgColors[this.level%10][1]).color);
-    zp.drawRect(0, 0, 24, 24);
-    zp.endFill();
-    zp.beginFill(0xffffff, 1);
-    zp.drawRect(0, 0, 3, 3);
-    zp.drawRect(3, 3, 6, 3);
-    zp.drawRect(3, 6, 3, 3);
-    zp.endFill();
-    this.zoidPrim2 = zp.generateTexture();
-    zp.destroy();
+//     zp = MetaTWO.game.add.graphics();
+//     zp.lineStyle(3, Phaser.Color.webToColor(this.bgColors[this.level%10][1]).color, 1);
+//     zp.beginFill(Phaser.Color.webToColor(this.bgColors[this.level%10][1]).color);
+//     zp.drawRect(0, 0, 24, 24);
+//     zp.endFill();
+//     this.zoidPrim2 = zp.generateTexture();
+//     zp.destroy();
+    
+    this.zoidPrim2 = MetaTWO.game.make.bitmapData(); 
+    this.zoidPrim2.ctx.lineWidth = 3;
+    this.zoidPrim2.ctx.strokeStyle =  Phaser.Color.RGBtoString(col2.r,col2.g,col2.b,"#");
+    this.zoidPrim2.ctx.beginPath();
+
+    this.zoidPrim2.ctx.rect(1, 1, 20, 20);
+    this.zoidPrim2.ctx.fillStyle = Phaser.Color.RGBtoString(col2.r,col2.g,col2.b,"#");
+    this.zoidPrim2.ctx.fill();
+    this.zoidPrim2.ctx.stroke();
     
     //debug
     zp = MetaTWO.game.add.graphics();
@@ -775,37 +862,56 @@ MetaTWO.Game.prototype = {
   this.prims = MetaTWO.game.add.group();
   this.prims.enableBody = true;
   
-  for(t = 0; t <3; t++){
-    for (i = 0; i < (MetaTWO.BOARD_WIDTH * MetaTWO.BOARD_HEIGHT); i++) {
-        switch(t){
-                        case 0: //large white square, primary color
-                        prim = this.prims.create(-1000, -1000, this.zoidPrim0)
+
+    for (i = 0; i < ((MetaTWO.BOARD_WIDTH * MetaTWO.BOARD_HEIGHT)*2+10); i++) {
+                        //just highlight
+                        prim = this.prims.create(-1000,-1000, this.whitespace)
                         prim.checkWorldBounds = true;
                         prim.outOfBoundsKill = true;
                         prim.kill();
+                        prim.home = 0;
+                        this.whitePool.add(prim);
+
+                        
+                        //large white square, primary color
+//                         prim = this.prims.create(-1000, -1000, this.zoidPrim0)
+                        prim = MetaTWO.game.add.sprite(-1000, -1000, this.zoidPrim0);
+                    
+                        prim.checkWorldBounds = true;
+                        prim.outOfBoundsKill = true;
+                        prim.kill();
+//                         prim.home = 1;
                         this.primPool0.add(prim);
                         
-                        break;
-                        case 1: // primary color, white highlight
-                        prim = this.prims.create(-1000, -1000, this.zoidPrim1)
-                        prim.checkWorldBounds = true;
-                                
-                        prim.outOfBoundsKill = true;
-                        prim.kill();
-                        this.primPool1.add(prim);
 
-                        break;
-                        case 2: //secondary color, white highlight
-                        prim = this.prims.create(-1000, -1000, this.zoidPrim2)
+                         // primary color, white highlight
+//                         prim = this.prims.create(-1000, -1000, this.zoidPrim1)
+                        prim = MetaTWO.game.add.sprite(-1000, -1000, this.zoidPrim1);
+                        prim.checkWorldBounds = true;       
+                        prim.outOfBoundsKill = true;
+                        prim.kill();
+//                         prim.home = 2;
+                        this.primPool1.add(prim);
+                        
+
+                         //secondary color, white highlight
+//                         prim = this.prims.create(-1000, -1000, this.zoidPrim2)
+                        prim = MetaTWO.game.add.sprite(-1000, -1000, this.zoidPrim2);
                         prim.checkWorldBounds = true;
                         prim.outOfBoundsKill = true;
                         prim.kill();
+//                         prim.home = 3;
                         this.primPool2.add(prim);
-        }
 
         
-        }
+
+        
+        
     }
+    this.whitePool.setAllChildren('home', 0);
+    this.primPool0.setAllChildren('home', 1);
+    this.primPool1.setAllChildren('home', 2);
+    this.primPool2.setAllChildren('home', 3);
   },
   recolor_pile: function(){
     this.pile.killAll();
@@ -818,20 +924,29 @@ MetaTWO.Game.prototype = {
                 switch(this.board.getStyle(ix, iy)){
                         case 0:
                         var zprim = this.primPool0.getFirstExists(exists=false);
-                        zprim.reset(ix*25+276, iy*25+74);
+                        zprim.reset(ix*25+278, iy*25+74);
+                        this.pile.add(zprim)
+                        var zprim = this.whitePool.getFirstExists(exists=false);
+                        zprim.reset(ix*25+278, iy*25+74);
                         this.pile.add(zprim)
                         break;
                         
                         case 1:
                         var zprim = this.primPool1.getFirstExists(exists=false);
-                        zprim.reset(ix*25+276, iy*25+74);
+                        zprim.reset(ix*25+278, iy*25+74);
                         this.pile.add(zprim);
+                        var zprim = this.whitePool.getFirstExists(exists=false);
+                        zprim.reset(ix*25+278, iy*25+74);
+                        this.pile.add(zprim)
                         break;
                         
                         case 2:
                         var zprim = this.primPool2.getFirstExists(exists=false)
-                        zprim.reset(ix*25+276, iy*25+74);
+                        zprim.reset(ix*25+278, iy*25+74);
                         this.pile.add(zprim);
+                        var zprim = this.whitePool.getFirstExists(exists=false);
+                        zprim.reset(ix*25+278, iy*25+74);
+                        this.pile.add(zprim)
                         break;
                         }
                     }
@@ -874,7 +989,10 @@ MetaTWO.Game.prototype = {
 //                         if(!zprim){
 //                         MetaTWO.game.debug.text("Helpful Text: " + this.zoid.style, 2, 28, "#00ff00");
 //                         }
-                        zprim.reset((blocks[i][0])*25+276, (blocks[i][1])*25+74);
+                        zprim.reset((blocks[i][0])*25+278, (blocks[i][1])*25+74);
+                        this.zoidRender.add(zprim)
+                        var zprim = this.whitePool.getFirstExists(exists=false);
+                        zprim.reset((blocks[i][0])*25+278, (blocks[i][1])*25+74);
                         this.zoidRender.add(zprim)
                         break;
                         
@@ -883,8 +1001,11 @@ MetaTWO.Game.prototype = {
 //                         if(!zprim){
 //                         MetaTWO.game.debug.text("Helpful Text: " + this.zoid.style, 2, 28, "#00ff00");
 //                         }
-                        zprim.reset((blocks[i][0])*25+276, (blocks[i][1])*25+74);
-                        this.zoidRender.add(zprim);
+                        zprim.reset((blocks[i][0])*25+278, (blocks[i][1])*25+74);
+                        this.zoidRender.add(zprim);                        
+                        var zprim = this.whitePool.getFirstExists(exists=false);
+                        zprim.reset((blocks[i][0])*25+278, (blocks[i][1])*25+74);
+                        this.zoidRender.add(zprim)
                         break;
                         
                         case 2:
@@ -893,8 +1014,11 @@ MetaTWO.Game.prototype = {
 //                         if(!zprim){
 //                         MetaTWO.game.debug.text("Helpful Text: " + this.zoid.style, 2, 28, "#00ff00");
 //                         }
-                        zprim.reset((blocks[i][0])*25+276, (blocks[i][1])*25+74);
+                        zprim.reset((blocks[i][0])*25+278, (blocks[i][1])*25+74);
                         this.zoidRender.add(zprim);
+                        var zprim = this.whitePool.getFirstExists(exists=false);
+                        zprim.reset((blocks[i][0])*25+278, (blocks[i][1])*25+74);
+                        this.zoidRender.add(zprim)
                         break;
                         
                         
@@ -911,18 +1035,27 @@ MetaTWO.Game.prototype = {
                         var zprim = this.primPool0.getFirstExists(exists=false);
                         zprim.reset((blocks[i][0])*25+525, (blocks[i][1])*25+100);
                         this.zoidNext.add(zprim)
+                        var zprim = this.whitePool.getFirstExists(exists=false);
+                        zprim.reset((blocks[i][0])*25+525, (blocks[i][1])*25+100);
+                        this.zoidNext.add(zprim)
                         break;
                         
                         case 1:
                         var zprim = this.primPool1.getFirstExists(exists=false);
                         zprim.reset((blocks[i][0])*25+525, (blocks[i][1])*25+100);
                         this.zoidNext.add(zprim);
+                        var zprim = this.whitePool.getFirstExists(exists=false);
+                        zprim.reset((blocks[i][0])*25+525, (blocks[i][1])*25+100);
+                        this.zoidNext.add(zprim)
                         break;
                         
                         case 2:
                         var zprim = this.primPool2.getFirstExists(exists=false)
                         zprim.reset((blocks[i][0])*25+525, (blocks[i][1])*25+100);
                         this.zoidNext.add(zprim);
+                        var zprim = this.whitePool.getFirstExists(exists=false);
+                        zprim.reset((blocks[i][0])*25+525, (blocks[i][1])*25+100);
+                        this.zoidNext.add(zprim)
                         break;
                         
                     }
@@ -942,21 +1075,29 @@ MetaTWO.Game.prototype = {
 //     }
 //     this.renderClear = this.pile.getAll('y', 19*25+74)
 // 
-//     MetaTWO.game.debug.text("fps: " + Object.getOwnPropertyNames(this.zoid), 2, 15, "#00ff00");
-    MetaTWO.game.debug.text("pivotx: " + Object.getOwnPropertyNames(this.primPool0.children[0]), 2, 30, "#00ff00");
-//     MetaTWO.game.debug.text("pivoty: " + this.zoidRender.pivot.y, 2, 45, "#00ff00");
-//     MetaTWO.game.debug.text("top: " + this.zoidRender.top, 2, 60, "#00ff00");
-//     MetaTWO.game.debug.text("left: " + this.zoidRender.left, 2, 75, "#00ff00");
-//     MetaTWO.game.debug.text("bottom: " + this.zoidRender.bottom, 2, 90, "#00ff00");
-//     MetaTWO.game.debug.text("centerX: " + this.zoidRender.centerX, 2, 105, "#00ff00");
-//     MetaTWO.game.debug.text("centerY: " + this.zoidRender.centerY, 2, 120, "#00ff00");
-//         MetaTWO.game.debug.text("childs: " + this.test2, 2, 135, "#00ff00");
-//         MetaTWO.game.debug.text("childs: " + this.renderClear, 2, 150, "#00ff00");
-//         MetaTWO.game.debug.text("childs: " + Object.getOwnPropertyNames(this.renderClear), 2, 165, "#00ff00");
-//          MetaTWO.game.debug.text("childs: " + this.pile.length, 2, 180, "#00ff00");
-
-
-
+//     var col1 = Phaser.Color.webToColor(this.bgColors[this.level%10][0]);
+//         MetaTWO.game.debug.text("childs: " + Phaser.Color.RGBtoString(col1.r,col1.g,col1.b,"#"), 2, 195, "#00ff00");
+        
+//     MetaTWO.game.debug.text("fps: " + Object.getOwnPropertyNames(this.zoidRender.children[0]), 2, 15, "#00ff00");
+//     MetaTWO.game.debug.text("pivotx: " + Object.getOwnPropertyNames(this.primPool0.children[0]), 2, 30, "#00ff00");
+//     MetaTWO.game.debug.text("pivoty: " + Object.getOwnPropertyNames(this.zoidRender.children[1]), 2, 45, "#00ff00");
+//     MetaTWO.game.debug.text("top: " + Phaser.Color.webToColor(this.bgColors[this.level%10][0]).r, 2, 60, "#00ff00");
+//     MetaTWO.game.debug.text("left: " + Phaser.Color.webToColor(this.bgColors[this.level%10][0]).g, 2, 75, "#00ff00");
+    MetaTWO.game.debug.text("deadW: " + this.whitePool.countDead(), 2, 90, "#00ff00");
+    MetaTWO.game.debug.text("dead0: " + this.primPool0.countDead(), 2, 105, "#00ff00");
+    MetaTWO.game.debug.text("dead1: " + this.primPool1.countDead(), 2, 120, "#00ff00");
+// 
+//     
+        MetaTWO.game.debug.text("dead2: " + this.primPool1.countDead(), 2, 135, "#00ff00");
+// 
+//         MetaTWO.game.debug.text("childs: " + this.test1, 2, 150, "#00ff00");
+//         MetaTWO.game.debug.text("childs: " + this.test2, 2, 165, "#00ff00");
+//         this.excount2 = this.primPool0.getAll('home', 1).length;
+//          MetaTWO.game.debug.text("childs: " + this.primPool0.children[0].home, 2, 180, "#00ff00");
+// 
+//     MetaTWO.game.debug.text("pileliving: " + this.pile.countLiving(), 2, 195, "#00ff00");
+//     MetaTWO.game.debug.text("piledead: " + this.pile.countDead(), 2, 210, "#00ff00");
+// 
 //     MetaTWO.game.debug.text("fps: " + this.zoid.type, 2, 34, "#00ff00");
 //     
     if (this.paused){ // game is paused
