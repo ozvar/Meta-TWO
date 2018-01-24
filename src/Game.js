@@ -82,12 +82,13 @@ MetaTWO.Game.prototype = {
     this.masterLog = "";
     this.changeOccured = false; 
     this.renderClear = this.add.group();
-    this.whitePool = this.add.group();
-    this.primPool0 = this.add.group();
-    this.primPool1 = this.add.group();
-    this.primPool2 = this.add.group();
-    this.test1 = 0;
-    this.test2 = 0;
+    this.zoidPrims = this.add.group();
+//     this.whitePool = this.add.group();
+//     this.primPool0 = this.add.group();
+//     this.primPool1 = this.add.group();
+//     this.primPool2 = this.add.group();
+//     this.test1 = 0;
+//     this.test2 = 0;
     
     let i, j;
     this.AButton = this.BButton = this.leftButton = this.rightButton = this.downButton = this.startButton = 0;
@@ -142,14 +143,15 @@ MetaTWO.Game.prototype = {
     
     
     this.firstDraw = 1;
-    this.zoid_prim();
+    this.init_prims();
 //     this.create_zoid_prims();
     this.pile = this.add.group();
     //add to zoid buffer
     this.zoidBuff.push(this.zoid.names[this.curr]);
     this.nextZoid = Zoid.spawn(this.next);
 
-    this.create_zoid_render();
+//     this.create_zoid_render();
+    this.init_zoid_render();
     this.paused = false;
         
     this.alive = true;
@@ -226,8 +228,7 @@ MetaTWO.Game.prototype = {
     if ((this.changeOccured === true) && (this.zoidRender.children.length > 0)){
               let blocks = this.zoid.getBlocks();
                 for (i=0; i< 4; i++){
-                        this.zoidRender.xy(i*2, blocks[i][0]*25+278, blocks[i][1]*25+74);
-                        this.zoidRender.xy(i*2+1, blocks[i][0]*25+278, blocks[i][1]*25+74);
+                        this.zoidRender.xy(i, blocks[i][0]*25+276, blocks[i][1]*25+74);
         }
         
 
@@ -474,40 +475,11 @@ MetaTWO.Game.prototype = {
         hex_trick = Math.floor(this.lines/10);
         hex_trick = parseInt(hex_trick.toString(), 16);
         if (hex_trick > this.level){
-            
-//             this.primPool0.killAll();
-//             this.primPool0.removeAll();
-//             this.primPool0.destroy();
-//             this.primPool1.killAll();
-//             this.primPool1.removeAll();
-//             this.primPool1.destroy();
-//             this.primPool2.killAll();
-//             this.primPool2.removeAll();
-//             this.primPool2.destroy();
-//             
-//             this.zoid_prim();
-//             this.recolor_pile();
-//             var col1o = Phaser.Color.webToColor(this.bgColors[this.level%10][0]);
-//             var col2o = Phaser.Color.webToColor(this.bgColors[this.level%10][1]);
-            var col1 = Phaser.Color.webToColor(this.bgColors[(this.level+1)%10][0]);            
-            var col2 = Phaser.Color.webToColor(this.bgColors[(this.level+1)%10][1]);
-//             primPool0 = MetaTWO.game.make.bitmapData();
-//             primPool0.drawGroup(this.primPool0);
-//             primPool0.replaceRGB(col1o.r,col1o.g,col1o.b,col1n.r,col1n.g,col1n.b);
-//             this.primPool0 = primPool0
-            this.primPool0.setAllChildren('tint', Phaser.Color.RGBtoString(col1.r,col1.g,col1.b,"#")); 
-            this.primPool1.setAllChildren('tint', Phaser.Color.RGBtoString(col1.r,col1.g,col1.b,"#"));
-            this.primPool2.setAllChildren('tint',Phaser.Color.RGBtoString(col2.r,col2.g,col2.b,"#"));
-//             primPool1 = MetaTWO.game.make.bitmapData(); 
-//             primPool1.drawGroup(this.primPool1);
-//             primPool1.replaceRGB(col1o.r,col1o.g,col1o.b,col1n.r,col1n.g,col1n.b);
-//             this.primPool1 = primPool1;
-//             
-//             primPool2 = MetaTWO.game.make.bitmapData();
-//             primPool2.drawGroup(this.primPool2);
-//             primPool2.replaceRGB(col2o.r,col2o.g,col2o.b,col2n.r,col2n.g,col2n.b);
-//             this.primPool2 = primPool2;
+
             this.level++;
+            this.zoidNext.addAll('frame',3);
+            this.pile.addAll('frame',3);
+
             MetaTWO.audio.levelup.play();
         }
     }
@@ -538,6 +510,7 @@ MetaTWO.Game.prototype = {
     }
     // LOG EPISODE info
     this.logEpisode();
+//     this.zoid_prim();
     this.logEvent("EPISODE", "END", "");    
     this.currentTask = this.goalCheck;
   },
@@ -571,10 +544,11 @@ MetaTWO.Game.prototype = {
     this.zoidBuff.push(this.zoid.names[this.curr]);
     this.nextZoid = Zoid.spawn(this.next);
     this.firstDraw = 1;
-    //move rendered curr zoid to pile
-    this.zoidRender.moveAll(this.pile);
+
     //render new zoid
-    this.zoidNext.destroy();
+//     this.zoidNext.callAll('kill');
+//     this.zoidNext.moveAll(this.zoidPrims);
+//     this.zoidRender.moveAll(this.pile);
     this.create_zoid_render();
     this.logEvent("ZOID", "NEW", this.zoid.names[this.curr]);
     this.logEvent("EPISODE", "BEGIN", "");
@@ -584,8 +558,8 @@ MetaTWO.Game.prototype = {
   sub_94ee: function(){
     if (this.currentTask === this.lineAnim){
         if ((this.frames & 3) === 0){
-            this.update_pile();
             this.are++;
+            curDestroy = this.add.group();
             //advance through line animation
             for (i=0; i < this.rowsToClear.length; i++)
                 {
@@ -593,46 +567,80 @@ MetaTWO.Game.prototype = {
                         case 1:
                         this.board.contents[this.rowsToClear[i]+3][4] = 0;
                         this.board.contents[this.rowsToClear[i]+3][5] = 0;
+                        curDestroy.addMultiple(this.renderClear.getAll('x', 4*25+276));
+                        curDestroy.addMultiple(this.renderClear.getAll('x', 5*25+276));
+                        curDestroy.callAll('kill');
+                        curDestroy.moveAll(this.zoidPrims)
                         
-//                         this.renderClear.remove(this.renderClear.getClosestTo(new Phaser.Point(4*25 + 276, (this.rowsToClear[i]+1)*25 + 74)));
-//                         this.renderClear.remove(this.renderClear.getClosestTo(new Phaser.Point(5*25 + 276, (this.rowsToClear[i])*25 + 74)));
                         break;
                         case 2:
                         this.board.contents[this.rowsToClear[i]+3][3] = 0;
                         this.board.contents[this.rowsToClear[i]+3][6] = 0;
                         if (this.rowsToClear.length === 4) {this.stage.backgroundColor = 0xffffff;}
-//                         this.renderClear.remove(this.renderClear.getClosestTo(new Phaser.Point(3*25 + 276, (this.rowsToClear[i]+1)*25 + 74)));
-//                         this.renderClear.remove(this.renderClear.getClosestTo(new Phaser.Point(6*25 + 276, (this.rowsToClear[i]+1)*25 + 74)));
+                        curDestroy.addMultiple(this.renderClear.getAll('x', 3*25+276));
+                        curDestroy.addMultiple(this.renderClear.getAll('x', 6*25+276));
+                        curDestroy.callAll('kill');
+                        curDestroy.moveAll(this.zoidPrims)
 
                         break;
                         case 3:
                         this.board.contents[this.rowsToClear[i]+3][2] = 0;
                         this.board.contents[this.rowsToClear[i]+3][7] = 0
                         this.stage.backgroundColor = 0x050505; 
-//                         this.renderClear.remove(this.renderClear.getClosestTo(new Phaser.Point(2*25 + 276, (this.rowsToClear[i]+1)*25 + 74)));
-//                         this.renderClear.remove(this.renderClear.getClosestTo(new Phaser.Point(7*25 + 276, (this.rowsToClear[i]+1)*25 + 74)));
+                        curDestroy.addMultiple(this.renderClear.getAll('x', 2*25+276));
+                        curDestroy.addMultiple(this.renderClear.getAll('x', 7*25+276));
+                        curDestroy.callAll('kill');
+                        curDestroy.moveAll(this.zoidPrims)
 
                         break;
                         case 4:
                         this.board.contents[this.rowsToClear[i]+3][1] = 0;
                         this.board.contents[this.rowsToClear[i]+3][8] = 0
                         if (this.rowsToClear.length === 4) {this.stage.backgroundColor = 0xffffff;}
-//                         this.renderClear.remove(this.renderClear.getClosestTo(new Phaser.Point(1*25 + 276, (this.rowsToClear[i]+1)*25 + 74)));
-//                         this.renderClear.remove(this.renderClear.getClosestTo(new Phaser.Point(8*25 + 276, (this.rowsToClear[i]+1)*25 + 74)));
-                        
+                        curDestroy.addMultiple(this.renderClear.getAll('x', 1*25+276));
+                        curDestroy.addMultiple(this.renderClear.getAll('x', 8*25+276));
+                        curDestroy.callAll('kill');
+                        curDestroy.moveAll(this.zoidPrims)
+
                         break;
                         case 5:
                         this.board.contents[this.rowsToClear[i]+3][0] = 0;
                         this.board.contents[this.rowsToClear[i]+3][9] = 0;
-//                         this.renderClear.remove(this.renderClear.getClosestTo(new Phaser.Point(0*25 + 276, (this.rowsToClear[i])*25 + 74)));
-//                         this.renderClear.remove(this.renderClear.getClosestTo(new Phaser.Point(9*25 + 276, (this.rowsToClear[i])*25 + 74)));
+                        curDestroy.callAll('kill');
+                        this.renderClear.callAll('kill');
+
+
+
+                        this.renderClear.moveAll(this.zoidPrims)
+
+                    //     this.renderClear.destroy();
+                        this.renderClear = this.add.group();
+                        this.stage.backgroundColor = 0x050505;
+                        for(i=0; i < this.rowsToClear.length; i++){
+                            this.tempI = this.rowsToClear[i]+1
+        
+                            var index = -1;
+                            //phaser's filter isn't working, so here's it manual
+                            var length = this.pile.children.length;
+                            var results = [];
+
+                            while (++index < length){
+                                var child = this.pile.children[index];
+                                if (child.exists){
+                                    if (child.position.y < (71+25*this.rowsToClear[i])){
+                                        child.position.y += 25;
+                                    }
+                                }
+                            }
+                        }
+
+
                         break;
                     }
                 }
         }
         //else {this.stage.backgroundColor = 0x050505;}
         if (this.are >= this.LINECLEAR_STEPS){
-            this.update_pile();
             this.are = 0;
             this.currentTask = this.scoreUpdate;
             this.rowsToClear = [];
@@ -647,107 +655,7 @@ MetaTWO.Game.prototype = {
         }
     }
   },
-  
-  update_pile: function(){
-    curDestroy = this.add.group();
-    switch(this.are){
 
-    case 1:
-    curDestroy.addMultiple(this.renderClear.getAll('x', 4*25+276));
-    curDestroy.addMultiple(this.renderClear.getAll('x', 5*25+276));
-    curDestroy.callAll('kill');
-    curDestroy.setAllChildren('x', -1000)
-    curDestroy.setAllChildren('y', -1000)
-    curDestroy.callAll('revive');
-//     curDestroy.destroy();
-    break;
-    
-    case 2:
-    curDestroy.addMultiple(this.renderClear.getAll('x', 3*25+276));
-    curDestroy.addMultiple(this.renderClear.getAll('x', 6*25+276));
-    curDestroy.callAll('kill');
-    curDestroy.setAllChildren('x', -1000)
-    curDestroy.setAllChildren('y', -1000)
-    curDestroy.callAll('revive');
-//     curDestroy.destroy();
-    break;
-    
-    case 3:
-    curDestroy.addMultiple(this.renderClear.getAll('x', 2*25+276));
-    curDestroy.addMultiple(this.renderClear.getAll('x', 7*25+276));
-    curDestroy.callAll('kill');
-    curDestroy.setAllChildren('x', -1000)
-    curDestroy.setAllChildren('y', -1000)
-    curDestroy.callAll('revive');
-//     curDestroy.destroy();
-    break;
-    
-    case 4:
-    curDestroy.addMultiple(this.renderClear.getAll('x', 1*25+276));
-    curDestroy.addMultiple(this.renderClear.getAll('x', 8*25+276));
-    curDestroy.callAll('kill');
-    curDestroy.setAllChildren('x', -1000)
-    curDestroy.setAllChildren('y', -1000)
-    curDestroy.callAll('revive');
-//     curDestroy.destroy();
-    break;
-    
-    case 5:
-    {
-    this.are = 0;
-    curDestroy.killAll();
-//     curDestroy.destroy();
-    this.renderClear.callAll('kill');
-    this.renderClear.setAllChildren('x', -1000)
-    this.renderClear.setAllChildren('y', -1000)
-    this.renderClear.callAll('revive');
-    
-
-    curbin = this.add.group();
-
-    this.test1 = this.renderClear.length;
-
-//     curbin.addMultiple(this.renderClear.getAll('home', 0));
-//     curbin.moveAll(this.whitePool);
-    curbin.addMultiple(this.renderClear.getAll('home', 1));
-    curbin.moveAll(this.primPool0);
-    curbin.addMultiple(this.renderClear.getAll('home', 2));
-    curbin.moveAll(this.primPool1);
-    curbin.addMultiple(this.renderClear.getAll('home', 3));
-    curbin.moveAll(this.primPool2);
-    this.renderClear.moveAll(this.whitePool)
-    this.test2 = this.renderClear.length;
-//     this.renderClear.destroy();
-    this.renderClear = this.add.group();
-    this.stage.backgroundColor = 0x050505;
-    for(i=0; i < this.rowsToClear.length; i++){
-        this.tempI = this.rowsToClear[i]+1
-        
-        var index = -1;
-        //phaser's filter isn't working, so here's it manual
-        var length = this.pile.children.length;
-        var results = [];
-
-        while (++index < length){
-            var child = this.pile.children[index];
-            if (child.exists){
-                if (child.position.y < (71+25*this.rowsToClear[i])){
-                    child.position.y += 25;
-                }
-            }
-        }
-        
-
-//         MetaTWO.game.debug.text("childs: " + Object.getOwnPropertyNames(this.tempGroup), 2, 210, "#00ff00");
-//         tempGroup.addAll("position.y", 25);
-    }
-    }
-    break;
-    
-   }
-  //basically we need to do the Line Drop function...
-  },
-  
   sub_9725: function(){
     if(this._49 > 0x15){
         return;
@@ -766,305 +674,77 @@ MetaTWO.Game.prototype = {
     }
   },
   
-  zoid_prim: function(){
-    
-//     this.zoidPrim0 = this.add.group();
-    let zp = MetaTWO.game.add.graphics();
-    
-    //whitespace object
-    zp.beginFill(0xffffff, 1);
-    zp.drawRect(0, 0, 3, 3);
-    zp.drawRect(3, 3, 6, 3);
-    zp.drawRect(3, 6, 3, 3);
-    zp.endFill();
-    this.whitespace = zp.generateTexture();
-    zp.destroy();    
-    
-//     zp = MetaTWO.game.add.graphics();
-//     zp.lineStyle(3, Phaser.Color.webToColor(this.bgColors[this.level%10][0]).color, 1);
-//     zp.beginFill(0xffffff);
-//     zp.drawRect(0, 0, 24, 24);//, this.bgColors[this.level%10][0]);
-//     zp.endFill();
-//     this.zoidPrim0 = zp.generateTexture();
-// //     this.zoidPrim0 = MetaTWO.game.add.image(274,71, zoidPrim0);
-//     zp.destroy();
+  init_prims: function(){
+//   initialize all the prims you should need
 
-    
-//     this.zoidPrim1 = this.add.group();
-    var col1 = Phaser.Color.webToColor(this.bgColors[this.level%10][0]);
-    var col2 = Phaser.Color.webToColor(this.bgColors[this.level%10][1]);
-    this.zoidPrim0 = MetaTWO.game.make.bitmapData(); 
-    this.zoidPrim0.ctx.lineWidth = 3;
-    this.zoidPrim0.ctx.strokeStyle =  Phaser.Color.RGBtoString(col1.r,col1.g,col1.b,"#");
-    this.zoidPrim0.ctx.beginPath();
-
-    this.zoidPrim0.ctx.rect(1, 1, 20, 20);
-    this.zoidPrim0.ctx.fillStyle = '#ffffff';
-    this.zoidPrim0.ctx.fill();
-    this.zoidPrim0.ctx.stroke();
-
-
-
-    this.zoidPrim1 = MetaTWO.game.make.bitmapData(); 
-    this.zoidPrim1.ctx.lineWidth = 3;
-    this.zoidPrim1.ctx.strokeStyle =  Phaser.Color.RGBtoString(col1.r,col1.g,col1.b,"#");
-    this.zoidPrim1.ctx.beginPath();
-
-    this.zoidPrim1.ctx.rect(1, 1, 20, 20);
-    this.zoidPrim1.ctx.fillStyle = Phaser.Color.RGBtoString(col1.r,col1.g,col1.b,"#");
-    this.zoidPrim1.ctx.fill();
-    this.zoidPrim1.ctx.stroke();
-    
-    
-//     zp = MetaTWO.game.add.graphics();
-//     zp.lineStyle(3, Phaser.Color.webToColor(this.bgColors[this.level%10][0]).color, 1);
-//     zp.beginFill(Phaser.Color.webToColor(this.bgColors[this.level%10][0]).color);
-//     zp.drawRect(0, 0, 24, 24);
-//     zp.endFill();
-//     this.zoidPrim1 = zp.generateTexture();
-//     zp.destroy();   
-
-
-    
-//     this.zoidPrim2 = this.add.group();
-//     zp = MetaTWO.game.add.graphics();
-//     zp.lineStyle(3, Phaser.Color.webToColor(this.bgColors[this.level%10][1]).color, 1);
-//     zp.beginFill(Phaser.Color.webToColor(this.bgColors[this.level%10][1]).color);
-//     zp.drawRect(0, 0, 24, 24);
-//     zp.endFill();
-//     this.zoidPrim2 = zp.generateTexture();
-//     zp.destroy();
-    
-    this.zoidPrim2 = MetaTWO.game.make.bitmapData(); 
-    this.zoidPrim2.ctx.lineWidth = 3;
-    this.zoidPrim2.ctx.strokeStyle =  Phaser.Color.RGBtoString(col2.r,col2.g,col2.b,"#");
-    this.zoidPrim2.ctx.beginPath();
-
-    this.zoidPrim2.ctx.rect(1, 1, 20, 20);
-    this.zoidPrim2.ctx.fillStyle = Phaser.Color.RGBtoString(col2.r,col2.g,col2.b,"#");
-    this.zoidPrim2.ctx.fill();
-    this.zoidPrim2.ctx.stroke();
-    
-    //debug
-    zp = MetaTWO.game.add.graphics();
-    zp.beginFill(0xff00000);
-    zp.drawRect(0, 0, 24, 24);
-    zp.endFill();
-    this.debugPrim = zp.generateTexture();
-    zp.destroy();    
-
-    this.create_zoid_prims()
-  },
-  create_zoid_prims: function(){
-    var prim;
-
-  // define obstacle group
-  this.prims = MetaTWO.game.add.group();
-  this.prims.enableBody = true;
-  
-
-    for (i = 0; i < ((MetaTWO.BOARD_WIDTH * MetaTWO.BOARD_HEIGHT)*2+10); i++) {
-                        //just highlight
-                        prim = this.prims.create(-1000,-1000, this.whitespace)
-                        prim.checkWorldBounds = true;
-                        prim.outOfBoundsKill = true;
-                        prim.kill();
-                        prim.home = 0;
-                        this.whitePool.add(prim);
-
-                        
-                        //large white square, primary color
-//                         prim = this.prims.create(-1000, -1000, this.zoidPrim0)
-                        prim = MetaTWO.game.add.sprite(-1000, -1000, this.zoidPrim0);
-                    
-                        prim.checkWorldBounds = true;
-                        prim.outOfBoundsKill = true;
-                        prim.kill();
-//                         prim.home = 1;
-                        this.primPool0.add(prim);
-                        
-
-                         // primary color, white highlight
-//                         prim = this.prims.create(-1000, -1000, this.zoidPrim1)
-                        prim = MetaTWO.game.add.sprite(-1000, -1000, this.zoidPrim1);
-                        prim.checkWorldBounds = true;       
-                        prim.outOfBoundsKill = true;
-                        prim.kill();
-//                         prim.home = 2;
-                        this.primPool1.add(prim);
-                        
-
-                         //secondary color, white highlight
-//                         prim = this.prims.create(-1000, -1000, this.zoidPrim2)
-                        prim = MetaTWO.game.add.sprite(-1000, -1000, this.zoidPrim2);
-                        prim.checkWorldBounds = true;
-                        prim.outOfBoundsKill = true;
-                        prim.kill();
-//                         prim.home = 3;
-                        this.primPool2.add(prim);
-
-        
-
-        
-        
+    for (i = 0; i < ((MetaTWO.BOARD_WIDTH * MetaTWO.BOARD_HEIGHT)*2+10); i++){
+        prim = this.add.sprite(-1000,-1000, 'blocks');
+        prim.checkWorldBounds = true;
+        prim.outOfBoundsKill = true;
+        prim.kill();
+        this.zoidPrims.add(prim)
     }
-    this.whitePool.setAllChildren('home', 0);
-    this.primPool0.setAllChildren('home', 1);
-    this.primPool1.setAllChildren('home', 2);
-    this.primPool2.setAllChildren('home', 3);
+
   },
-  recolor_pile: function(){
-    this.pile.killAll();
-    this.pile.removeAll();
-    this.pile.destroy();
-    this.pile = this.add.group()
-    for(iy = 0; iy<this.board.height; iy++){
-        for(ix = 0; ix<this.board.width; ix++){
-            if(this.board.isFilled(ix, iy)){
-                switch(this.board.getStyle(ix, iy)){
-                        case 0:
-                        var zprim = this.primPool0.getFirstExists(exists=false);
-                        zprim.reset(ix*25+278, iy*25+74);
-                        this.pile.add(zprim)
-                        var zprim = this.whitePool.getFirstExists(exists=false);
-                        zprim.reset(ix*25+278, iy*25+74);
-                        this.pile.add(zprim)
-                        break;
-                        
-                        case 1:
-                        var zprim = this.primPool1.getFirstExists(exists=false);
-                        zprim.reset(ix*25+278, iy*25+74);
-                        this.pile.add(zprim);
-                        var zprim = this.whitePool.getFirstExists(exists=false);
-                        zprim.reset(ix*25+278, iy*25+74);
-                        this.pile.add(zprim)
-                        break;
-                        
-                        case 2:
-                        var zprim = this.primPool2.getFirstExists(exists=false)
-                        zprim.reset(ix*25+278, iy*25+74);
-                        this.pile.add(zprim);
-                        var zprim = this.whitePool.getFirstExists(exists=false);
-                        zprim.reset(ix*25+278, iy*25+74);
-                        this.pile.add(zprim)
-                        break;
-                        }
-                    }
-                }
-            }
-                
-},
-  create_zoid_render: function(){
-//       let graphics = MetaTWO.game.add.graphics();
-//     graphics.lineStyle(2, 0x00FF00, 1);    
-//     graphics.drawRect(0, 0, 252, 503);
-//     graphics.drawRect(320,0,120,120)
-//     let frameImage = graphics.generateTexture();
-
-//             let zr = MetaTWO.game.add.graphics();
-            
-            let blocks = this.zoid.getBlocks();
-            this.zoidNext = this.add.group()
-            this.zoidRender = this.add.group();
-            
-//             this.zoidRender.x = 276+25*this.rotCenter[this.zoid.zoidType][0];
-//             this.zoidRender.y = 74+25*this.rotCenter[this.zoid.zoidType][1];
-
-
-            var mask = MetaTWO.game.add.graphics(276, 74);
-
-    //  Shapes drawn to the Graphics object must be filled.
-            mask.beginFill(0x00FFFFF);
-
-    //  Here we'll draw a rectangle for each group sprite
-            mask.drawRect(0, 0, 252, 503);
-            mask.endFill();
-
-//             let group = this.add.group();
-            for (i=0; i< 4; i++){
-                if(blocks[i][1] >= 0){
-                    switch(this.zoid.style){
-                        case 0:
-                        var zprim = this.primPool0.getFirstExists(exists=false);
-//                         if(!zprim){
-//                         MetaTWO.game.debug.text("Helpful Text: " + this.zoid.style, 2, 28, "#00ff00");
-//                         }
-                        zprim.reset((blocks[i][0])*25+278, (blocks[i][1])*25+74);
-                        this.zoidRender.add(zprim)
-                        var zprim = this.whitePool.getFirstExists(exists=false);
-                        zprim.reset((blocks[i][0])*25+278, (blocks[i][1])*25+74);
-                        this.zoidRender.add(zprim)
-                        break;
-                        
-                        case 1:
-                        var zprim = this.primPool1.getFirstExists(exists=false);
-//                         if(!zprim){
-//                         MetaTWO.game.debug.text("Helpful Text: " + this.zoid.style, 2, 28, "#00ff00");
-//                         }
-                        zprim.reset((blocks[i][0])*25+278, (blocks[i][1])*25+74);
-                        this.zoidRender.add(zprim);                        
-                        var zprim = this.whitePool.getFirstExists(exists=false);
-                        zprim.reset((blocks[i][0])*25+278, (blocks[i][1])*25+74);
-                        this.zoidRender.add(zprim)
-                        break;
-                        
-                        case 2:
-                        var zprim = this.primPool2.getFirstExists(exists=false);
-                        
-//                         if(!zprim){
-//                         MetaTWO.game.debug.text("Helpful Text: " + this.zoid.style, 2, 28, "#00ff00");
-//                         }
-                        zprim.reset((blocks[i][0])*25+278, (blocks[i][1])*25+74);
-                        this.zoidRender.add(zprim);
-                        var zprim = this.whitePool.getFirstExists(exists=false);
-                        zprim.reset((blocks[i][0])*25+278, (blocks[i][1])*25+74);
-                        this.zoidRender.add(zprim)
-                        break;
-                        
-                        
-                        }
-                    }
-
-                }
+  init_zoid_render: function(){
+    let blocks = this.zoid.getBlocks();
+    this.zoidNext = this.add.group()
+    this.zoidRender = this.add.group();
     
-            blocks = this.nextZoid.getBlocks();
-            for (i=0; i< 4; i++){
-                if(blocks[i][1] >= 0){
-                    switch (this.nextZoid.style){
-                        case 0:
-                        var zprim = this.primPool0.getFirstExists(exists=false);
-                        zprim.reset((blocks[i][0])*25+525, (blocks[i][1])*25+100);
-                        this.zoidNext.add(zprim)
-                        var zprim = this.whitePool.getFirstExists(exists=false);
-                        zprim.reset((blocks[i][0])*25+525, (blocks[i][1])*25+100);
-                        this.zoidNext.add(zprim)
-                        break;
-                        
-                        case 1:
-                        var zprim = this.primPool1.getFirstExists(exists=false);
-                        zprim.reset((blocks[i][0])*25+525, (blocks[i][1])*25+100);
-                        this.zoidNext.add(zprim);
-                        var zprim = this.whitePool.getFirstExists(exists=false);
-                        zprim.reset((blocks[i][0])*25+525, (blocks[i][1])*25+100);
-                        this.zoidNext.add(zprim)
-                        break;
-                        
-                        case 2:
-                        var zprim = this.primPool2.getFirstExists(exists=false)
-                        zprim.reset((blocks[i][0])*25+525, (blocks[i][1])*25+100);
-                        this.zoidNext.add(zprim);
-                        var zprim = this.whitePool.getFirstExists(exists=false);
-                        zprim.reset((blocks[i][0])*25+525, (blocks[i][1])*25+100);
-                        this.zoidNext.add(zprim)
-                        break;
-                        
-                    }
+    var mask = MetaTWO.game.add.graphics(276, 74);
+    mask.beginFill(0xFFFFFF);
+    mask.drawRect(0, 0, 252, 503);
+    mask.endFill();
+    
 
-                }
-            }
-            this.zoidRender.mask = mask;
-//             this.zoidRender.add(zr);
+    
+    for(i = 0; i < 4; i++) {
+
+//       var zprim =  this.add.sprite(blocks[i][0]*25+276, blocks[i][1]*25+74, 'blocks');
+      var zprim = this.zoidPrims.getFirstExists(exists=false);
+      zprim.reset(blocks[i][0]*25+276,blocks[i][1]*25+74);
+      zprim.frame = this.zoid.style+(this.level%10)*3;
+      this.zoidRender.add(zprim)
+    }
+    blocks = this.nextZoid.getBlocks();
+    for(i = 0; i < 4; i++) {
+//       var zprim = this.add.sprite(blocks[i][0]*25+525, blocks[i][1]*25+100, 'blocks');
+      var zprim = this.zoidPrims.getFirstExists(exists=false);
+      zprim.reset(blocks[i][0]*25+525, blocks[i][1]*25+100);
+      zprim.frame = this.nextZoid.style+(this.level%10)*3;
+      this.zoidNext.add(zprim)
+    }
+    this.zoidRender.mask = mask;
   },
+  
+  create_zoid_render: function(){
+    //move rendered curr zoid to pile
+    this.zoidRender.moveAll(this.pile);
+    //reset group, for some reason if you don't do this, the mask shows up. 
+    this.zoidRender = this.add.group();
+    //move rendered next to curr
+    var mask = MetaTWO.game.add.graphics(276, 74);
+    mask.beginFill(0xFFFFFFF);
+    mask.drawRect(0, 0, 252, 503);
+    mask.endFill();
+
+    
+    this.zoidNext.moveAll(this.zoidRender)
+    this.zoidRender.subAll('x',(525-276))
+    this.zoidRender.subAll('y',(100-74))
+
+    blocks = this.nextZoid.getBlocks();
+    for(i = 0; i < 4; i++) {
+//       var zprim = this.add.sprite(blocks[i][0]*25+525, blocks[i][1]*25+100, 'blocks');
+      var zprim = this.zoidPrims.getFirstExists(exists=false);
+      zprim.reset(blocks[i][0]*25+525, blocks[i][1]*25+100);
+      zprim.frame = this.nextZoid.style+(this.level%10)*3;
+      this.zoidNext.add(zprim)
+    }
+    this.zoidRender.mask = mask;
+
+  },
+
 
   render: function(){
 //     c2 =Phaser.Color.webToColor(this.bgColors[this.level%10][0])
@@ -1075,36 +755,13 @@ MetaTWO.Game.prototype = {
 //     }
 //     this.renderClear = this.pile.getAll('y', 19*25+74)
 // 
-//     var col1 = Phaser.Color.webToColor(this.bgColors[this.level%10][0]);
-//         MetaTWO.game.debug.text("childs: " + Phaser.Color.RGBtoString(col1.r,col1.g,col1.b,"#"), 2, 195, "#00ff00");
-        
-//     MetaTWO.game.debug.text("fps: " + Object.getOwnPropertyNames(this.zoidRender.children[0]), 2, 15, "#00ff00");
-//     MetaTWO.game.debug.text("pivotx: " + Object.getOwnPropertyNames(this.primPool0.children[0]), 2, 30, "#00ff00");
-//     MetaTWO.game.debug.text("pivoty: " + Object.getOwnPropertyNames(this.zoidRender.children[1]), 2, 45, "#00ff00");
-//     MetaTWO.game.debug.text("top: " + Phaser.Color.webToColor(this.bgColors[this.level%10][0]).r, 2, 60, "#00ff00");
-//     MetaTWO.game.debug.text("left: " + Phaser.Color.webToColor(this.bgColors[this.level%10][0]).g, 2, 75, "#00ff00");
-    MetaTWO.game.debug.text("deadW: " + this.whitePool.countDead(), 2, 90, "#00ff00");
-    MetaTWO.game.debug.text("dead0: " + this.primPool0.countDead(), 2, 105, "#00ff00");
-    MetaTWO.game.debug.text("dead1: " + this.primPool1.countDead(), 2, 120, "#00ff00");
-// 
-//     
-        MetaTWO.game.debug.text("dead2: " + this.primPool1.countDead(), 2, 135, "#00ff00");
-// 
-//         MetaTWO.game.debug.text("childs: " + this.test1, 2, 150, "#00ff00");
-//         MetaTWO.game.debug.text("childs: " + this.test2, 2, 165, "#00ff00");
-//         this.excount2 = this.primPool0.getAll('home', 1).length;
-//          MetaTWO.game.debug.text("childs: " + this.primPool0.children[0].home, 2, 180, "#00ff00");
-// 
-//     MetaTWO.game.debug.text("pileliving: " + this.pile.countLiving(), 2, 195, "#00ff00");
-//     MetaTWO.game.debug.text("piledead: " + this.pile.countDead(), 2, 210, "#00ff00");
-// 
-//     MetaTWO.game.debug.text("fps: " + this.zoid.type, 2, 34, "#00ff00");
-//     
     if (this.paused){ // game is paused
         MetaTWO.game.debug.text("Paused", 360, 300, "#ffffff","24px Arial");
     }
 
-    MetaTWO.game.debug.text("fps: " + MetaTWO.game.time.fps, 2, 14, "#00ff00");
+//     MetaTWO.game.debug.text("fps: " + MetaTWO.game.time.fps, 2, 14, "#00ff00");
+//     MetaTWO.game.debug.text("dead: " + this.zoidPrims.countDead(), 2, 30, "#00ff00");
+//     MetaTWO.game.debug.text("alive: " + this.zoidPrims.countLiving(), 2, 46, "#00ff00");
     // MetaTWO.game.debug.text("softdrop: " + this.softdrop_timer, 2, 30, "#00ff00");
     // MetaTWO.game.debug.text("level: " + this.level, 2, 46, "#00ff00");
     // MetaTWO.game.debug.text("line count: " + this.lines, 2, 62, "#00ff00");
