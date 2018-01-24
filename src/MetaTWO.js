@@ -19,6 +19,7 @@ let MetaTWO =
   BOARD_WIDTH: 10,
   BOARD_HEIGHT: 20,
   
+  
   // The actual board is initialized in MetaTWO.Game.create(). 
   board: null,
   
