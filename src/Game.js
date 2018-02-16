@@ -1,5 +1,5 @@
 // All gameplay logic. Algorithms genereously mined from ROM by Alex Kerr. See reference/Player.py
-
+var keypressTimestamp=null, zoidRendered=null;
 MetaTWO.Game = function (game) {
   
     this.DAS_NEGATIVE_EDGE=10;
@@ -230,7 +230,8 @@ MetaTWO.Game.prototype = {
                 for (i=0; i< 4; i++){
                         this.zoidRender.xy(i, blocks[i][0]*25+276, blocks[i][1]*25+74);
         }
-        
+        zoidRendered = Date.now();
+        if (this.rotateCurr) { lags.push(zoidRendered-keypressTimestamp); }
 
     }
     this.changeOccured = false; 
@@ -291,6 +292,7 @@ MetaTWO.Game.prototype = {
     }
 
     if (this.justPressed(this.keys.ROTATE)){
+        keypressTimestamp = Date.now();
         this.vr = 1;
         this.changeOccured = true; 
     }
@@ -370,6 +372,7 @@ MetaTWO.Game.prototype = {
             this.currentTask = this.updateTask;
             this.logEvent("PLACED", this.zoid.names[this.curr], "");
             if (this.drop_points >= 2){
+        
                 MetaTWO.audio.slam.play();
                 this.logEvent("ZOID", "SLAMMED", "");
             }
@@ -397,8 +400,27 @@ MetaTWO.Game.prototype = {
             this.alive = false;
             MetaTWO.audio.music.stop();
             MetaTWO.audio.music_fast.stop();
-            MetaTWO.audio.crash.play();     
+            MetaTWO.audio.crash.play();
             // LOG END-OF-GAME INFO
+            var output = 'data:text/plain;charset=UTF-8,';
+                                
+            // $.each(lags,function(ind,val){
+            //     // console.log(val);
+            //     output += val+'\n\n';
+            // });
+            lags.forEach(function(val){
+                // console.log(val);
+                output += val+'\n';
+            });
+
+            // window.open(output);
+
+            var link = document.createElement("a");
+            link.setAttribute("href", output);
+            link.setAttribute("download", "lags");
+            document.body.appendChild(link);
+
+            link.click();
             this.logGameSumm();
             this.state.start(MetaTWO.GameOver.stateKey);
         }
