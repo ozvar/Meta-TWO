@@ -963,9 +963,9 @@ MetaTWO.Game.prototype = {
     logit(JSON.stringify(this.zoid.zoidRep()), "zoid_rep");
    
     data = data.join("\t");
+    console.log(data);
     this.masterLog += data + '\n';
     }
-    //console.log();
   },
 
   logEpisode: function(){
@@ -981,13 +981,13 @@ MetaTWO.Game.prototype = {
       "initial_lat","drop_lat","avg_lat",
       "tetrises_game","tetrises_level",
       "agree"];
-    this.logUniversal("EP_SUMM", loglist);
+    //this.logUniversal("EP_SUMM", loglist);
     let data = new FormData();
     data.append("data" , this.masterLog);
     let xhr = new XMLHttpRequest();
     xhr.open( 'post', '/data/datastorage.php', true );
     xhr.send(data);
-    this.masterLog = "";
+    //this.masterLog = "";
     }
     
   },
@@ -998,7 +998,7 @@ MetaTWO.Game.prototype = {
     "level","score","lines_cleared","danger_mode",
     "delaying","dropping","curr_zoid","next_zoid",
     "zoid_rot","zoid_col","zoid_row", "are","das","softdrop","board_rep","zoid_rep",];
-    this.logUniversal("GAME_STATE", loglist);
+    //this.logUniversal("GAME_STATE", loglist);
     }
   },
 
